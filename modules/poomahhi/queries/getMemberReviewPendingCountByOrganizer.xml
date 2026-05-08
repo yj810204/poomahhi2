@@ -1,0 +1,22 @@
+<query id="getMemberReviewPendingCountByOrganizer" action="select">
+	<tables>
+		<table name="poomahhi_application" alias="a" />
+		<table name="poomahhi_product" alias="p" type="inner">
+			<conditions>
+				<condition operation="equal" column="a.product_srl" default="p.product_srl" />
+			</conditions>
+		</table>
+		<table name="poomahhi_member_review" alias="mr" type="left">
+			<conditions>
+				<condition operation="equal" column="a.application_srl" default="mr.application_srl" />
+			</conditions>
+		</table>
+	</tables>
+	<columns>
+		<column name="SUM(CASE WHEN mr.review_srl IS NULL THEN 1 ELSE 0 END)" alias="pending_count" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="p.member_srl" var="member_srl" notnull="notnull" pipe="AND" />
+		<condition operation="equal" column="a.status" default="under_review" pipe="AND" />
+	</conditions>
+</query>

@@ -1,0 +1,8 @@
+<query id="deleteApplication" action="delete">
+	<tables>
+		<table name="poomahhi_application" />
+	</tables>
+	<conditions>
+		<condition operation="equal" column="application_srl" var="application_srl" />
+	</conditions>
+</query>

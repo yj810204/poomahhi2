@@ -1,0 +1,11 @@
+<query id="updateExtraTemplateOrder" action="update">
+	<tables>
+		<table name="poomahhi_extra_template" />
+	</tables>
+	<columns>
+		<column name="list_order" var="list_order" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="template_srl" var="template_srl" notnull="notnull" />
+	</conditions>
+</query>

@@ -1,0 +1,20 @@
+<query id="getWishlistCountByOrganizerProducts" action="select">
+	<tables>
+		<table name="poomahhi_product" alias="p" />
+		<table name="poomahhi_wishlist" alias="w" type="left join">
+			<conditions>
+				<condition operation="equal" column="p.product_srl" default="w.product_srl" />
+			</conditions>
+		</table>
+	</tables>
+	<columns>
+		<column name="p.product_srl" />
+		<column name="count(w.wishlist_srl)" alias="wish_count" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="p.member_srl" var="member_srl" notnull="notnull" pipe="AND" />
+	</conditions>
+	<groups>
+		<group column="p.product_srl" />
+	</groups>
+</query>

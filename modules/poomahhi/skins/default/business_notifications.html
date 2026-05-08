@@ -1,0 +1,119 @@
+<load target="css/business.scss" />
+<load target="../../../member/css/member.scss" />
+
+<div class="pmh-business-layout">
+<include target="_business_sidebar.html" />
+<div class="member-contents pmh-business-main pmh-business-notifications">
+	<h1>알림</h1>
+
+	<div class="business_inner">
+		<!--@if($ncenterlite_unavailable)-->
+		<p class="pmh-bn-alert">알림 센터 모듈을 사용할 수 없습니다. 사이트에 알림 센터(ncenterlite)가 설치·설정되어 있는지 확인해 주세요.</p>
+		<!--@else-->
+
+		<div class="poomahhi-tabs">
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiBusinessNotifications', 'notify_tab', 'all', 'unread_only', $notify_unread_only, 'search_keyword', $notify_search_keyword, 'page', 1)}" class="poomahhi-tab {$bn_tab_all_class}">전체</a>
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiBusinessNotifications', 'notify_tab', 'poomahhi', 'unread_only', $notify_unread_only, 'search_keyword', $notify_search_keyword, 'page', 1)}" class="poomahhi-tab {$bn_tab_poomahhi_class}">품앗이</a>
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiBusinessNotifications', 'notify_tab', 'notice', 'unread_only', $notify_unread_only, 'search_keyword', $notify_search_keyword, 'page', 1)}" class="poomahhi-tab {$bn_tab_notice_class}">공지</a>
+		</div>
+
+		<form action="./" method="get" class="pmh-bn-toolbar" no-error-return-url="true">
+			<input type="hidden" name="mid" value="{$mid}" />
+			<input type="hidden" name="act" value="dispPoomahhiBusinessNotifications" />
+			<input type="hidden" name="notify_tab" value="{$notify_tab}" />
+			<div class="pmh-bn-search-wrap">
+				<input type="search" name="search_keyword" id="pmh_bn_search" class="pmh-bn-search-input" value="<!--@if($notify_search_keyword)-->{$notify_search_keyword}<!--@else--><!--@end-->" placeholder="검색어를 입력해 주세요" />
+				<span class="pmh-bn-search-icon"><i class="ri-search-line"></i></span>
+			</div>
+			<label class="pmh-bn-unread-label">
+				읽지않음만 보기
+				<input type="checkbox" name="unread_only" value="Y" checked|cond="$notify_unread_only == 'Y'" />
+				<button type="submit" class="pmh-bn-submit">적용</button>
+			</label>
+		</form>
+
+		<!--@if($notification_list)-->
+		<div class="pmh-bn-table-wrap">
+			<table class="pmh-bn-table">
+				<thead>
+					<tr>
+						<th class="pmh-bn-col-cat">항목</th>
+						<th class="pmh-bn-col-body">내용</th>
+						<th class="pmh-bn-col-status">상태</th>
+						<th class="pmh-bn-col-date">날짜</th>
+					</tr>
+				</thead>
+				<tbody>
+					<!--@foreach($notification_list as $notify_row)-->
+					<tr>
+						<td><span class="pmh-bn-badge-cat">{$notify_row->notify_category_label}</span></td>
+						<td class="pmh-bn-cell-body">
+							<a href="{$notify_row->url}" class="pmh-bn-body-link">
+								<i class="bi {$notify_row->notify_icon_class} pmh-bn-body-ico" aria-hidden="true"></i>
+								<span class="pmh-bn-body-text">{$notify_row->text}</span>
+							</a>
+						</td>
+						<td>
+							<!--@if($notify_row->readed == 'N')-->
+							<span class="pmh-bn-status unread">안읽음</span>
+							<!--@else-->
+							<span class="pmh-bn-status read">읽음</span>
+							<!--@end-->
+						</td>
+						<td class="pmh-bn-cell-date">{$notify_row->ago}</td>
+					</tr>
+					<!--@end-->
+				</tbody>
+			</table>
+		</div>
+		<!--@else-->
+		<p class="empty">표시할 알림이 없습니다.</p>
+		<!--@end-->
+
+		<!--@if($page_navigation)-->
+		<div class="pagination">
+			<ul>
+				<!--@if($page_navigation->cur_page > 1)-->
+				<li>
+					<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiBusinessNotifications', 'notify_tab', $notify_tab, 'unread_only', $notify_unread_only, 'search_keyword', $notify_search_keyword, 'page', 1)}" class="pmh-page-nav" rel="nofollow"><i class="ri-arrow-left-double-line"></i></a>
+				</li>
+				
+				<li>
+					<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiBusinessNotifications', 'notify_tab', $notify_tab, 'unread_only', $notify_unread_only, 'search_keyword', $notify_search_keyword, 'page', $page_navigation->cur_page - 1)}" class="pmh-page-nav" rel="nofollow"><i class="ri-arrow-left-s-line"></i></a>
+				</li>
+				<!--@end-->
+				<!--@for($i = $page_navigation->first_page; $i <= $page_navigation->last_page; $i++)-->
+				<!--@if($i == $page_navigation->cur_page)-->
+				<li class="active">
+					<a href="#">{$i}</a>
+				</li>
+				<!--@else-->
+				<li>
+					<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiBusinessNotifications', 'notify_tab', $notify_tab, 'unread_only', $notify_unread_only, 'search_keyword', $notify_search_keyword, 'page', $i)}" class="pmh-page">{$i}</a>
+				</li>
+				<!--@end-->
+				<!--@end-->
+				<!--@if($page_navigation->cur_page < $page_navigation->total_page)-->
+				<li>
+					<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiBusinessNotifications', 'notify_tab', $notify_tab, 'unread_only', $notify_unread_only, 'search_keyword', $notify_search_keyword, 'page', $page_navigation->cur_page + 1)}" class="pmh-page-nav" rel="nofollow"><i class="ri-arrow-right-s-line"></i></a>
+				</li>
+				
+				<li>
+					<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiBusinessNotifications', 'notify_tab', $notify_tab, 'unread_only', $notify_unread_only, 'search_keyword', $notify_search_keyword, 'page', $page_navigation->total_page)}" class="pmh-page-nav" rel="nofollow"><i class="ri-arrow-right-double-line"></i></a>
+				</li>
+				
+				<!--@end-->
+			</ul>
+		</div>
+		<!--@end-->
+
+		<!--@if($ncenterlite_mid)-->
+		<p class="pmh-bn-footer-link">
+			<a href="{getUrl('', 'mid', $ncenterlite_mid, 'act', 'dispNcenterliteNotifyList')}">알림 센터에서 보기</a>
+		</p>
+		<!--@end-->
+
+		<!--@end-->
+	</div>
+</div>
+</div>

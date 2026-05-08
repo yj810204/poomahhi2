@@ -1,0 +1,12 @@
+<table name="poomahhi_extra_def">
+	<column name="extra_def_srl" type="number" size="11" notnull="notnull" primary_key="primary_key" />
+	<column name="module_srl" type="number" size="11" notnull="notnull" index="idx_module_srl" />
+	<column name="template_srl" type="number" size="11" default="0" index="idx_template_srl" />
+	<column name="var_name" type="varchar" size="250" notnull="notnull" />
+	<column name="var_label" type="varchar" size="250" notnull="notnull" />
+	<column name="var_type" type="varchar" size="50" default="text" />
+	<column name="var_options" type="text" />
+	<column name="is_required" type="varchar" size="1" default="N" />
+	<column name="list_order" type="number" size="11" default="0" />
+	<column name="regdate" type="date" />
+</table>

@@ -1,0 +1,379 @@
+<load target="css/product.scss" />
+
+<div class="pmh-write">
+
+<!--@if($product)-->
+<div class="pmh-page-title">지역 품앗이 수정</div>
+<!--@else-->
+<div class="pmh-page-title">지역 품앗이 글쓰기</div>
+<!--@end-->
+
+<form action="./" method="post" id="productWriteForm" enctype="multipart/form-data">
+	<input type="hidden" name="mid" value="{$mid}" />
+	<input type="hidden" name="product_type" value="local" />
+	<!--@if($product)-->
+	<input type="hidden" name="act" value="procPoomahhiUpdateProduct" />
+	<input type="hidden" name="product_srl" value="{$product->product_srl}" />
+	<!--@else-->
+	<input type="hidden" name="act" value="procPoomahhiInsertProduct" />
+	<input type="hidden" name="product_srl" value="{$upload_target_srl}" />
+	<!--@end-->
+	<textarea name="content" id="content_hidden" style="display:none;"><!--@if($product && $product->content)-->{$product->content}<!--@else--><!--@end--></textarea>
+
+	<section class="pmh-section local">
+		<h3 class="pmh-section-title">상품정보</h3>
+
+		<div class="pmh-row-half">
+			<div class="pmh-field">
+				<label class="pmh-label req">카테고리 선택</label>
+				<select name="category_srl" class="pmh-input" required="required">
+					<option value="">카테고리를 선택해 주세요.</option>
+					<!--@foreach($category_list as $cat)-->
+					<option value="{$cat->category_srl}" selected|cond="$product->category_srl == $cat->category_srl">{$cat->title}</option>
+					<!--@end-->
+				</select>
+			</div>
+			<div class="pmh-field">
+				<label class="pmh-label req">지역</label>
+				<select name="region_srl" class="pmh-input" required="required">
+					<option value="">지역을 선택해 주세요.</option>
+					<!--@foreach($region_list as $rg)-->
+					<option value="{$rg->region_srl}" selected|cond="$product->region_srl == $rg->region_srl">{$rg->title}</option>
+					<!--@end-->
+				</select>
+			</div>
+		</div>
+
+		<div class="pmh-field">
+			<label class="pmh-label req">업체명</label>
+			<input type="text" name="company_name" value="<!--@if($product)-->{$product->company_name}<!--@else--><!--@end-->" class="pmh-input" placeholder="업체명을 입력해 주세요." required="required" />
+		</div>
+
+		<div class="pmh-field">
+			<label class="pmh-label req">상품 대표이미지</label>
+			<div class="pmh-image-upload" id="imageUploadArea">
+				<!-- 기존 이미지가 있을 때 -->
+				<div class="pmh-image-preview" id="imagePreview" style="display:<!--@if($product->product_image)-->block<!--@else-->none<!--@end-->;">
+					<img src="{$product->product_image}" alt="" />
+					<button type="button" class="pmh-image-remove" onclick="removeImage();">X</button>
+				</div>
+
+				<!-- 이미지가 없을 때 보이는 버튼 -->
+				<div class="pmh-image-placeholder" id="imagePlaceholder" onclick="document.getElementById('productImageInput').click();" style="display:<!--@if($product->product_image)-->none<!--@else-->flex<!--@end-->;">
+					<span class="pmh-placeholder-plus"><i class="ri-camera-4-fill"></i></span>
+				</div>
+
+				<!-- 파일 인풋은 항상 이 자리에 고정 -->
+				<input type="file" name="product_image" id="productImageInput" accept="image/*" style="display:none;" onchange="previewImage(this);" />
+				<input type="hidden" name="delete_product_image" id="deleteImageFlag" value="" />
+			</div>
+		</div>
+
+		<div class="pmh-field">
+			<label class="pmh-label req">제목</label>
+			<input type="text" name="title" value="<!--@if($product)-->{$product->title}<!--@else--><!--@end-->" class="pmh-input" placeholder="상품명을 입력해 주세요." required="required" />
+		</div>
+
+		<div class="pmh-field">
+			<label class="pmh-label req">상품 한 줄 설명</label>
+			<input type="text" name="short_description" value="<!--@if($product)-->{$product->short_description}<!--@else--><!--@end-->" class="pmh-input" placeholder="상품 한 줄 설명을 입력해 주세요." required="required" />
+		</div>
+	</section>
+
+	<section class="pmh-section">
+		<h3 class="pmh-section-title">품앗이 설정</h3>
+
+		<div class="pmh-row-half">
+			<div class="pmh-field">
+				<label class="pmh-label req">실구매가</label>
+				<input type="number" name="actual_price" value="<!--@if($product)-->{$product->actual_price}<!--@else--><!--@end-->" class="pmh-input pmh-input-half" placeholder="실구매가를 입력해 주세요." required="required" min="0" />
+			</div>
+		</div>
+
+		<div class="pmh-row-half">
+			<div class="pmh-field">
+				<label class="pmh-label req">연락처</label>
+				<p class="pmh-field-desc">연락처는 선정된 회원에게만 보여집니다.</p>
+				<input type="text" name="contact" value="<!--@if($product)-->{$product->contact}<!--@else--><!--@end-->" class="pmh-input pmh-input-half" placeholder="연락처를 입력해 주세요." required="required" />
+			</div>
+		</div>
+
+		<div class="pmh-field">
+			<label class="pmh-label req">주소</label>
+			<div class="pmh-address-wrap">
+				<div class="pmh-address-row">
+					<input type="text" name="zipcode" id="zipcode" value="<!--@if($product)-->{$product->zipcode}<!--@else--><!--@end-->" class="pmh-input mt-0" placeholder="우편번호" readonly="readonly" disabled />
+					<button type="button" class="pmh-btn-address" onclick="searchAddress();">검색</button>
+				</div>
+				<input type="text" name="address" id="address" value="<!--@if($product)-->{$product->address}<!--@else--><!--@end-->" class="pmh-input" placeholder="주소" readonly="readonly" disabled />
+				<input type="text" name="address_detail" id="address_detail" value="<!--@if($product)-->{$product->address_detail}<!--@else--><!--@end-->" class="pmh-input" placeholder="상세주소를 입력해 주세요." />
+			</div>
+		</div>
+
+		<div class="pmh-field">
+			<label class="pmh-label req">품앗이 신청 인원</label>
+			<input type="number" name="max_applicants" value="<!--@if($product)-->{$product->max_applicants}<!--@else--><!--@end-->" class="pmh-input pmh-input-half" placeholder="품앗이 신청 인원을 입력해 주세요." required="required" min="1" />
+		</div>
+
+		<div class="pmh-field">
+			<label class="pmh-label req">품앗이 신청 기간</label>
+			<div class="pmh-date-range">
+				<input type="date" name="apply_start_date" value="<!--@if($product->apply_start_date)-->{zdate($product->apply_start_date, 'Y-m-d')}<!--@else--><!--@end-->" class="pmh-input" required="required" />
+				<span class="pmh-date-sep">~</span>
+				<input type="date" name="apply_end_date" value="<!--@if($product->apply_end_date)-->{zdate($product->apply_end_date, 'Y-m-d')}<!--@else--><!--@end-->" class="pmh-input" required="required" />
+			</div>
+		</div>
+
+		<div class="pmh-field">
+			<label class="pmh-label req">선정자 발표 날짜</label>
+			<input type="date" name="selection_date" value="<!--@if($product->selection_date)-->{zdate($product->selection_date, 'Y-m-d')}<!--@else--><!--@end-->" class="pmh-input pmh-input-half" required="required" />
+		</div>
+
+		<div class="pmh-field">
+			<label class="pmh-label req">리뷰 등록 기간</label>
+			<div class="pmh-date-range">
+				<input type="date" name="review_start_date" value="<!--@if($product->review_start_date)-->{zdate($product->review_start_date, 'Y-m-d')}<!--@else--><!--@end-->" class="pmh-input" required="required" />
+				<span class="pmh-date-sep">~</span>
+				<input type="date" name="review_end_date" value="<!--@if($product->review_end_date)-->{zdate($product->review_end_date, 'Y-m-d')}<!--@else--><!--@end-->" class="pmh-input" required="required" />
+			</div>
+		</div>
+
+		<div class="pmh-field">
+			<label class="pmh-label req">품앗이 결과발표 날짜</label>
+			<input type="date" name="result_date" value="<!--@if($product->result_date)-->{zdate($product->result_date, 'Y-m-d')}<!--@else--><!--@end-->" class="pmh-input pmh-input-half" required="required" />
+		</div>
+	</section>
+
+	<section class="pmh-section">
+		<h3 class="pmh-section-title">콘텐츠 접근 설정</h3>
+		<div class="pmh-field">
+			<label class="pmh-label req">콘텐츠 공개 설정</label>
+			<select name="content_access_type" id="contentAccessType" class="pmh-input pmh-input-half">
+				<option value="public" selected|cond="!$product || !$product->content_access_type || $product->content_access_type == 'public'">공개</option>
+				<option value="private" selected|cond="$product && $product->content_access_type == 'private'">비공개 (회원만 열람)</option>
+				<option value="paid" selected|cond="$product && $product->content_access_type == 'paid'">유료 (포인트 차감 후 열람)</option>
+			</select>
+			<p style="color:#999; margin-top:5px; font-size:13px;">비공개: 로그인 회원만 열람. 유료: 포인트 차감 후 열람 가능 (한번 열람 시 영구 열람)</p>
+		</div>
+		<div class="pmh-field" id="pointCostField" style="<!--@if(!$product || $product->content_access_type != 'paid')-->display:none;<!--@end-->">
+			<label class="pmh-label">열람 포인트</label>
+			<input type="number" name="point_cost" value="<!--@if($product && $product->point_cost)-->{$product->point_cost}<!--@else-->0<!--@end-->" class="pmh-input pmh-input-half" min="0" placeholder="500" />
+			<p style="color:#999; margin-top:5px; font-size:13px;">유료 선택 시 열람에 필요한 포인트 (P)</p>
+		</div>
+	</section>
+
+	<section class="pmh-section">
+		<h3 class="pmh-section-title">품앗이 상세정보</h3>
+
+		<div class="pmh-field">
+			<label class="pmh-label req">품앗이 상세정보</label>
+			<div id="editorWrapper">
+				{$editor}
+			</div>
+		</div>
+
+		<div class="pmh-field">
+			<label class="pmh-label req">제공내역</label>
+			<textarea name="provision" class="pmh-textarea" rows="6" placeholder="내용을 입력해 주세요." required="required"><!--@if($product)-->{$product->provision}<!--@else--><!--@end--></textarea>
+		</div>
+
+		<div class="pmh-field">
+			<label class="pmh-label req">방문 및 예약안내</label>
+			<textarea name="visit_info" class="pmh-textarea" rows="6" placeholder="내용을 입력해 주세요." required="required"><!--@if($product)-->{$product->visit_info}<!--@else--><!--@end--></textarea>
+		</div>
+	</section>
+
+	<section class="pmh-section">
+		<div class="pmh-field">
+			<label class="pmh-label req">품앗이 미션</label>
+			<textarea name="mission" class="pmh-textarea" rows="8" placeholder="내용을 입력해 주세요." required="required"><!--@if($product)-->{$product->mission}<!--@else--><!--@end--></textarea>
+			<input type="text" name="mission_tags" value="<!--@if($product)-->{$product->mission_tags}<!--@else--><!--@end-->" class="pmh-input" style="margin-top:8px;" placeholder="쉼표(,)를 이용하여 태그 복수 등록" />
+		</div>
+
+		<div class="pmh-field">
+			<label class="pmh-label req">키워드</label>
+			<textarea name="keywords" class="pmh-textarea" rows="6" placeholder="내용을 입력해 주세요." required="required"><!--@if($product)-->{$product->keywords}<!--@else--><!--@end--></textarea>
+		</div>
+
+		<div class="pmh-field">
+			<label class="pmh-label req">안내사항</label>
+			<textarea name="notice" class="pmh-textarea" rows="8" placeholder="내용을 입력해 주세요." required="required"><!--@if($product)-->{$product->notice}<!--@else--><!--@end--></textarea>
+		</div>
+	</section>
+
+	<!--@if($extra_template_list)-->
+	<section class="pmh-section">
+		<h3 class="pmh-section-title">확장변수 템플릿</h3>
+		<div class="pmh-field">
+			<select name="extra_template_srl" id="extraTemplateSelect" class="pmh-input">
+				<option value="">확장변수 템플릿 선택</option>
+				<!--@foreach($extra_template_list as $tpl)-->
+				<option value="{$tpl->template_srl}" selected|cond="$product->extra_template_srl == $tpl->template_srl">{$tpl->title}</option>
+				<!--@end-->
+			</select>
+		</div>
+		<div id="extraVarsContainer">
+			<!--@if($extra_def_list)-->
+			<!--@foreach($extra_def_list as $def)-->
+			<div class="pmh-field">
+				<label class="pmh-label <!--@if($def->is_required == 'Y')-->req<!--@end-->">{$def->var_label}</label>
+				<!--@if($def->var_type == 'textarea')-->
+				<textarea name="extra_{$def->var_name}" class="pmh-textarea" rows="4" <!--@if($def->is_required == 'Y')-->required="required"<!--@end-->><!--@if($extra_var_map[$def->var_name])-->{$extra_var_map[$def->var_name]}<!--@else--><!--@end--></textarea>
+				<!--@elseif($def->var_type == 'number')-->
+				<input type="number" name="extra_{$def->var_name}" value="<!--@if($extra_var_map[$def->var_name])-->{$extra_var_map[$def->var_name]}<!--@else--><!--@end-->" class="pmh-input pmh-input-half" <!--@if($def->is_required == 'Y')-->required="required"<!--@end--> />
+				<!--@elseif($def->var_type == 'date')-->
+				<input type="date" name="extra_{$def->var_name}" value="<!--@if($extra_var_map[$def->var_name])-->{$extra_var_map[$def->var_name]}<!--@else--><!--@end-->" class="pmh-input pmh-input-half" <!--@if($def->is_required == 'Y')-->required="required"<!--@end--> />
+				<!--@else-->
+				<input type="text" name="extra_{$def->var_name}" value="<!--@if($extra_var_map[$def->var_name])-->{$extra_var_map[$def->var_name]}<!--@else--><!--@end-->" class="pmh-input" <!--@if($def->is_required == 'Y')-->required="required"<!--@end--> />
+				<!--@end-->
+			</div>
+			<!--@end-->
+			<!--@end-->
+		</div>
+	</section>
+	<!--@end-->
+
+	<div class="pmh-submit-area">
+		<button type="submit" class="pmh-btn-submit"><!--@if($product)-->글 수정하기<!--@else-->글 등록하기<!--@end--></button>
+	</div>
+</form>
+</div>
+
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script>
+function searchAddress(){
+	new daum.Postcode({
+		oncomplete: function(data){
+			document.getElementById('zipcode').value = data.zonecode;
+			document.getElementById('address').value = data.roadAddress || data.jibunAddress;
+			document.getElementById('address_detail').focus();
+		}
+	}).open();
+}
+
+jQuery(function($){
+	$('#contentAccessType').on('change', function(){
+		var v = $(this).val();
+		$('#pointCostField').toggle(v === 'paid');
+	});
+
+	$('#productWriteForm').on('submit', function(e){
+		e.preventDefault();
+		var editorContent = '';
+		try {
+			var editorIframes = $('#editorWrapper iframe');
+			if(editorIframes.length > 0){
+				editorIframes.each(function(){
+					try {
+						var iframeDoc = this.contentDocument || this.contentWindow.document;
+						var body = $(iframeDoc).find('body');
+						if(body.length > 0) editorContent = body.html();
+					} catch(err){}
+				});
+			}
+			if(!editorContent && typeof CKEDITOR !== 'undefined'){
+				for(var instance in CKEDITOR.instances){
+					if(CKEDITOR.instances.hasOwnProperty(instance)){
+						editorContent = CKEDITOR.instances[instance].getData();
+						break;
+					}
+				}
+			}
+			if(!editorContent){
+				var editableDiv = $('#editorWrapper .xe_content[contenteditable], #editorWrapper [contenteditable="true"]');
+				if(editableDiv.length > 0) editorContent = editableDiv.html();
+			}
+			if(!editorContent){
+				var editorTextarea = $('#editorWrapper textarea[name="content"]');
+				if(editorTextarea.length > 0 && editorTextarea.val()) editorContent = editorTextarea.val();
+			}
+		} catch(err){}
+		$('#content_hidden').val(editorContent);
+		$('#editorWrapper textarea[name="content"], #editorWrapper input[name="content"]').removeAttr('name');
+		this.submit();
+	});
+
+	$('#extraTemplateSelect').on('change', function(){
+		var template_srl = $(this).val();
+		var container = $('#extraVarsContainer');
+		if(!template_srl){ container.html(''); return; }
+		$.exec_json('poomahhi.procPoomahhiGetExtraDefsByTemplate', {template_srl: template_srl}, function(ret){
+			if(ret.error != 0){ alert(ret.message); return; }
+			var defs = ret.extra_defs || [];
+			if(!defs.length){ container.html('<p class="pmh-empty-msg">선택한 템플릿에 등록된 확장변수가 없습니다.</p>'); return; }
+			var html = '';
+			for(var i = 0; i < defs.length; i++){
+				var def = defs[i];
+				var req = (def.is_required === 'Y');
+				var reqAttr = req ? ' required="required"' : '';
+				var reqClass = req ? ' req' : '';
+				html += '<div class="pmh-field"><label class="pmh-label' + reqClass + '">' + def.var_label + '</label>';
+				if(def.var_type === 'textarea'){
+					html += '<textarea name="extra_' + def.var_name + '" class="pmh-textarea" rows="4"' + reqAttr + '></textarea>';
+				} else if(def.var_type === 'number'){
+					html += '<input type="number" name="extra_' + def.var_name + '" class="pmh-input pmh-input-half"' + reqAttr + ' />';
+				} else if(def.var_type === 'date'){
+					html += '<input type="date" name="extra_' + def.var_name + '" class="pmh-input pmh-input-half"' + reqAttr + ' />';
+				} else if(def.var_type === 'select' && def.var_options){
+					html += '<select name="extra_' + def.var_name + '" class="pmh-input"' + reqAttr + '><option value="">-- 선택 --</option>';
+					var opts = def.var_options.split(',');
+					for(var j = 0; j < opts.length; j++) html += '<option value="' + opts[j].trim() + '">' + opts[j].trim() + '</option>';
+					html += '</select>';
+				} else {
+					html += '<input type="text" name="extra_' + def.var_name + '" class="pmh-input"' + reqAttr + ' />';
+				}
+				html += '</div>';
+			}
+			container.html(html);
+		});
+	});
+});
+
+function previewImage(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            // 1. 기존 placeholder 숨기기
+            if(document.getElementById('imagePlaceholder')) {
+                document.getElementById('imagePlaceholder').style.display = 'none';
+            }
+            
+            // 2. 프리뷰 영역 생성 또는 업데이트
+            var preview = document.getElementById('imagePreview');
+            if(!preview) {
+                // 프리뷰 영역이 없으면 생성
+                var div = document.createElement('div');
+                div.id = 'imagePreview';
+                div.className = 'pmh-image-preview';
+                div.innerHTML = '<img src="' + e.target.result + '" alt="" /><button type="button" class="pmh-image-remove" onclick="removeImage();">X</button>';
+                document.getElementById('imageUploadArea').prepend(div);
+            } else {
+                // 있으면 이미지 소스만 교체
+                preview.style.display = 'block';
+                preview.querySelector('img').src = e.target.result;
+            }
+            
+            // 3. 삭제 플래그 초기화
+            document.getElementById('deleteImageFlag').value = '';
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function removeImage() {
+    // 1. 파일 input 초기화
+    var input = document.getElementById('productImageInput');
+    input.value = ""; 
+    
+    // 2. 프리뷰 숨기고 placeholder 보이기
+    if(document.getElementById('imagePreview')) {
+        document.getElementById('imagePreview').style.display = 'none';
+    }
+    if(document.getElementById('imagePlaceholder')) {
+        document.getElementById('imagePlaceholder').style.display = 'flex';
+    }
+    
+    // 3. 서버에 삭제 알림 플래그 설정
+    document.getElementById('deleteImageFlag').value = 'Y';
+}
+</script>

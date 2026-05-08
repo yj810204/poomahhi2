@@ -1,0 +1,34 @@
+<load target="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+<load target="css/signup.scss" />
+<div class="pmh-signup-select">
+	<h2 class="pmh-page-title">회원가입</h2>
+
+	<div class="pmh-signup-select-cards common-wrap">
+		<div class="select-wrap">
+			<a href="{getUrl('', 'mid', $signup_member_mid, 'act', 'dispMemberSignUpForm', 'member_type', 'general')}" class="pmh-signup-card">
+				<p class="pmh-signup-card-desc">개인회원이신가요?</p>
+				<p class="pmh-signup-card-label">일반회원</p>
+				<img src="img/signup_general.png" alt="일반회원">
+			</a>
+			<a href="{getUrl('', 'mid', $signup_member_mid, 'act', 'dispMemberSignUpForm', 'member_type', 'business')}" class="pmh-signup-card">
+				<p class="pmh-signup-card-desc">사장님이신가요?</p>
+				<p class="pmh-signup-card-label">비즈니스</p>
+				<img src="img/signup_business.png" alt="비즈니스">
+			</a>
+		</div>
+		<div class="social-login-wrap">
+			<div class="bh_row gutters-10 ai-c">
+				<div class="col"><div class="line"></div></div>
+				<div class="col-auto">
+					<p class="fw-m">소셜 로그인</p>
+				</div>
+				<div class="col"><div class="line"></div></div>
+			</div>
+			<a href="{\Rhymix\Modules\Sociallogin\Models\Config::getInstance()->getAuthUrl('kakao', 'login')}" class="social-login-btn kakao"><i class="ri-kakao-talk-fill"></i>카카오로 회원가입하기</a>
+			<a href="{\Rhymix\Modules\Sociallogin\Models\Config::getInstance()->getAuthUrl('naver', 'login')}" class="social-login-btn"><img src="img/signup_naver.png" alt="naver">네이버로 회원가입하기</a>
+		</div>
+
+	</div>
+
+	<!-- 소셜 로그인 영역은 추후 작업 -->
+</div>

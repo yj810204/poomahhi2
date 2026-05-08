@@ -1,0 +1,466 @@
+<div class="pmh-business-layout">
+<include target="_business_sidebar.html" />
+<div class="member-contents pmh-business-main pmh-product-manage-list poomahhi-application-manage">
+
+	<h1>품앗이 관리</h1>
+
+	<div class="business_inner">
+		<!--@if($product)-->
+		<div class="pmh-am-hero">
+			<div class="pmh-am-hero-thumb">
+				<!--@if($product->product_image)-->
+				<img src="{$product->product_image}" />
+				<!--@end-->
+			</div>
+			<div class="pmh-am-hero-body">
+				<div class="pmh-am-hero-line1">
+					<!--@if($product_list_tag_label)-->
+					<div class="tag">
+						<!--@if($product->product_type == 'local')-->
+						<span class="area 
+							<!--@if($product_list_tag_label == '수도권')-->seoul<!--@end-->
+							<!--@if($product_list_tag_label == '충청권')-->chungcheong<!--@end-->
+							<!--@if($product_list_tag_label == '호남권')-->honam<!--@end-->
+							<!--@if($product_list_tag_label == '영남권')-->yeongnam<!--@end-->
+							">
+						{$product_list_tag_label}</span>
+						<!--@else-->
+						<span class="channel 
+							<!--@if($product_list_tag_label == '올리브영')-->oliveyoung<!--@end-->
+							<!--@if($product_list_tag_label == '쿠팡')-->coupang<!--@end-->
+							<!--@if($product_list_tag_label == 'G마켓')-->gmarket<!--@end-->
+							<!--@if($product_list_tag_label == '11번가')-->11st<!--@end-->
+							<!--@if($product_list_tag_label == '자사몰')-->mall<!--@end-->
+							<!--@if($product_list_tag_label == '마켓컬리')-->marketcurly<!--@end-->
+							<!--@if($product_list_tag_label == '카카오선물하기')-->kakaogift<!--@end-->
+							<!--@if($product_list_tag_label == '네이버 스마트스토어')-->smartstore<!--@end-->
+							<!--@if($product_list_tag_label == '무신사')-->musinsa<!--@end-->
+							<!--@if($product_list_tag_label == '옥션')-->auction<!--@end-->
+							<!--@if($product_list_tag_label == '카카오쇼핑')-->kakaoshopping<!--@end-->
+							">
+						{$product_list_tag_label}</span>
+						<!--@end-->
+					</div>
+					<!--@end-->
+					<span class="pmh-am-hero-title">{$product->title}</span>
+				</div>
+				<div class="pmh-am-hero-line2">
+					<p>
+						<span class="box-name">신청자</span>
+						<span>{$product_total_applications}/<!--@if($product->max_applicants)-->{$product->max_applicants}<!--@else-->0<!--@end-->명</span>
+					</p>
+					<p>
+						<span class="box-name">작성일</span>
+						<span><!--@if($product->regdate)-->{zdate($product->regdate, 'y.m.d')}<!--@else-->-<!--@end--></span>
+					</p>
+				</div>
+			</div>
+		</div>
+		<!--@end-->
+
+		<!--@if($XE_VALIDATOR_MESSAGE && ($XE_VALIDATOR_ID == 'modules/poomahhi/manage_status' || $XE_VALIDATOR_ID == 'modules/poomahhi/manage_delete'))-->
+		<div class="message {$XE_VALIDATOR_MESSAGE_TYPE}" style="margin-bottom:15px; border-radius:6px;">
+			<p>{$XE_VALIDATOR_MESSAGE}</p>
+		</div>
+		<!--@end-->
+
+		<div class="pmh-pml-panel poomahhi-application-list">
+			<div class="pmh-pml-panel-head">
+				<h3>신청자 관리</h3>
+				<form action="./" method="get" no-error-return-url="true" class="pmh-pml-search pmh-pml-search--head">
+					<input type="hidden" name="mid" value="{$mid}" />
+					<input type="hidden" name="act" value="dispPoomahhiApplicationManage" />
+					<input type="hidden" name="product_srl" value="{$product->product_srl}" />
+					<input type="hidden" name="manage_tab" value="{$manage_tab}" />
+					<div class="pmh-pml-search-field">
+						<input type="search" name="search_keyword" id="pmh_am_search_kw" value="{$am_search_keyword}" placeholder="검색어를 입력해 주세요" class="pmh-pml-search-input" />
+					</div>
+					<button type="submit" class="pmh-sr-only"><i class="ri-search-line"></i></button>
+				</form>
+			</div>
+
+			<div class="pmh-list-status-boxes">
+				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationManage', 'product_srl', $product->product_srl, 'manage_tab', 'applied', 'search_keyword', $am_search_keyword)}" class="pmh-status-box <!--@if($manage_tab == 'applied')-->active<!--@end-->">
+					<img src="img/application_list_img1.png" class="default" >
+					<img src="img/application_list_img1_hover.png" class="hover" >
+					<span class="pmh-status-box-label">
+						<span class="lg:ds-b ds-n">신청된 품앗이</span>
+						<span class="lg:ds-n ds-b">신청된</span>
+					</span>
+					<span class="pmh-status-box-count">{$product_application_counts->applied}</span>
+				</a>
+				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationManage', 'product_srl', $product->product_srl, 'manage_tab', 'selected', 'search_keyword', $am_search_keyword)}" class="pmh-status-box <!--@if($manage_tab == 'selected')-->active<!--@end-->">
+					<img src="img/application_list_img2.png" class="default" >
+					<img src="img/application_list_img2_hover.png" class="hover" >
+					<span class="pmh-status-box-label">
+						<span class="lg:ds-b ds-n">선정한 품앗이</span>
+						<span class="lg:ds-n ds-b">선정한</span>
+					</span>
+					<span class="pmh-status-box-count">{$product_application_counts->selected}</span>
+				</a>
+				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationManage', 'product_srl', $product->product_srl, 'manage_tab', 'under_review', 'search_keyword', $am_search_keyword)}" class="pmh-status-box <!--@if($manage_tab == 'under_review')-->active<!--@end-->">
+					<img src="img/application_list_img3.png" class="default" >
+					<img src="img/application_list_img3_hover.png" class="hover" >
+					<span class="pmh-status-box-label">
+						<span class="lg:ds-b ds-n">검수대기중인 품앗이</span>
+						<span class="lg:ds-n ds-b">검수대기중인</span>
+					</span>
+					<span class="pmh-status-box-count">{$product_application_counts->under_review}</span>
+				</a>
+				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationManage', 'product_srl', $product->product_srl, 'manage_tab', 'revision_requested', 'search_keyword', $am_search_keyword)}" class="pmh-status-box <!--@if($manage_tab == 'revision_requested')-->active<!--@end-->">
+					<img src="img/application_list_img4.png" class="default" >
+					<img src="img/application_list_img4_hover.png" class="hover" >
+					<span class="pmh-status-box-label">
+						<span class="lg:ds-b ds-n">수정요청한 품앗이</span>
+						<span class="lg:ds-n ds-b">수정요청한</span>
+					</span>
+					<span class="pmh-status-box-count">{$product_application_counts->revision_requested}</span>
+				</a>
+				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationManage', 'product_srl', $product->product_srl, 'manage_tab', 'completed', 'search_keyword', $am_search_keyword)}" class="pmh-status-box <!--@if($manage_tab == 'completed')-->active<!--@end-->">
+					<img src="img/application_list_img5.png" class="default" >
+					<img src="img/application_list_img5_hover.png" class="hover" >
+					<span class="pmh-status-box-label">
+						<span class="lg:ds-b ds-n">완료된 품앗이</span>
+						<span class="lg:ds-n ds-b">완료된</span>
+					</span>
+					<span class="pmh-status-box-count">{$product_application_counts->completed}</span>
+				</a>
+				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationManage', 'product_srl', $product->product_srl, 'manage_tab', 'rejected_cancelled', 'search_keyword', $am_search_keyword)}" class="pmh-status-box <!--@if($manage_tab == 'rejected_cancelled')-->active<!--@end-->">
+					<img src="img/application_list_img6.png" class="default" >
+					<img src="img/application_list_img6_hover.png" class="hover" >
+					<span class="pmh-status-box-label">
+						<span class="lg:ds-b ds-n">미선정·취소한 품앗이</span>
+						<span class="lg:ds-n ds-b">미선정·취소한</span>
+					</span>
+					<span class="pmh-status-box-count">{$product_application_counts->rejected_cancelled}</span>
+				</a>
+			</div>
+
+			<!--@if($application_list)-->
+			<div class="pmh-am-table-wrap">
+				<table class="pmh-am-table">
+					<thead>
+						<tr>
+							<!--@if($manage_tab == 'rejected_cancelled')-->
+								<th class="pmh-am-col-cancle">상태</th>
+							<!--@end-->
+							<!--@if($manage_tab == 'applied')-->
+								<th class="pmh-am-col-profile">프로필</th>
+								<th class="pmh-am-col-applicant">신청자 정보</th>
+								<th class="pmh-am-col-date">신청날짜</th>
+								<th class="pmh-am-col-manage">관리</th>
+							<!--@else-->
+								<th class="pmh-am-col-profile">프로필</th>
+								<!--@if($manage_tab == 'selected')-->
+									<th class="pmh-am-col-applicant">신청자 정보</th>
+									<th>선정 정보</th>
+									<th class="pmh-am-col-status">인증 제출 상태</th>
+								<!--@elseif($manage_tab == 'under_review')-->
+									<th class="pmh-am-col-applicant">검수대기자 정보</th>
+									<th class="pmh-am-col-status">인증 제출 상태</th>
+									<th class="pmh-am-col-manage">관리</th>
+								<!--@elseif($manage_tab == 'revision_requested')-->
+									<th class="pmh-am-col-applicant">수정요청자 정보</th>
+									<th class="pmh-am-col-control">수정상태</th>
+								<!--@elseif($manage_tab == 'completed')-->
+									<!--<th>신청자</th>-->
+									<th class="pmh-am-col-applicant">신청자 정보</th>
+									<th class="pmh-am-col-status">인증 제출 상태</th>
+									<th class="pmh-am-col-control">관리</th>
+								<!--@elseif($manage_tab == 'rejected_cancelled')-->
+									<th class="pmh-am-col-applicant">미선정 · 취소자 정보</th>
+									<th class="pmh-am-col-reason">사유</th>
+								<!--@end-->
+								<!--
+								<th class="pmh-am-col-del">삭제</th>
+								-->
+							<!--@end-->
+						</tr>
+					</thead>
+					<tbody>
+						<!--@foreach($application_list as $app_row)-->
+						<tr>
+							<!--@if($manage_tab == 'applied')-->
+							<td>
+								<div class="pmh-am-media-thumb">
+									<!--@if($app_row->avatar_src)-->
+									<img src="{$app_row->avatar_src}" alt="" class="pmh-am-avatar-img" />
+									<!--@else-->
+									<img src="/assets/images/icon/profile.png" alt="profile">
+									<!--@end-->
+								</div>
+							</td>
+							<td class="pmh-am-td-media">
+								<div class="pmh-am-info-line">
+									<span class="pmh-am-info-name"><!--@if($app_row->member_info && $app_row->member_info->nick_name)-->{$app_row->member_info->nick_name}<!--@elseif($app_row->applicant_name)-->{$app_row->applicant_name}<!--@else-->신청자<!--@end--></span>
+									<!--@if($app_row->gender_display)-->
+									<span class="pmh-am-dot">•</span><span class="pmh-am-info-meta">{$app_row->gender_display}</span>
+									<!--@end-->
+									<!--@if($app_row->birth_display)-->
+									<span class="pmh-am-dot">•</span><span class="pmh-am-info-meta">{$app_row->birth_display}</span>
+									<!--@end-->
+								</div>
+								<div class="pmh-am-info-comment-wrap">
+									<!--@if($app_row->applicant_comment)-->
+									<p class="pmh-am-info-comment">{$app_row->applicant_comment}</p>
+									<!--@else-->
+									<p class="pmh-am-info-comment pmh-am-info-comment--empty">신청자 한마디가 없습니다.</p>
+									<!--@end-->
+								</div>
+							</td>
+							<td class="pmh-am-td-date"><!--@if($app_row->regdate)-->{zdate($app_row->regdate, 'y.m.d')}<!--@else-->-<!--@end--></td>
+							<td class="pmh-am-actions">
+								<div class="pmh-am-action-btns">
+									<button type="button" class="pmh-am-btn1 pmh-js-reject-open" data-application-srl="{$app_row->application_srl}">미선정</button>
+									<button type="button" class="pmh-am-btn2 pmh-js-select" data-application-srl="{$app_row->application_srl}">선정</button>
+								</div>
+								<form action="./" method="post" class="ds-n pmh-am-del-form" onsubmit="return confirm('삭제하시겠습니까?');">
+									<input type="hidden" name="mid" value="{$mid}" />
+									<input type="hidden" name="act" value="procPoomahhiDeleteApplication" />
+									<input type="hidden" name="application_srl" value="{$app_row->application_srl}" />
+									<input type="hidden" name="success_return_url" value="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationManage', 'product_srl', $product->product_srl, 'manage_tab', $manage_tab, 'search_keyword', $am_search_keyword, 'page', $page)}" />
+									<input type="hidden" name="xe_validator_id" value="modules/poomahhi/manage_delete" />
+									<button type="submit" class="pmh-am-btn-del-text">삭제</button>
+								</form>
+							</td>
+							<!--@else-->
+							<!--@if($manage_tab == 'rejected_cancelled')-->
+							<td class="pmh-am-td-cancle">
+								<span><!--@if($app_row->status == 'rejected')-->미선정<!--@elseif($app_row->status == 'cancelled')-->취소<!--@else-->{$app_row->status}<!--@end--></span>
+							</td>
+							<!--@end-->
+							<td>
+								<div class="pmh-am-media-thumb">
+									<!--@if($app_row->avatar_src)-->
+									<img src="{$app_row->avatar_src}" alt="" class="pmh-am-avatar-img" />
+									<!--@else-->
+									<img src="/assets/images/common/profile.png" alt="profile">
+									<!--@end-->
+								</div>
+							</td>
+							<td class="pmh-am-td-media">
+								<div class="pmh-am-info-line">
+									<span class="pmh-am-info-name"><!--@if($app_row->member_info && $app_row->member_info->nick_name)-->{$app_row->member_info->nick_name}<!--@elseif($app_row->applicant_name)-->{$app_row->applicant_name}<!--@else-->신청자<!--@end--></span>
+									<!--@if($app_row->gender_display)-->
+									<span class="pmh-am-dot">•</span><span class="pmh-am-info-meta">{$app_row->gender_display}</span>
+									<!--@end-->
+									<!--@if($app_row->birth_display)-->
+									<span class="pmh-am-dot">•</span><span class="pmh-am-info-meta">{$app_row->birth_display}</span>
+									<!--@end-->
+								</div>
+								<div class="pmh-am-info-comment-wrap">
+									<!--@if($app_row->applicant_comment)-->
+									<p class="pmh-am-info-comment">{$app_row->applicant_comment}</p>
+									<!--@else-->
+									<p class="pmh-am-info-comment pmh-am-info-comment--empty">신청자 한마디가 없습니다.</p>
+									<!--@end-->
+								</div>
+							</td>
+							<!--@if($manage_tab == 'selected')-->
+							<td class="pmh-am-td-date">{zdate($app_row->regdate, 'Y-m-d')}</td>
+							<td><span class="pmh-am-status-btn pmh-am-status-btn--wait">대기</span></td>
+							<!--@elseif($manage_tab == 'under_review')-->
+							<td><!--@if($app_row->review)--><a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationManageDetail', 'application_srl', $app_row->application_srl)}" class="pmh-am-status-btn pmh-am-status-btn--done">완료</a><!--@else-->-<!--@end--></td>
+							<td>
+								<div class="pmh-am-action-btns">
+									<button type="button" class="pmh-am-btn2 pmh-js-approve" data-application-srl="{$app_row->application_srl}">승인</button>
+									<button type="button" class="pmh-am-btn1 pmh-js-revision-open" data-application-srl="{$app_row->application_srl}">수정요청</button>
+								</div>
+							</td>
+							<!--@elseif($manage_tab == 'revision_requested')-->
+							<td><span class="pmh-am-status-btn pmh-am-status-btn--wait">대기</span></td>
+							<!--@elseif($manage_tab == 'completed')-->
+							<!--<td>{$app_row->applicant_name}</td>-->
+							<td><!--@if($app_row->review)--><span class="pmh-am-status-btn pmh-am-status-btn--done">완료</span><!--@else-->-<!--@end--></td>
+							<td>
+								<!--@if($app_row->member_review)-->
+								<span class="pmh-muted fs-14 fw-m bh_color_gray_500 ta-c">리뷰 작성 완료</span>
+								<!--@else-->
+								<div class="pmh-am-action-btns">
+									<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationManageDetail', 'application_srl', $app_row->application_srl)}" class="pmh-am-btn1 pmh-am-btn-review">리뷰남기기</a>
+								</div>
+								<!--@end-->
+							</td>
+							<!--@elseif($manage_tab == 'rejected_cancelled')-->
+							<td class="fs-13 fw-l bh_color_gray_600">
+								<!--@if($app_row->status == 'rejected')-->
+								<!--@if($app_row->rejection_reason)--><div class="pmh-reason-label">{$app_row->rejection_reason}</div><!--@end-->
+								<!--@if($app_row->rejection_detail)--><div class="pmh-reason-detail">{$app_row->rejection_detail}</div><!--@end-->
+								<!--@elseif($app_row->status == 'cancelled')-->
+								<span class="pmh-reason-label">신청자 취소</span>
+								<!--@else-->-<!--@end-->
+							</td>
+							<!--@end-->
+							<!--@end-->
+							<!--@if($manage_tab != 'applied')-->
+							<!--
+							<td class="pmh-am-col-del">
+								<form action="./" method="post" onsubmit="return confirm('삭제하시겠습니까?');">
+									<input type="hidden" name="mid" value="{$mid}" />
+									<input type="hidden" name="act" value="procPoomahhiDeleteApplication" />
+									<input type="hidden" name="application_srl" value="{$app_row->application_srl}" />
+									<input type="hidden" name="success_return_url" value="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationManage', 'product_srl', $product->product_srl, 'manage_tab', $manage_tab, 'search_keyword', $am_search_keyword, 'page', $page)}" />
+									<input type="hidden" name="xe_validator_id" value="modules/poomahhi/manage_delete" />
+									<button type="submit" class="pmh-am-btn-del">삭제</button>
+								</form>
+							</td>
+							-->
+							<!--@end-->
+						</tr>
+						<!--@end-->
+					</tbody>
+				</table>
+			</div>
+			<!--@else-->
+			<p class="pmh-am-empty">해당 탭에 표시할 신청이 없습니다.</p>
+			<!--@end-->
+		</div>
+
+		<!--@if($page_navigation)-->
+		<div class="pagination">
+			<ul>
+			<!--@if($page_navigation->cur_page > 1)-->
+			<li>
+				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationManage', 'product_srl', $product->product_srl, 'manage_tab', $manage_tab, 'search_keyword', $am_search_keyword, 'page', 1)}" class="pmh-am-page pmh-am-page-edge" rel="nofollow"><i class="ri-arrow-left-double-line"></i></a>
+			</li>
+			<li>
+				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationManage', 'product_srl', $product->product_srl, 'manage_tab', $manage_tab, 'search_keyword', $am_search_keyword, 'page', $page_navigation->cur_page - 1)}" class="pmh-am-page pmh-am-page-edge" rel="nofollow"><i class="ri-arrow-left-s-line"></i></a>
+			</li>
+			<!--@end-->
+			<!--@for($i = $page_navigation->first_page; $i <= $page_navigation->last_page; $i++)-->
+			<!--@if($i == $page_navigation->cur_page)-->
+			<li class="active">
+				<a href="#" class="pmh-am-page">{$i}</a>
+			</li>
+			<!--@else-->
+			<li>
+				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationManage', 'product_srl', $product->product_srl, 'manage_tab', $manage_tab, 'search_keyword', $am_search_keyword, 'page', $i)}" class="pmh-am-page">{$i}</a>
+			</li>
+			<!--@end-->
+			<!--@end-->
+			<!--@if($page_navigation->cur_page < $page_navigation->total_page)-->
+			<li>
+				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationManage', 'product_srl', $product->product_srl, 'manage_tab', $manage_tab, 'search_keyword', $am_search_keyword, 'page', $page_navigation->cur_page + 1)}" class="pmh-am-page pmh-am-page-edge" rel="nofollow"><i class="ri-arrow-right-s-line"></i></a>
+			</li>
+			<li>
+				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationManage', 'product_srl', $product->product_srl, 'manage_tab', $manage_tab, 'search_keyword', $am_search_keyword, 'page', $page_navigation->total_page)}" class="pmh-am-page pmh-am-page-edge" rel="nofollow"><i class="ri-arrow-right-double-line"></i></a>
+			</li>
+			<!--@end-->
+			</ul>
+		</div>
+		<!--@end-->
+
+		<div class="pmh-am-footer-links ds-n">
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductDetail', 'product_srl', $product->product_srl)}" class="pmh-btn-line">상품 보러가기</a>
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductManageList')}" class="pmh-btn-line">품앗이 관리 목록</a>
+		</div>
+	</div>
+</div>
+</div>
+
+<div id="pmh_modal_reject" class="pmh-modal" style="display:none;">
+	<div class="pmh-modal-backdrop"></div>
+	<div class="pmh-modal-box">
+		<div class="title1">미선정 사유를 선택해 주세요</div>
+		<div class="title2">미선정 사유 항목을 선택해 주세요.</div>
+		<div id="pmh_reject_cancel" class="close-btn"><i class="ri-close-line"></i></div>
+		<input type="hidden" id="pmh_reject_app_srl" value="" />
+		<div class="pmh-reject-presets">
+			<label class="pmh-radio-card"><input type="radio" name="pmh_reject_reason" value="모집 인원 초과" /> 모집 인원 <br>초과</label>
+			<label class="pmh-radio-card"><input type="radio" name="pmh_reject_reason" value="지역 조건 미충족" /> 지역 조건 <br>미충족</label>
+			<label class="pmh-radio-card"><input type="radio" name="pmh_reject_reason" value="선정 기준 내부 검토 결과 미선정" /> 선정 기준 내부 검토 결과 <br>미선정</label>
+			<label class="pmh-radio-card"><input type="radio" name="pmh_reject_reason" value="품앗이 조건 미충족" /> 품앗이 조건 <br>미충족</label>
+		</div>
+		<label for="pmh_reject_detail" class="pmh_reject_detail"><span class="bh_color_main">*</span>미선정 사유 내용</label>
+		<textarea id="pmh_reject_detail" class="pmh-textarea" placeholder="내용을 입력해 주세요."></textarea>
+		<div class="pmh-modal-actions">
+			<button type="button" class="pmh-btn-cancel" id="pmh_reject_cancel">취소</button>
+			<button type="button" class="pmh-btn-submit" id="pmh_reject_submit">미선정하기</button>
+		</div>
+	</div>
+</div>
+
+<div id="pmh_modal_revision" class="pmh-modal" style="display:none;">
+	<div class="pmh-modal-backdrop"></div>
+	<div class="pmh-modal-box">
+		<div class="title1 mb-30">수정 요청</div>
+		<div id="pmh_revision_cancel" class="close-btn"><i class="ri-close-line"></i></div>
+		<input type="hidden" id="pmh_revision_app_srl" value="" />
+		<label for="pmh_revision_content" class="pmh_reject_detail"><span class="bh_color_main">*</span>요청 내용</label>
+		<textarea id="pmh_revision_content" class="pmh-textarea" placeholder="내용을 입력해 주세요."></textarea>
+		<div class="pmh-modal-actions">
+			<button type="button" class="pmh-btn-cancel" id="pmh_revision_cancel">취소</button>
+			<button type="button" class="pmh-btn-submit" id="pmh_revision_submit">수정요청하기</button>
+		</div>
+	</div>
+</div>
+
+<script>
+(function($){
+	function showModal(id){ $(id).show(); }
+	function hideModal(id){ $(id).hide(); }
+	$(function(){
+		$(document).on('click', '.pmh-js-reject-open', function(){
+			var srl = $(this).data('application-srl');
+			$('#pmh_reject_app_srl').val(srl);
+			$('input[name=pmh_reject_reason]').prop('checked', false);
+			$('#pmh_reject_detail').val('');
+			showModal('#pmh_modal_reject');
+		});
+		$('#pmh_reject_cancel, #pmh_modal_reject .pmh-modal-backdrop').on('click', function(){ hideModal('#pmh_modal_reject'); });
+		$('#pmh_reject_submit').on('click', function(){
+			var application_srl = $('#pmh_reject_app_srl').val();
+			var rejection_reason = $('input[name=pmh_reject_reason]:checked').val();
+			var rejection_detail = $('#pmh_reject_detail').val();
+			if(!rejection_reason){ alert('사유를 선택해 주세요.'); return; }
+			$.exec_json('poomahhi.procPoomahhiUpdateApplicationStatus', {
+				application_srl: application_srl,
+				status: 'rejected',
+				rejection_reason: rejection_reason,
+				rejection_detail: rejection_detail
+			}, function(ret){
+				if(parseInt(ret.error, 10) !== 0){ if(ret.message) alert(ret.message); return; }
+				location.reload();
+			});
+		});
+		$(document).on('click', '.pmh-js-revision-open', function(){
+			$('#pmh_revision_app_srl').val($(this).data('application-srl'));
+			$('#pmh_revision_content').val('');
+			showModal('#pmh_modal_revision');
+		});
+		$('#pmh_revision_cancel, #pmh_modal_revision .pmh-modal-backdrop').on('click', function(){ hideModal('#pmh_modal_revision'); });
+		$('#pmh_revision_submit').on('click', function(){
+			var application_srl = $('#pmh_revision_app_srl').val();
+			var revision_request_content = $('#pmh_revision_content').val();
+			if(!revision_request_content || !revision_request_content.trim()){ alert('요청 내용을 입력해 주세요.'); return; }
+			$.exec_json('poomahhi.procPoomahhiUpdateApplicationStatus', {
+				application_srl: application_srl,
+				status: 'revision_requested',
+				revision_request_content: revision_request_content
+			}, function(ret){
+				if(parseInt(ret.error, 10) !== 0){ if(ret.message) alert(ret.message); return; }
+				location.reload();
+			});
+		});
+		$(document).on('click', '.pmh-js-select', function(){
+			var application_srl = $(this).data('application-srl');
+			$.exec_json('poomahhi.procPoomahhiUpdateApplicationStatus', {
+				application_srl: application_srl,
+				status: 'selected'
+			}, function(ret){
+				if(parseInt(ret.error, 10) !== 0){ if(ret.message) alert(ret.message); return; }
+				location.reload();
+			});
+		});
+		$(document).on('click', '.pmh-js-approve', function(){
+			var application_srl = $(this).data('application-srl');
+			$.exec_json('poomahhi.procPoomahhiApproveReview', {
+				application_srl: application_srl
+			}, function(ret){
+				if(parseInt(ret.error, 10) !== 0){ if(ret.message) alert(ret.message); return; }
+				location.reload();
+			});
+		});
+	});
+})(jQuery);
+</script>

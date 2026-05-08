@@ -1,0 +1,8 @@
+<query id="deleteChannel" action="delete">
+	<tables>
+		<table name="poomahhi_shopping_channel" />
+	</tables>
+	<conditions>
+		<condition operation="equal" column="channel_srl" var="channel_srl" pipe="AND" />
+	</conditions>
+</query>

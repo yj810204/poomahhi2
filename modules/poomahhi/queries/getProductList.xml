@@ -1,0 +1,24 @@
+<query id="getProductList" action="select">
+	<tables>
+		<table name="poomahhi_product" alias="p" />
+	</tables>
+	<columns>
+		<column name="p.*" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="p.module_srl" var="module_srl" pipe="AND" />
+		<condition operation="equal" column="p.category_srl" var="category_srl" pipe="AND" />
+		<condition operation="equal" column="p.member_srl" var="member_srl" pipe="AND" />
+		<condition operation="equal" column="p.status" var="status" pipe="AND" />
+		<condition operation="equal" column="p.shopping_channel" var="shopping_channel" pipe="AND" />
+		<condition operation="equal" column="p.product_type" var="product_type" pipe="AND" />
+		<condition operation="equal" column="p.region_srl" var="region_srl" pipe="AND" />
+		<condition operation="like" column="p.title" var="search_keyword" pipe="AND" />
+	</conditions>
+	<navigation>
+		<index var="sort_index" default="product_srl" order="desc" />
+		<list_count var="list_count" default="20" />
+		<page_count var="page_count" default="10" />
+		<page var="page" default="1" />
+	</navigation>
+</query>

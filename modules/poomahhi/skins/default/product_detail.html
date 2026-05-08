@@ -1,0 +1,467 @@
+<load target="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+<load target="css/product.scss" />
+<div class="pmh-detail">
+
+<div class="pmh-detail-layout <!--@if($require_login || $show_lock_ui)-->lock<!--@end-->">
+	<div class="pmh-detail-main">
+		<div class="lg:ds-n ds-b">
+			<div class="pmh-page-title">
+				<!--@if($product->product_type == 'local')-->
+				지역 품앗이
+				<!--@else-->
+				상품 품앗이
+				<!--@end-->
+			</div>
+
+			<h3 class="pmh-sidebar-title">
+				<!--@if($product->company_name)-->{$product->company_name} <!--@end-->[{$product->title}]
+			</h3>
+			<!--@if($product->short_description)-->
+			<p class="pmh-detail-desc">{$product->short_description}</p>
+			<!--@end-->
+
+			<div class="tag">
+				<!--@if($product->product_type == 'local' && $region)-->
+				<span class="area 
+					<!--@if($region->title == '수도권')-->seoul<!--@end-->
+					<!--@if($region->title == '충청권')-->chungcheong<!--@end-->
+					<!--@if($region->title == '호남권')-->honam<!--@end-->
+					<!--@if($region->title == '영남권')-->yeongnam<!--@end-->
+					">
+				{$region->title}</span>
+				<!--@elseif($product->shopping_channel)-->
+				<span class="channel 
+					<!--@if($product->shopping_channel == '올리브영')-->oliveyoung<!--@end-->
+					<!--@if($product->shopping_channel == '쿠팡')-->coupang<!--@end-->
+					<!--@if($product->shopping_channel == 'G마켓')-->gmarket<!--@end-->
+					<!--@if($product->shopping_channel == '11번가')-->11st<!--@end-->
+					<!--@if($product->shopping_channel == '자사몰')-->mall<!--@end-->
+					<!--@if($product->shopping_channel == '마켓컬리')-->marketcurly<!--@end-->
+					<!--@if($product->shopping_channel == '카카오선물하기')-->kakaogift<!--@end-->
+					<!--@if($product->shopping_channel == '네이버 스마트스토어')-->smartstore<!--@end-->
+					<!--@if($product->shopping_channel == '무신사')-->musinsa<!--@end-->
+					<!--@if($product->shopping_channel == '옥션')-->auction<!--@end-->
+					<!--@if($product->shopping_channel == '카카오쇼핑')-->kakaoshopping<!--@end-->
+					">
+				{$product->shopping_channel}</span>
+				<!--@end-->
+				<!--@if($dday_text)-->
+				<span class="dday">{$dday_text}</span>
+				<!--@end-->
+			</div>
+		</div>
+		<div class="pmh-detail-header">
+			<div class="tag">
+				<!--@if($product->product_type == 'local' && $region)-->
+				<span class="area 
+					<!--@if($region->title == '수도권')-->seoul<!--@end-->
+					<!--@if($region->title == '충청권')-->chungcheong<!--@end-->
+					<!--@if($region->title == '호남권')-->honam<!--@end-->
+					<!--@if($region->title == '영남권')-->yeongnam<!--@end-->
+					">
+				{$region->title}</span>
+				<!--@elseif($product->shopping_channel)-->
+				<span class="channel 
+					<!--@if($product->shopping_channel == '올리브영')-->oliveyoung<!--@end-->
+					<!--@if($product->shopping_channel == '쿠팡')-->coupang<!--@end-->
+					<!--@if($product->shopping_channel == 'G마켓')-->gmarket<!--@end-->
+					<!--@if($product->shopping_channel == '11번가')-->11st<!--@end-->
+					<!--@if($product->shopping_channel == '자사몰')-->mall<!--@end-->
+					<!--@if($product->shopping_channel == '마켓컬리')-->marketcurly<!--@end-->
+					<!--@if($product->shopping_channel == '카카오선물하기')-->kakaogift<!--@end-->
+					<!--@if($product->shopping_channel == '네이버 스마트스토어')-->smartstore<!--@end-->
+					<!--@if($product->shopping_channel == '무신사')-->musinsa<!--@end-->
+					<!--@if($product->shopping_channel == '옥션')-->auction<!--@end-->
+					<!--@if($product->shopping_channel == '카카오쇼핑')-->kakaoshopping<!--@end-->
+					">
+				{$product->shopping_channel}</span>
+				<!--@end-->
+				<!--@if($dday_text)-->
+				<span class="dday">{$dday_text}</span>
+				<!--@end-->
+			</div>
+			<!--@if($logged_info)-->
+			<button type="button" class="pmh-detail-heart <!--@if($is_wished)-->active<!--@end-->" id="wishlistBtn" onclick="toggleDetailWishlist();">
+				<i class="<!--@if($is_wished)-->ri-heart-fill<!--@else-->ri-heart-line<!--@end-->"></i>
+			</button>
+			<!--@end-->
+		</div>
+
+		<h1 class="pmh-detail-title">
+			<!--@if($product->company_name)-->{$product->company_name} <!--@end-->[{$product->title}]
+		</h1>
+
+		<!--@if($product->short_description)-->
+		<p class="pmh-detail-desc">{$product->short_description}</p>
+		<!--@end-->
+
+		<!--@if($product->product_type != 'local' && $product->product_url)-->
+		<a href="{$product->product_url}" target="_blank" class="pmh-link-product">상품 보러가기 <i class="ri-arrow-right-line"></i></a>
+		<!--@end-->
+
+		<!--@if($require_login)-->
+		<div class="pmh-content-lock-area">
+			<div class="pmh-lock-inner">
+				<i class="ri-lock-line"></i>
+				<div class="pmh-desc-box">
+					<p class="pmh-lock-desc">로그인하시면 콘텐츠를 확인하실 수 있습니다.</p>
+				</div>
+				<div class="pmh-lock-btns">
+					<a href="{getUrl('', 'mid', 'member', 'act', 'dispMemberLoginForm', 'redirect_url', $current_url)}" class="pmh-btn-deduct bh_bg_color_main">로그인하기</a>
+				</div>
+			</div>
+		</div>
+		<!--@elseif($show_lock_ui)-->
+		<div class="pmh-content-lock-area">
+			<div class="pmh-lock-inner">
+				<i class="ri-lock-line"></i>
+				<div class="pmh-desc-box">
+					<p class="pmh-lock-desc"><!--@if($content_point_cost)-->{$content_point_cost}<!--@else-->0<!--@end-->P를 차감하시면 확인하실 수 있습니다.<br><span class="bh_color_main">차감하시겠습니까?</span></p>
+				</div>
+				<div class="pmh-lock-btns">
+					<button type="button" class="pmh-btn-cancel bh_bg_color_gray_600" onclick="history.back();">취소</button>
+					<button type="button" class="pmh-btn-deduct bh_bg_color_main" id="deductPointBtn" onclick="procDeductPointForView({$product->product_srl});"><!--@if($content_point_cost)-->{$content_point_cost}<!--@else-->0<!--@end-->P 차감하기</button>
+				</div>
+			</div>
+		</div>
+		<!--@elseif($product->content)-->
+		<div class="pmh-content-area">
+			<div class="pmh-content-wrap" id="contentWrap">
+				<div class="pmh-content-inner" id="contentInner">
+					{$product->content}
+				</div>
+				<div class="pmh-content-fade" id="contentFade"></div>
+			</div>
+			<button type="button" class="pmh-content-more" id="contentMoreBtn" onclick="expandContent();">
+				더 불러오기 <i class="ri-add-large-line"></i>
+			</button>
+		</div>
+		<!--@end-->
+
+		<!--@if($has_content_access && $product->provision)-->
+		<div class="pmh-section-block" id="provision">
+			<h3 class="pmh-block-title">제공 내역</h3>
+			<div class="pmh-block-body">{$product->provision}</div>
+		</div>
+		<!--@end-->
+
+		<!--@if($has_content_access && $product->product_type == 'local' && $product->visit_info)-->
+		<div class="pmh-section-block" id="visit_info">
+			<h3 class="pmh-block-title">방문 및 예약안내</h3>
+			<div class="pmh-block-body">
+				{$product->visit_info}
+				<!--@if($product->address)-->
+				<div class="pmh-address-display">
+					<div class="pmh-map-container" id="mapContainer"></div>
+					<p class="pmh-address-text">{$product->address}<!--@if($product->address_detail)--> {$product->address_detail}<!--@end--></p>
+				</div>
+				<!--@end-->
+			</div>
+		</div>
+		<!--@end-->
+
+		<!--@if($has_content_access && $product->mission)-->
+		<div class="pmh-section-block" id="mission">
+			<h3 class="pmh-block-title">품앗이 미션</h3>
+			<div class="pmh-block-body">
+				<!--@if($mission_tags)-->
+				<div class="pmh-mission-tags">
+					<!--@foreach($mission_tags as $tag)-->
+					<span class="pmh-mission-tag">{$tag}</span>
+					<!--@end-->
+				</div>
+				<!--@end-->
+				{$product->mission}
+			</div>
+		</div>
+		<!--@end-->
+
+		<!--@if($has_content_access && $product->keywords)-->
+		<div class="pmh-section-block" id="keywords">
+			<h3 class="pmh-block-title">키워드</h3>
+			<div class="pmh-block-body">{$product->keywords}</div>
+		</div>
+		<!--@end-->
+
+		<!--@if($has_content_access && $product->notice)-->
+		<div class="pmh-section-block" id="notice">
+			<h3 class="pmh-block-title">안내사항</h3>
+			<div class="pmh-block-body">{$product->notice}</div>
+		</div>
+		<!--@end-->
+
+		<!--@if($has_content_access && $extra_vars)-->
+		<div class="pmh-section-block"  id="add">
+			<h3 class="pmh-block-title">추가 정보</h3>
+			<table class="pmh-info-table">
+				<tbody>
+					<!--@foreach($extra_vars as $ev)-->
+					<tr>
+						<th>{$ev->var_name}</th>
+						<td>{$ev->var_value}</td>
+					</tr>
+					<!--@end-->
+				</tbody>
+			</table>
+		</div>
+		<!--@end-->
+
+		<div class="pmh-detail-bottom">
+			<!--@if($logged_info && ($logged_info->member_srl == $product->member_srl || $logged_info->is_admin == 'Y'))-->
+			<!--@if($XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/poomahhi/product_delete')-->
+			<div class="message {$XE_VALIDATOR_MESSAGE_TYPE}" style="margin-bottom:15px; border-radius:6px;">
+				<p>{$XE_VALIDATOR_MESSAGE}</p>
+			</div>
+			<!--@end-->
+			<div class="pmh-owner-actions">
+				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductWrite', 'product_srl', $product->product_srl)}" class="pmh-btn-outline">수정</a>
+				<form action="./" method="post" style="display:inline;">
+					<input type="hidden" name="mid" value="{$mid}" />
+					<input type="hidden" name="act" value="procPoomahhiDeleteProduct" />
+					<input type="hidden" name="product_srl" value="{$product->product_srl}" />
+					<input type="hidden" name="xe_validator_id" value="modules/poomahhi/product_delete" />
+					<button type="submit" class="pmh-btn-outline danger" onclick="return confirm('정말 삭제하시겠습니까?');">삭제</button>
+				</form>
+				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationManage', 'product_srl', $product->product_srl)}" class="pmh-btn-outline">신청 관리</a>
+			</div>
+			<!--@end-->
+			<!--@if(!$require_login && !$show_lock_ui)-->
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductList')}" class="pmh-btn-back"><i class="ri-arrow-left-s-line pr-5"></i> 목록으로</a>
+			<!--@end-->
+		</div>
+
+		<!--@if(!$require_login && !$show_lock_ui)-->
+		<div class="lg:ds-n ds-b">
+			<div class="pmh-sidebar-actions">
+				<!--@if($logged_info && $product->status == 'active')-->
+					<!--@if($is_application_closed)-->
+					<span class="pmh-btn-apply pmh-btn-apply-disabled pmh-apply-form">마감</span>
+					<!--@else-->
+					<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationWrite', 'product_srl', $product->product_srl)}" class="pmh-btn-apply pmh-apply-form">품앗이 신청하기</a>
+					<!--@end-->
+				<!--@end-->
+				<!--@if($logged_info)-->
+				<button type="button" class="pmh-btn-wish <!--@if($is_wished)-->active<!--@end-->" id="sidebarWishBtn" onclick="toggleDetailWishlist();">
+					관심 <i class="<!--@if($is_wished)-->ri-heart-fill<!--@else-->ri-heart-line<!--@end-->"></i>
+				</button>
+				<!--@end-->
+			</div>
+		</div>
+		<!--@end-->
+	</div>
+
+	<div class="pmh-detail-sidebar" id="detailSidebar">
+		<div class="pmh-sidebar-card <!--@if($require_login || $show_lock_ui)-->lock<!--@end-->" id="sidebarCard">
+
+			<div class="pmh-sidebar-top">
+				<div class="tag lg:ds-b ds-n">
+					<!--@if($product->product_type == 'local' && $region)-->
+					<span class="area 
+						<!--@if($region->title == '수도권')-->seoul<!--@end-->
+						<!--@if($region->title == '충청권')-->chungcheong<!--@end-->
+						<!--@if($region->title == '호남권')-->honam<!--@end-->
+						<!--@if($region->title == '영남권')-->yeongnam<!--@end-->
+						">
+					{$region->title}</span>
+					<!--@elseif($product->shopping_channel)-->
+					<span class="channel 
+						<!--@if($product->shopping_channel == '올리브영')-->oliveyoung<!--@end-->
+						<!--@if($product->shopping_channel == '쿠팡')-->coupang<!--@end-->
+						<!--@if($product->shopping_channel == 'G마켓')-->gmarket<!--@end-->
+						<!--@if($product->shopping_channel == '11번가')-->11st<!--@end-->
+						<!--@if($product->shopping_channel == '자사몰')-->mall<!--@end-->
+						<!--@if($product->shopping_channel == '마켓컬리')-->marketcurly<!--@end-->
+						<!--@if($product->shopping_channel == '카카오선물하기')-->kakaogift<!--@end-->
+						<!--@if($product->shopping_channel == '네이버 스마트스토어')-->smartstore<!--@end-->
+						<!--@if($product->shopping_channel == '무신사')-->musinsa<!--@end-->
+						<!--@if($product->shopping_channel == '옥션')-->auction<!--@end-->
+						<!--@if($product->shopping_channel == '카카오쇼핑')-->kakaoshopping<!--@end-->
+						">
+					{$product->shopping_channel}</span>
+					<!--@end-->
+					<!--@if($dday_text)-->
+					<span class="dday">{$dday_text}</span>
+					<!--@end-->
+				</div>
+
+				<div class="lg:ds-b ds-n">
+					<h3 class="pmh-sidebar-title">
+						<!--@if($product->company_name)-->{$product->company_name} <!--@end-->[{$product->title}]
+					</h3>
+				</div>
+
+				<!--@if($product->actual_price)-->
+				<div class="pmh-sidebar-price">
+					<span class="pmh-price-label">실구매가</span>
+					<span class="pmh-price-value">{number_format($product->actual_price)}<small>원</small></span>
+				</div>
+				<!--@end-->
+
+				<!--@if($product->product_type != 'local' && $product->product_url)-->
+				<div class="lg:ds-n ds-b">
+				<a href="{$product->product_url}" target="_blank" class="pmh-link-product">상품 보러가기 <i class="ri-arrow-right-line"></i></a>
+				</div>
+				<!--@end-->
+			</div>
+
+			<div class="pmh-sidebar-info">
+				<!--@if($product->apply_start_date && $product->apply_end_date)-->
+				<div class="pmh-info-row">
+					<span class="pmh-info-label">품앗이 신청기간</span>
+					<span class="pmh-info-value pmh-count-highlight">{zdate($product->apply_start_date, 'm.d')} ~ {zdate($product->apply_end_date, 'm.d')}</span>
+				</div>
+				<!--@end-->
+				<!--@if($product->selection_date)-->
+				<div class="pmh-info-row">
+					<span class="pmh-info-label">선정자 발표</span>
+					<span class="pmh-info-value">{zdate($product->selection_date, 'm.d')}</span>
+				</div>
+				<!--@end-->
+				<!--@if($product->review_start_date && $product->review_end_date)-->
+				<div class="pmh-info-row">
+					<span class="pmh-info-label">리뷰 등록기간</span>
+					<span class="pmh-info-value">{zdate($product->review_start_date, 'm.d')} ~ {zdate($product->review_end_date, 'm.d')}</span>
+				</div>
+				<!--@end-->
+				<!--@if($product->result_date)-->
+				<div class="pmh-info-row">
+					<span class="pmh-info-label">품앗이 결과발표</span>
+					<span class="pmh-info-value">{zdate($product->result_date, 'm.d')}</span>
+				</div>
+				<!--@end-->
+				<div class="pmh-info-row">
+					<span class="pmh-info-label">신청자</span>
+					<span class="pmh-info-value"><span class="pmh-count-highlight">{$application_count}</span><!--@if($product->max_applicants > 0)-->/{$product->max_applicants}명<!--@else-->명<!--@end--></span>
+				</div>
+			</div>
+
+			<div class="pmh-sidebar-accordion">
+				<!--@if($has_content_access && $product->provision)-->
+				<div class="pmh-accordion-item">
+					<a href="#provision" class="pmh-accordion-btn">제공 내역<span class="pmh-acc-arrow"></span></a>
+				</div>
+				<!--@end-->
+				<!--@if($has_content_access && $product->product_type == 'local' && $product->visit_info)-->
+				<div class="pmh-accordion-item">
+					<a href="#visit_info" class="pmh-accordion-btn">방문 및 예약안내<span class="pmh-acc-arrow"></span></a>
+				</div>
+				<!--@end-->
+				<!--@if($has_content_access && $product->mission)-->
+				<div class="pmh-accordion-item">
+					<a href="#mission" class="pmh-accordion-btn">품앗이 미션<span class="pmh-acc-arrow"></span></a>
+				</div>
+				<!--@end-->
+				<!--@if($has_content_access && $product->keywords)-->
+				<div class="pmh-accordion-item">
+					<a href="#keywords" class="pmh-accordion-btn">키워드<span class="pmh-acc-arrow"></span></a>
+				</div>
+				<!--@end-->
+				<!--@if($has_content_access && $product->notice)-->
+				<div class="pmh-accordion-item">
+					<a href="#notice" class="pmh-accordion-btn">안내사항<span class="pmh-acc-arrow"></span></a>
+				</div>
+				<!--@end-->
+			</div>
+
+			<div class="pmh-sidebar-actions">
+			<!--@if($logged_info && $product->status == 'active')-->
+			<!--@if($is_application_closed)-->
+			<span class="pmh-btn-apply pmh-btn-apply-disabled pmh-apply-form">마감</span>
+			<!--@else-->
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationWrite', 'product_srl', $product->product_srl)}" class="pmh-btn-apply pmh-apply-form">품앗이 신청하기</a>
+			<!--@end-->
+			<!--@end-->
+				<!--@if($logged_info)-->
+				<button type="button" class="pmh-btn-wish <!--@if($is_wished)-->active<!--@end-->" id="sidebarWishBtn2" onclick="toggleDetailWishlist();">
+					관심 <i class="<!--@if($is_wished)-->ri-heart-fill<!--@else-->ri-heart-line<!--@end-->"></i>
+				</button>
+				<!--@end-->
+			</div>
+		</div>
+	</div>
+</div>
+
+</div>
+
+<!--@if($product->product_type == 'local' && $product->address)-->
+<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=KAKAO_MAP_APP_KEY&libraries=services"></script>
+<script>
+(function(){
+	var mapContainer = document.getElementById('mapContainer');
+	if(!mapContainer) return;
+	var address = '{$product->address}';
+	if(!address) return;
+
+	var map = new kakao.maps.Map(mapContainer, {
+		center: new kakao.maps.LatLng(37.5665, 126.9780),
+		level: 3
+	});
+
+	var geocoder = new kakao.maps.services.Geocoder();
+	geocoder.addressSearch(address, function(result, status){
+		if(status === kakao.maps.services.Status.OK){
+			var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+			var marker = new kakao.maps.Marker({map: map, position: coords});
+			map.setCenter(coords);
+		}
+	});
+})();
+</script>
+<!--@end-->
+
+<script>
+function expandContent(){
+	var wrap = document.getElementById('contentWrap');
+	var fade = document.getElementById('contentFade');
+	var btn = document.getElementById('contentMoreBtn');
+	wrap.style.maxHeight = 'none';
+	fade.style.display = 'none';
+	btn.style.display = 'none';
+}
+
+function procDeductPointForView(product_srl){
+	var btn = document.getElementById('deductPointBtn');
+	if(btn) btn.disabled = true;
+	jQuery.exec_json('poomahhi.procPoomahhiDeductPointForView', {product_srl: product_srl}, function(ret){
+		if(ret.error != 0){ alert(ret.message); if(btn) btn.disabled = false; return; }
+		location.reload();
+	});
+}
+
+function toggleDetailWishlist(){
+	var product_srl = '{$product->product_srl}';
+	jQuery.exec_json('poomahhi.procPoomahhiToggleWishlist', {product_srl: product_srl}, function(ret){
+		if(ret.error != 0){ alert(ret.message); return; }
+		var heartBtn = document.getElementById('wishlistBtn');
+		var sideBtn = document.getElementById('sidebarWishBtn');
+		var sideBtn2 = document.getElementById('sidebarWishBtn2');
+		if(ret.action === 'added'){
+			if(heartBtn){ heartBtn.querySelector('i').className = 'ri-heart-fill'; heartBtn.classList.add('active'); }
+			if(sideBtn){ sideBtn.innerHTML = '관심 <i class="ri-heart-fill"></i>'; sideBtn.classList.add('active'); }
+			if(sideBtn2){ sideBtn2.innerHTML = '관심 <i class="ri-heart-fill"></i>'; sideBtn.classList.add('active'); }
+		} else {
+			if(heartBtn){ heartBtn.querySelector('i').className = 'ri-heart-line'; heartBtn.classList.remove('active'); }
+			if(sideBtn){ sideBtn.innerHTML = '관심 <i class="ri-heart-line"></i>'; sideBtn.classList.remove('active'); }
+			if(sideBtn2){ sideBtn2.innerHTML = '관심 <i class="ri-heart-line"></i>'; sideBtn.classList.remove('active'); }
+		}
+	});
+}
+
+document.querySelectorAll('.pmh-accordion-btn').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        const href = this.getAttribute('href');
+
+        if (href.startsWith('#')) {
+            e.preventDefault();
+            
+            const targetElement = document.querySelector(href);
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        }
+    });
+});
+</script>

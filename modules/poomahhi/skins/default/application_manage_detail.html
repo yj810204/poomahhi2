@@ -1,0 +1,304 @@
+<!--@if($use_business_layout)-->
+<load target="css/business.scss" />
+<div class="pmh-business-layout">
+<include target="_business_sidebar.html" />
+<div class="member-contents pmh-business-main">
+<!--@end-->
+<div class="pmh-app-detail">
+
+	<h1>품앗이 현황</h1>
+
+	<div class="business_inner">
+		<!-- 상품 카드 -->
+		<!--@if($product)-->
+		<div class="pmh-app-product-card">
+			<!--@if($product->product_image)-->
+			<div class="pmh-app-product-img">
+				<img src="{$product->product_image}" alt="{$product->title}" />
+			</div>
+			<!--@end-->
+			<div class="pmh-app-product-info">
+				<h3 class="pmh-app-product-title">{$product->title}</h3>
+				<!--@if($product->company_name)-->
+				<p class="pmh-app-product-company">{$product->company_name}</p>
+				<!--@end-->
+			</div>
+		</div>
+		<!--@end-->
+
+		<!-- 신청자 한마디 -->
+		<!--@if($application->applicant_comment)-->
+		<div class="pmh-app-section">
+			<h3 class="pmh-app-section-title">신청자 한마디</h3>
+			<div class="pmh-app-section-body">{$application->applicant_comment}</div>
+		</div>
+		<!--@end-->
+
+		<!-- 상품 확장변수 -->
+		<!--@if($extra_vars)-->
+		<div class="pmh-app-section">
+			<h3 class="pmh-app-section-title">추가 정보</h3>
+			<table class="pmh-info-table">
+				<tbody>
+					<!--@foreach($extra_vars as $ev)-->
+					<tr>
+						<th>{$ev->var_name}</th>
+						<td>{$ev->var_value}</td>
+					</tr>
+					<!--@end-->
+				</tbody>
+			</table>
+		</div>
+		<!--@end-->
+
+		<!-- 신청자 정보 -->
+		<div class="pmh-app-section">
+			<h3 class="pmh-app-section-title">신청 정보 입력</h3>
+			<table class="pmh-info-table">
+				<tbody>
+					<!--@if($applicant_member)-->
+					<tr>
+						<th>닉네임</th>
+						<td>{$applicant_member->nick_name}</td>
+					</tr>
+					<!--@end-->
+					<!--@if($application->applicant_name)-->
+					<tr>
+						<th>이름</th>
+						<td>{$application->applicant_name}</td>
+					</tr>
+					<!--@end-->
+					<!--@if($application->gender)-->
+					<tr>
+						<th>성별</th>
+						<td>{$application->gender}</td>
+					</tr>
+					<!--@end-->
+					<!--@if($application->birth_date)-->
+					<tr>
+						<th>생년월일</th>
+						<td>{$application->birth_date}</td>
+					</tr>
+					<!--@end-->
+					<!--@if($application->phone)-->
+					<tr>
+						<th>연락처</th>
+						<td>{$application->phone}</td>
+					</tr>
+					<!--@end-->
+					<!--@if($application->applicant_address)-->
+					<tr>
+						<th>주소</th>
+						<td>
+							<!--@if($application->applicant_zipcode)-->({$application->applicant_zipcode}) <!--@end-->
+							{$application->applicant_address}<!--@if($application->applicant_address_detail)--> {$application->applicant_address_detail}<!--@end-->
+						</td>
+					</tr>
+					<!--@end-->
+					<tr>
+						<th>신청일</th>
+						<td><!--@if($application->regdate)-->{zdate($application->regdate, 'Y-m-d H:i')}<!--@else-->-<!--@end--></td>
+					</tr>
+					<tr>
+						<th>현재 상태</th>
+						<td>
+							<!--@if($application->status == 'applied')-->
+							<span class="pmh-status-badge applied">신청된 품앗이</span>
+							<!--@elseif($application->status == 'selected')-->
+							<span class="pmh-status-badge selected">선정한 품앗이</span>
+						<!--@elseif($application->status == 'under_review')-->
+							<span class="pmh-status-badge under_review">검수대기중인 품앗이</span>
+						<!--@elseif($application->status == 'revision_requested')-->
+							<span class="pmh-status-badge revision_requested">수정요청한 품앗이</span>
+							<!--@elseif($application->status == 'completed')-->
+							<span class="pmh-status-badge completed">완료된 품앗이</span>
+							<!--@elseif($application->status == 'rejected')-->
+							<span class="pmh-status-badge rejected">미선정한 품앗이</span>
+							<!--@elseif($application->status == 'cancelled')-->
+							<span class="pmh-status-badge cancelled">취소한 품앗이</span>
+							<!--@else-->
+							{$application->status}
+							<!--@end-->
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<!-- 참여 인증 섹션 -->
+		<!--@if($review)-->
+		<div class="pmh-app-section">
+			<h3 class="pmh-app-section-title">참여 인증</h3>
+			<div class="pmh-app-section-text">
+				<div class="text-title">상품 만족도</div>
+				{$review->score}/5
+
+				<!--@if($review->content)-->
+				<div class="text-title">{$review->content}</div>
+				<!--@end-->
+				<div class="text-title">등록일</div>
+				<!--@if($review->regdate)-->{zdate($review->regdate, 'Y-m-d H:i')}<!--@else-->-<!--@end-->
+
+				<div class="text-title">최종 수정</div>
+				<!--@if($review->last_update)-->{zdate($review->last_update, 'Y-m-d H:i')}<!--@else-->-<!--@end-->
+
+				<!-- 참여 인증 업로드 이미지: 인증샷 / 구매경로 구분 -->
+				<!--@if($review_certification_files)-->
+				<div class="pmh-app-section-sub">
+					<h4 class="pmh-app-subsection-title">리뷰작성 인증 샷 이미지</h4>
+					<div class="pmh-review-images">
+						<!--@foreach($review_certification_files as $file)-->
+						<div class="pmh-review-image-item">
+							<a href="{$file->download_url}" target="_blank">
+								<img src="{$file->download_url}" alt="{$file->source_filename}" />
+							</a>
+						</div>
+						<!--@end-->
+					</div>
+				</div>
+				<!--@end-->
+				<!--@if($review_purchase_files)-->
+				<div class="pmh-app-section-sub">
+					<h4 class="pmh-app-subsection-title">구매경로 인증샷 이미지</h4>
+					<div class="pmh-review-images">
+						<!--@foreach($review_purchase_files as $file)-->
+						<div class="pmh-review-image-item">
+							<a href="{$file->download_url}" target="_blank">
+								<img src="{$file->download_url}" alt="{$file->source_filename}" />
+							</a>
+						</div>
+						<!--@end-->
+					</div>
+				</div>
+				<!--@end-->
+			</div>
+		</div>
+		<!--@else-->
+		<div class="pmh-app-section">
+			<h3 class="pmh-app-section-title">참여 인증</h3>
+			<p class="pmh-app-empty-text">참여 인증 내역이 없습니다.</p>
+		</div>
+		<!--@end-->
+
+		<!-- 참여인증 통과 (검수중 상태 + 리뷰 존재 시) -->
+		<!--@if($application->status == 'under_review' && $review)-->
+		<div class="pmh-app-section">
+			<h3 class="pmh-app-section-title">참여인증 통과</h3>
+			<div class="pmh-app-section-text">
+				<form action="./" method="post" class="pmh-review-approve-form" onsubmit="return confirm('참여인증을 통과 처리하시겠습니까?');">
+					<input type="hidden" name="mid" value="{$mid}" />
+					<input type="hidden" name="act" value="procPoomahhiApproveReview" />
+					<input type="hidden" name="application_srl" value="{$application->application_srl}" />
+					<input type="hidden" name="success_return_url" value="{$form_success_return_url}" />
+					<button type="submit" class="pmh-btn-primary pmh-btn-review-approve">참여인증 통과</button>
+				</form>
+			</div>
+		</div>
+		<!--@end-->
+
+		<!-- 회원 리뷰 섹션 -->
+		<div class="pmh-app-section">
+			<h3 class="pmh-app-section-title">회원 평가 작성</h3>
+			<div class="pmh-app-section-text">
+				<!--@if($existing_member_review)-->
+				<table class="pmh-info-table">
+					<tbody>
+						<tr>
+							<th class="text-title">평가 점수</th>
+							<td>{$existing_member_review->score}점</td>
+						</tr>
+						<!--@if($existing_member_review->content)-->
+						<tr>
+							<th class="text-title">내용</th>
+							<td><div class="pmh-app-section-body">{$existing_member_review->content}</div></td>
+						</tr>
+						<!--@end-->
+						<tr>
+							<th class="text-title">등록일</th>
+							<td><!--@if($existing_member_review->regdate)-->{zdate($existing_member_review->regdate, 'Y-m-d H:i')}<!--@else-->-<!--@end--></td>
+						</tr>
+					</tbody>
+				</table>
+				<p class="pmh-app-notice">이미 평가를 작성했습니다.</p>
+				<!--@elseif($application->status == 'under_review' || $application->status == 'completed')-->
+				<!--@if($XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/poomahhi/member_review')-->
+				<div class="pmh-app-message {$XE_VALIDATOR_MESSAGE_TYPE}">
+					<p>{$XE_VALIDATOR_MESSAGE}</p>
+				</div>
+				<!--@end-->
+				<form action="./" method="post" class="pmh-member-review-form">
+					<input type="hidden" name="mid" value="{$mid}" />
+					<input type="hidden" name="act" value="procPoomahhiInsertMemberReview" />
+					<input type="hidden" name="application_srl" value="{$application->application_srl}" />
+					<input type="hidden" name="success_return_url" value="{$form_success_return_url}" />
+					<input type="hidden" name="xe_validator_id" value="modules/poomahhi/member_review" />
+
+					<div class="pmh-form-group">
+						<label for="member_review_score" class="text-title">평가 점수</label>
+						<select name="score" id="member_review_score" class="pmh-select">
+							<!--@for($i = 1; $i <= 5; $i++)-->
+							<option value="{$i}" selected|cond="$i == 5">{$i}점</option>
+							<!--@end-->
+						</select>
+					</div>
+
+					<div class="pmh-form-group">
+						<label for="member_review_content" class="text-title">내용</label>
+						<textarea name="content" id="member_review_content" class="pmh-textarea" rows="4" placeholder="평가 내용"></textarea>
+					</div>
+
+					<div class="pmh-form-actions">
+						<button type="submit" class="pmh-btn-primary">평가 등록</button>
+					</div>
+				</form>
+				<!--@else-->
+				<p class="pmh-app-notice">회원 평가를 작성할 수 없는 상태입니다.</p>
+				<!--@end-->
+			</div>
+		</div>
+
+		<!-- 상태 변경 -->
+		<div class="pmh-app-section">
+			<h3 class="pmh-app-section-title">상태</h3>
+			<div class="pmh-app-section-text">
+				<div class="text-title">상태변경</div>
+				<!--@if($XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/poomahhi/status_change')-->
+				<div class="pmh-app-message {$XE_VALIDATOR_MESSAGE_TYPE}">
+					<p>{$XE_VALIDATOR_MESSAGE}</p>
+				</div>
+				<!--@end-->
+				<form action="./" method="post" class="pmh-status-form">
+					<input type="hidden" name="mid" value="{$mid}" />
+					<input type="hidden" name="act" value="procPoomahhiUpdateApplicationStatus" />
+					<input type="hidden" name="application_srl" value="{$application->application_srl}" />
+					<input type="hidden" name="success_return_url" value="{$form_success_return_url}" />
+					<input type="hidden" name="xe_validator_id" value="modules/poomahhi/status_change" />
+					<div class="pmh-status-form-row">
+						<select name="status" class="pmh-select">
+							<option value="applied" selected|cond="$application->status == 'applied'">신청된 품앗이</option>
+							<option value="selected" selected|cond="$application->status == 'selected'">선정한 품앗이</option>
+							<option value="under_review" selected|cond="$application->status == 'under_review'">검수대기중인 품앗이</option>
+							<option value="revision_requested" selected|cond="$application->status == 'revision_requested'">수정요청한 품앗이</option>
+							<option value="completed" selected|cond="$application->status == 'completed'">완료된 품앗이</option>
+							<option value="rejected" selected|cond="$application->status == 'rejected'">미선정한 품앗이</option>
+							<option value="cancelled" selected|cond="$application->status == 'cancelled'">취소한 품앗이</option>
+						</select>
+						<button type="submit" class="pmh-btn-primary">상태 변경</button>
+					</div>
+				</form>
+			</div>
+		</div>
+
+		<!-- 하단 버튼 -->
+		<div class="pmh-app-detail-actions">
+			<div class="pmh-app-detail-actions-left">
+				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationManage', 'product_srl', $product->product_srl)}" class="pmh-btn-outline">뒤로가기</a>
+				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductDetail', 'product_srl', $product->product_srl)}" class="pmh-btn-primary">상품 보러가기</a>
+			</div>
+		</div>
+	</div>
+</div>
+<!--@if($use_business_layout)-->
+</div>
+</div>
+<!--@end-->

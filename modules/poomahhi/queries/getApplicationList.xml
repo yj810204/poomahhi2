@@ -1,0 +1,18 @@
+<query id="getApplicationList" action="select">
+	<tables>
+		<table name="poomahhi_application" alias="a" />
+	</tables>
+	<columns>
+		<column name="a.*" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="a.product_srl" var="product_srl" pipe="AND" />
+		<condition operation="equal" column="a.status" var="status" pipe="AND" />
+	</conditions>
+	<navigation>
+		<index var="sort_index" default="application_srl" order="desc" />
+		<list_count var="list_count" default="20" />
+		<page_count var="page_count" default="10" />
+		<page var="page" default="1" />
+	</navigation>
+</query>

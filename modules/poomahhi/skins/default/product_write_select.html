@@ -1,0 +1,89 @@
+<load target="css/business.scss" />
+<load target="../../../member/css/member.scss" />
+<div class="pmh-business-layout">
+<include target="_business_sidebar.html" />
+<div class="member-contents pmh-business-main pmh-product-write-select">
+	<h1>품앗이 등록</h1>
+
+	<div class="pmh-pws-board">
+		<div class="business_inner">
+			<div class="pmh-pws-card">
+				<div class="pmh-pws-card-main">
+					<h3>상품 품앗이</h3>
+					<p class="pmh-pws-desc">내가 인터넷에 판매하는 상품을 품앗이에 올려서 <br>퀄리티 높은 리뷰를 받아보세요!</p>
+					<div class="tag">
+						<!--@foreach($pws_channel_list as $ch_item)-->
+						<span class="channel
+							<!--@if($ch_item->title == '올리브영')-->oliveyoung<!--@end-->
+							<!--@if($ch_item->title == '쿠팡')-->coupang<!--@end-->
+							<!--@if($ch_item->title == 'G마켓')-->gmarket<!--@end-->
+							<!--@if($ch_item->title == '11번가')-->11st<!--@end-->
+							<!--@if($ch_item->title == '자사몰')-->mall<!--@end-->
+							<!--@if($ch_item->title == '마켓컬리')-->marketcurly<!--@end-->
+							<!--@if($ch_item->title == '카카오선물하기')-->kakaogift<!--@end-->
+							<!--@if($ch_item->title == '네이버 스마트스토어')-->smartstore<!--@end-->
+							<!--@if($ch_item->title == '무신사')-->musinsa<!--@end-->
+							<!--@if($ch_item->title == '옥션')-->auction<!--@end-->
+							<!--@if($ch_item->title == '카카오쇼핑')-->kakaoshopping<!--@end-->
+							<!--@if($ch_item->title == '수도권')-->seoul<!--@end-->
+							<!--@if($ch_item->title == '충청권')-->chungcheong<!--@end-->
+							<!--@if($ch_item->title == '호남권')-->honam<!--@end-->
+							<!--@if($ch_item->title == '영남권')-->yeongnam<!--@end-->
+							">
+						{$ch_item->title}</span>
+						<!--@end-->
+					</div>
+				</div>
+				<div class="pmh-pws-card-side">
+					<div class="pmh-donut-legend bg_style">
+						<div class="pmh-donut-legend-col">
+							<span class="pmh-donut-legend-head">완료된 품앗이</span>
+							<strong class="pmh-donut-legend-pct"><!--@if($wsc_product_closed)-->{$wsc_product_closed}<!--@else-->0<!--@end--></strong>건
+						</div>
+						<div class="pmh-donut-legend-divider"></div>
+						<div class="pmh-donut-legend-col">
+							<span class="pmh-donut-legend-head">진행중인 품앗이</span>
+							<strong class="pmh-donut-legend-pct"><!--@if($wsc_product_active)-->{$wsc_product_active}<!--@else-->0<!--@end--></strong>건
+						</div>
+					</div>
+					<a href="{getUrl('', 'mid', $poomahhi_mid, 'act', 'dispPoomahhiProductWrite', 'product_type', 'product')}" class="pmh-btn-pink pmh-pws-register-btn">등록하기</a>
+				</div>
+			</div>
+		</div>
+		<div class="business_inner">
+			<div class="pmh-pws-card">
+				<div class="pmh-pws-card-main">
+					<h3>지역 품앗이</h3>
+					<p class="pmh-pws-desc">내 가게를 품앗이에 올려서 <br>퀄리티 높은 리뷰를 받아보세요!</p>
+					<div class="tag">
+						<!--@foreach($pws_region_list as $rg_item)-->
+						<span class="area
+							<!--@if($rg_item->title == '수도권')-->seoul<!--@end-->
+							<!--@if($rg_item->title == '충청권')-->chungcheong<!--@end-->
+							<!--@if($rg_item->title == '호남권')-->honam<!--@end-->
+							<!--@if($rg_item->title == '영남권')-->yeongnam<!--@end-->
+							">
+						{$rg_item->title}</span>
+						<!--@end-->
+					</div>
+				</div>
+				<div class="pmh-pws-card-side">
+					<div class="pmh-donut-legend bg_style">
+						<div class="pmh-donut-legend-col">
+							<span class="pmh-donut-legend-head">완료된 품앗이</span>
+							<strong class="pmh-donut-legend-pct"><!--@if($wsc_local_closed)-->{$wsc_local_closed}<!--@else-->0<!--@end--></strong>건
+						</div>
+						<div class="pmh-donut-legend-divider"></div>
+						<span class="pmh-pws-stat-vsep"></span>
+						<div class="pmh-donut-legend-col">
+							<span class="pmh-donut-legend-head">진행중인 품앗이</span>
+							<strong class="pmh-donut-legend-pct"><!--@if($wsc_local_active)-->{$wsc_local_active}<!--@else-->0<!--@end--></strong>건
+						</div>
+					</div>
+					<a href="{getUrl('', 'mid', $local_poomahhi_mid, 'act', 'dispPoomahhiProductWrite', 'product_type', 'local')}" class="pmh-btn-pink pmh-pws-register-btn">등록하기</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</div>

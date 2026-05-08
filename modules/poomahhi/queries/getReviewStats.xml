@@ -1,0 +1,12 @@
+<query id="getReviewStats" action="select">
+	<tables>
+		<table name="poomahhi_review" alias="r" />
+	</tables>
+	<columns>
+		<column name="count(*)" alias="review_count" />
+		<column name="AVG(r.score)" alias="avg_score" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="r.member_srl" var="member_srl" notnull="notnull" />
+	</conditions>
+</query>

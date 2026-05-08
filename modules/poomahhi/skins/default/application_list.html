@@ -1,0 +1,224 @@
+<load target="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+<include target="../../../member/skins/poomahhi/common_header.html" />
+
+<div class="member-contents">
+	<h1>{$page_title}</h1>
+
+	<div class="poomahhi-application-list">
+
+		<!--@if($XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/poomahhi/application_list_cancel')-->
+		<div class="message {$XE_VALIDATOR_MESSAGE_TYPE}" style="margin-bottom:15px; border-radius:6px;">
+			<p>{$XE_VALIDATOR_MESSAGE}</p>
+		</div>
+		<!--@end-->
+
+		<!--@if($status_counts)-->
+		<div class="pmh-list-status-boxes">
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationList', 'status', 'applied')}" class="pmh-status-box <!--@if($current_status == 'applied')-->active<!--@end-->">
+				<img src="img/application_list_img1.png" class="default" >
+				<img src="img/application_list_img1_hover.png" class="hover" >
+				<span class="pmh-status-box-label">
+					<span class="lg:ds-b ds-n">{$lang_app->status_applied}</span>
+					<span class="lg:ds-n ds-b">신청한</span>
+				</span>
+				<div class="pmh-status-box-count">{$status_counts->applied}</div>
+			</a>
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationList', 'status', 'selected')}" class="pmh-status-box <!--@if($current_status == 'selected')-->active<!--@end-->">
+				<img src="img/application_list_img2.png" class="default" >
+				<img src="img/application_list_img2_hover.png" class="hover" >
+				<span class="pmh-status-box-label">
+					<span class="lg:ds-b ds-n">{$lang_app->status_selected}</span>
+					<span class="lg:ds-n ds-b">선정된</span>
+				</span>
+				<div class="pmh-status-box-count">{$status_counts->selected}</div>
+			</a>
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationList', 'status', 'under_review')}" class="pmh-status-box <!--@if($current_status == 'under_review')-->active<!--@end-->">
+				<img src="img/application_list_img3.png" class="default" >
+				<img src="img/application_list_img3_hover.png" class="hover" >
+				<span class="pmh-status-box-label">
+					<span class="lg:ds-b ds-n">{$lang_app->status_under_review}</span>
+					<span class="lg:ds-n ds-b">검수중인</span>
+				</span>
+				<div class="pmh-status-box-count">{$status_counts->under_review}</div>
+			</a>
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationList', 'status', 'revision_requested')}" class="pmh-status-box <!--@if($current_status == 'revision_requested')-->active<!--@end-->">
+				<img src="img/application_list_img4.png" class="default" >
+				<img src="img/application_list_img4_hover.png" class="hover" >
+				<span class="pmh-status-box-label">
+					<span class="lg:ds-b ds-n">{$lang_app->status_revision_requested}</span>
+					<span class="lg:ds-n ds-b">수정요청된</span>
+				</span>
+				<div class="pmh-status-box-count">{$status_counts->revision_requested}</div>
+			</a>
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationList', 'status', 'completed')}" class="pmh-status-box <!--@if($current_status == 'completed')-->active<!--@end-->">
+				<img src="img/application_list_img5.png" class="default" >
+				<img src="img/application_list_img5_hover.png" class="hover" >
+				<span class="pmh-status-box-label">
+					<span class="lg:ds-b ds-n">{$lang_app->status_completed}</span>
+					<span class="lg:ds-n ds-b">완료된</span>
+				</span>
+				<div class="pmh-status-box-count">{$status_counts->completed}</div>
+			</a>
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationList', 'status', 'rejected')}" class="pmh-status-box <!--@if($current_status == 'rejected')-->active<!--@end-->">
+				<img src="img/application_list_img6.png" class="default" >
+				<img src="img/application_list_img6_hover.png" class="hover" >
+				<span class="pmh-status-box-label">
+					<span class="lg:ds-b ds-n">{$lang_app->status_rejected_cancelled}</span>
+					<span class="lg:ds-n ds-b">미선정·취소된</span>
+				</span>
+				<div class="pmh-status-box-count">{$status_counts->rejected_cancelled}</div>
+			</a>
+		</div>
+		<!--@end-->
+
+		<p class="pmh-list-all-link ds-n">
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationList', 'status', '')}"><!--@if(!$current_status)-->[전체]<!--@else-->전체 보기<!--@end--></a>
+		</p>
+
+		<!-- 신청 목록 (카드형) -->
+		<!--@if($application_list)-->
+		<div class="pmh-app-list-cards">
+			<!--@foreach($application_list as $app)-->
+			<div class="pmh-app-card" data-app-srl="{$app->application_srl}">
+				<div class="pmh-app-card-main">
+					<div class="pmh-app-card-left">
+						<div class="pmh-app-card-img-wrap">
+							<!--@if($app->product_image_url)-->
+							<img src="{$app->product_image_url}" alt="" class="pmh-app-card-img" />
+							<!--@end-->
+							<span class="pmh-app-card-badge">{trim(str_replace('품앗이', '', $app->status_label))}</span>
+						</div>
+					</div>
+					<div class="pmh-app-card-body">
+						<div class="pmh-app-card-head">
+							<div class="pmh-app-card-title-wrap tag">
+								<!--@if($app->product)-->
+								<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationDetail', 'application_srl', $app->application_srl)}" class="pmh-app-card-title">
+									<div class="tag">
+										<!--@if($app->$product->product_type == 'local' && $app->$product->region_title)-->
+										<span class="area 
+											<!--@if($app->product->region_title == '수도권')-->seoul<!--@end-->
+											<!--@if($app->product->region_title == '충청권')-->chungcheong<!--@end-->
+											<!--@if($app->product->region_title == '호남권')-->honam<!--@end-->
+											<!--@if($app->product->region_title == '영남권')-->yeongnam<!--@end-->
+											">
+										{$product->region_title}</span>
+										<!--@end-->
+										<!--@if($app->product->shopping_channel)-->
+										<span class="channel 
+										<!--@if($app->product->shopping_channel == '올리브영')-->oliveyoung<!--@end-->
+										<!--@if($app->product->shopping_channel == '쿠팡')-->coupang<!--@end-->
+										<!--@if($app->product->shopping_channel == 'G마켓')-->gmarket<!--@end-->
+										<!--@if($app->product->shopping_channel == '11번가')-->11st<!--@end-->
+										<!--@if($app->product->shopping_channel == '자사몰')-->mall<!--@end-->
+										<!--@if($app->product->shopping_channel == '마켓컬리')-->marketcurly<!--@end-->
+										<!--@if($app->product->shopping_channel == '카카오선물하기')-->kakaogift<!--@end-->
+										<!--@if($app->product->shopping_channel == '네이버 스마트스토어')-->smartstore<!--@end-->
+										<!--@if($app->product->shopping_channel == '무신사')-->musinsa<!--@end-->
+										<!--@if($app->product->shopping_channel == '옥션')-->auction<!--@end-->
+										<!--@if($app->product->shopping_channel == '카카오쇼핑')-->kakaoshopping<!--@end-->
+										">
+										{$app->product->shopping_channel}</span>
+										<!--@end-->
+										<!--@if($app->dday)--><span class="pmh-app-dday dday"> {$app->dday}</span><!--@end-->
+									</div>
+								</a>
+								<!--@else-->
+								<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationDetail', 'application_srl', $app->application_srl)}" class="pmh-app-card-title">삭제된 상품</a>
+								<!--@end-->
+							</div>
+							<!--@if($app->action_list && count($app->action_list) > 0)-->
+							<button type="button" class="pmh-app-card-toggle" aria-label="펼치기/접기"><i class="ri-arrow-down-s-line"></i></button>
+							<!--@end-->
+						</div>
+						<!--@if($app->product)-->
+							<div class="title">
+							<!--@if($app->product->company_name)-->
+							<p class="pmh-app-card-company">{$app->product->company_name}<!--@if($app->product->title)--> [{$app->product->title}]<!--@end--></p>
+							<!--@elseif($app->product->title)-->
+							<p class="pmh-app-card-company">{$app->product->title}</p>
+							<!--@end-->
+							</div>
+							<!--@if($app->product->product_type != 'local' && $app->product->product_url)-->
+							<p class="pmh-app-card-link">{$lang_app->product_purchase_link} · <a href="{$app->product->product_url}" target="_blank" rel="noopener">{$app->product->product_url}</a></p>
+							<!--@elseif($app->product->product_type == 'local')-->
+							<!--@if($app->product->contact)--><p class="pmh-app-card-link">{$lang_app->contact} {$app->product->contact}</p><!--@end-->
+							<!--@if($app->product->address)--><p class="pmh-app-card-link">{$lang_app->address} {$app->product->address}</p><!--@end-->
+							<!--@end-->
+						<!--@end-->
+					</div>
+				</div>
+			<!-- 접히는 액션 타임라인 -->
+			<!--@if($app->action_list && count($app->action_list) > 0)-->
+			<div class="pmh-app-card-actions pmh-app-card-collapsed">
+				<!--@foreach($app->action_list as $action_item)-->
+				<div class="pmh-app-action-row">
+					<span class="pmh-app-action-dot"></span>
+					<div class="pmh-app-action-content">
+						<div>
+							<span class="pmh-app-action-deadline"><!--@if($action_item->dday)--><span class="pmh-app-dday bh_color_main fw-b">마감 {$action_item->dday}</span> <!--@end--><!--@if($action_item->deadline_date)-->{$action_item->deadline_date}<!--@end--></span>
+							<a href="{$action_item->url}" class="pmh-app-action-link <!--@if($action_item->done)-->pmh-app-action-done-link<!--@end-->">{$action_item->label}</a>
+						</div>
+						<span class="pmh-app-action-status <!--@if($action_item->done)-->pmh-action-done<!--@else-->pmh-action-waiting<!--@end-->">{str_replace('>', '', $action_item->status_label)}<i class="ri-arrow-right-s-line"></i></span>
+					</div>
+				</div>
+				<!--@end-->
+			</div>
+			<!--@end-->
+				<!-- 신청한 상태: 취소 버튼 -->
+				<!--@if($app->status == 'applied')-->
+				<div class="pmh-app-detail-actions">
+					<form action="./" method="post" style="display:inline;">
+						<input type="hidden" name="mid" value="{$mid}" />
+						<input type="hidden" name="act" value="procPoomahhiUpdateApplicationStatus" />
+						<input type="hidden" name="application_srl" value="{$app->application_srl}" />
+						<input type="hidden" name="status" value="cancelled" />
+						<input type="hidden" name="success_return_url" value="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationList')}" />
+						<input type="hidden" name="xe_validator_id" value="modules/poomahhi/application_list_cancel" />
+						<button type="submit" class="pmh-app-card-cancel" onclick="return confirm('신청을 취소하시겠습니까?');">{$lang_app->btn_cancel}</button>
+					</form>
+				</div>
+				<!--@end-->
+			</div>
+			<!--@end-->
+		</div>
+
+		<!-- 페이지네이션 -->
+		<!--@if($page_navigation)-->
+		<div class="ds-n pagination" style="text-align:center;">
+			<!--@for($i = $page_navigation->first_page; $i <= $page_navigation->last_page; $i++)-->
+			<!--@if($i == $page_navigation->cur_page)-->
+			<strong>[{$i}]</strong>
+			<!--@else-->
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationList', 'status', $current_status, 'page', $i)}">[{$i}]</a>
+			<!--@end-->
+			<!--@end-->
+		</div>
+		<!--@end-->
+		<!--@else-->
+		<p class="empty">신청 내역이 없습니다.</p>
+		<!--@end-->
+	</div>
+</div>
+
+
+<script>
+(function() {
+	document.querySelectorAll('.pmh-app-card-toggle').forEach(function(btn) {
+		btn.addEventListener('click', function() {
+			var card = this.closest('.pmh-app-card');
+			var actions = card.querySelector('.pmh-app-card-actions');
+			var icon = this.querySelector('i');
+			if(actions && actions.classList.contains('pmh-app-card-collapsed')) {
+				actions.classList.remove('pmh-app-card-collapsed');
+				if(icon) { icon.className = 'ri-arrow-up-s-line'; }
+			} else if(actions) {
+				actions.classList.add('pmh-app-card-collapsed');
+				if(icon) { icon.className = 'ri-arrow-down-s-line'; }
+			}
+		});
+	});
+})();
+</script>
+
+<include target="../../../member/skins/poomahhi/common_footer.html" />

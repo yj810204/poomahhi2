@@ -1,0 +1,15 @@
+<query id="updateReviewDraft" action="update">
+	<tables>
+		<table name="poomahhi_review_draft" />
+	</tables>
+	<columns>
+		<column name="score" var="score" />
+		<column name="content" var="content" />
+		<column name="certification_attachment_paths" var="certification_attachment_paths" />
+		<column name="purchase_attachment_paths" var="purchase_attachment_paths" />
+		<column name="last_update" var="last_update" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="application_srl" var="application_srl" notnull="notnull" />
+	</conditions>
+</query>

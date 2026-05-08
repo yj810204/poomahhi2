@@ -1,0 +1,139 @@
+.pmh-page-title {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.common-wrap {
+    max-width: 680px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.1);
+    background-color: var(--bh_color_white);
+}
+
+.pmh-signup-select {
+    .select-wrap {
+        display: flex;
+        gap: 30px;
+        .pmh-signup-card {
+            display: block;
+            width: calc((100% - 30px) / 2);
+            border: 1px solid var(--bh_color_gray_300);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: all .3s;
+            &:hover {
+                box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.1);
+                border-color: var(--bh_color_main);
+            }
+            .pmh-signup-card-desc {
+                color: var(--bh_color_gray_600);
+            }
+            .pmh-signup-card-label {
+                font-size: 24px;
+                font-weight: bold;
+                margin-bottom: 20px;
+            }
+        }
+    }
+}
+
+.social-login-wrap {
+    > .bh_row {
+        margin: 30px 0;
+    }
+    .line {
+        width: 100%;
+        height: 1px;
+        background-color: var(--bh_color_gray_300);
+    }
+    .social-login-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        line-height: 60px;
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        border: 1px solid var(--bh_color_gray_300);
+        border-radius: 10px;
+        i {
+            font-size: 24px;
+            font-weight: normal;
+        }
+        &.kakao {
+            background-color: #fedf2a;
+            border-color: #fedf2a;
+            margin-bottom: 10px;
+        }
+    }
+}
+
+@media(max-width:992px) {
+    .body {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-top: 0;
+        .content_wrap {
+            width: 100%;
+        }
+    }
+
+    .pmh-page-title {
+        font-size: 20px;
+        margin-bottom: 30px;
+    }
+
+    .common-wrap {
+        padding: 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .pmh-signup-select {
+        .select-wrap {
+            gap: 15px;
+            .pmh-signup-card {
+                width: calc((100% - 15px) / 2);
+                border-radius: 10px;
+                padding: 20px;
+                .pmh-signup-card-desc {
+                    font-size: 13px;
+                }
+                .pmh-signup-card-label {
+                    font-size: 18px;
+                    margin-bottom: 10px;
+                }
+                img {
+                    height: 40px;
+                }
+            }
+        }
+    }
+
+    .social-login-wrap {
+        > .bh_row {
+            margin: 30px 0 15px 0;
+        }
+        .social-login-btn {
+            line-height: 40px;
+            font-size: 14px;
+            border-radius: 5px;
+            i {
+                font-size: 16px;
+            }
+        }
+    }
+
+    footer {
+        display: none;
+    }
+}

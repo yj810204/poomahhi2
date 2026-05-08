@@ -1,0 +1,40 @@
+<table name="poomahhi_product">
+	<column name="product_srl" type="number" size="11" notnull="notnull" primary_key="primary_key" />
+	<column name="module_srl" type="number" size="11" notnull="notnull" index="idx_module_srl" />
+	<column name="category_srl" type="number" size="11" default="0" index="idx_category_srl" />
+	<column name="extra_template_srl" type="number" size="11" default="0" />
+	<column name="member_srl" type="number" size="11" notnull="notnull" index="idx_member_srl" />
+	<column name="title" type="varchar" size="250" notnull="notnull" />
+	<column name="short_description" type="varchar" size="500" />
+	<column name="content" type="bigtext" />
+	<column name="shopping_channel" type="varchar" size="250" />
+	<column name="company_name" type="varchar" size="250" />
+	<column name="product_url" type="varchar" size="500" />
+	<column name="product_image" type="varchar" size="500" />
+	<column name="actual_price" type="number" size="11" default="0" />
+	<column name="max_applicants" type="number" size="11" default="0" />
+	<column name="apply_start_date" type="varchar" size="14" />
+	<column name="apply_end_date" type="varchar" size="14" />
+	<column name="selection_date" type="varchar" size="14" />
+	<column name="review_start_date" type="varchar" size="14" />
+	<column name="review_end_date" type="varchar" size="14" />
+	<column name="result_date" type="varchar" size="14" />
+	<column name="provision" type="text" />
+	<column name="mission" type="text" />
+	<column name="mission_tags" type="varchar" size="500" />
+	<column name="keywords" type="text" />
+	<column name="notice" type="text" />
+	<column name="deadline_date" type="varchar" size="14" />
+	<column name="product_type" type="varchar" size="20" default="product" index="idx_product_type" />
+	<column name="region_srl" type="number" size="11" default="0" index="idx_region_srl" />
+	<column name="contact" type="varchar" size="100" />
+	<column name="zipcode" type="varchar" size="10" />
+	<column name="address" type="varchar" size="500" />
+	<column name="address_detail" type="varchar" size="500" />
+	<column name="visit_info" type="text" />
+	<column name="status" type="varchar" size="20" default="active" index="idx_status" />
+	<column name="content_access_type" type="varchar" size="20" default="public" index="idx_content_access_type" />
+	<column name="point_cost" type="number" size="11" default="0" />
+	<column name="regdate" type="date" index="idx_regdate" />
+	<column name="last_update" type="date" />
+</table>

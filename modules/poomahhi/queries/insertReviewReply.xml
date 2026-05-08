@@ -1,0 +1,11 @@
+<query id="insertReviewReply" action="insert">
+	<tables>
+		<table name="poomahhi_review_reply" />
+	</tables>
+	<columns>
+		<column name="reply_srl" var="reply_srl" />
+		<column name="review_srl" var="review_srl" />
+		<column name="member_srl" var="member_srl" />
+		<column name="content" var="content" />
+	</columns>
+</query>

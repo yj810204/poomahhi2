@@ -1,0 +1,17 @@
+<query id="getReviewReplies" action="select">
+	<tables>
+		<table name="poomahhi_review_reply" alias="rr" />
+	</tables>
+	<columns>
+		<column name="rr.*" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="rr.review_srl" var="review_srl" notnull="notnull" />
+	</conditions>
+	<navigation>
+		<index var="sort_index" default="reply_srl" order="asc" />
+		<list_count var="list_count" default="100" />
+		<page_count var="page_count" default="10" />
+		<page var="page" default="1" />
+	</navigation>
+</query>

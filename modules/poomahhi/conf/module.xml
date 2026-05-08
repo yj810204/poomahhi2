@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module>
+	<grants>
+		<grant name="access" default="guest">
+			<title xml:lang="ko">접근 권한</title>
+		</grant>
+		<grant name="apply" default="member">
+			<title xml:lang="ko">신청 권한</title>
+		</grant>
+		<grant name="write_product" default="manager">
+			<title xml:lang="ko">상품 등록 권한</title>
+		</grant>
+		<grant name="manager" default="manager">
+			<title xml:lang="ko">관리 권한</title>
+		</grant>
+	</grants>
+
+	<permissions>
+		<permission action="dispPoomahhiAdminConfig" target="manager" />
+		<permission action="dispPoomahhiAdminCategoryList" target="manager" />
+		<permission action="dispPoomahhiAdminChannelList" target="manager" />
+		<permission action="dispPoomahhiAdminExtraTemplate" target="manager" />
+		<permission action="dispPoomahhiAdminExtraDef" target="manager" />
+		<permission action="dispPoomahhiAdminProductList" target="manager" />
+		<permission action="dispPoomahhiAdminApplicationList" target="manager" />
+		<permission action="dispPoomahhiAdminSettlement" target="manager" />
+		<permission action="procPoomahhiAdminSaveConfig" target="manager" />
+		<permission action="procPoomahhiAdminSaveChannel" target="manager" />
+		<permission action="procPoomahhiAdminDeleteChannel" target="manager" />
+		<permission action="procPoomahhiAdminSortChannels" target="manager" />
+		<permission action="procPoomahhiAdminSaveExtraTemplate" target="manager" />
+		<permission action="procPoomahhiAdminDeleteExtraTemplate" target="manager" />
+		<permission action="procPoomahhiAdminSortExtraTemplates" target="manager" />
+		<permission action="procPoomahhiAdminSaveExtraDef" target="manager" />
+		<permission action="procPoomahhiAdminDeleteExtraDef" target="manager" />
+		<permission action="procPoomahhiAdminSortExtraDefs" target="manager" />
+		<permission action="dispPoomahhiAdminRegionList" target="manager" />
+		<permission action="procPoomahhiAdminSaveRegion" target="manager" />
+		<permission action="procPoomahhiAdminDeleteRegion" target="manager" />
+		<permission action="procPoomahhiAdminSortRegions" target="manager" />
+		<permission action="procPoomahhiGetExtraDefsByTemplate" target="member" />
+		<permission action="procPoomahhiDeductPointForView" target="member" />
+	</permissions>
+
+	<actions>
+		<!-- Front View -->
+		<action name="dispPoomahhiProductList" type="view" index="true" />
+		<action name="dispPoomahhiSearchResult" type="view" />
+		<action name="dispPoomahhiProductDetail" type="view" />
+		<action name="dispPoomahhiProductWrite" type="view" />
+		<action name="dispPoomahhiApplicationWrite" type="view" />
+		<action name="dispPoomahhiApplicationList" type="view" />
+		<action name="dispPoomahhiApplicationManage" type="view" />
+		<action name="dispPoomahhiApplicationManageDetail" type="view" />
+		<action name="dispPoomahhiApplicationDetail" type="view" />
+		<action name="dispPoomahhiReviewWrite" type="view" />
+		<action name="dispPoomahhiReviewEdit" type="view" />
+		<action name="dispPoomahhiMyReviews" type="view" />
+		<action name="dispPoomahhiMyPoints" type="view" />
+		<action name="dispPoomahhiMemberReviews" type="view" />
+		<action name="dispPoomahhiWishlist" type="view" />
+		<action name="dispPoomahhiSettlement" type="view" />
+		<action name="dispPoomahhiBusinessNotifications" type="view" />
+		<action name="dispPoomahhiCreatorDashboard" type="view" />
+		<action name="dispPoomahhiProductWriteSelect" type="view" />
+		<action name="dispPoomahhiProductManageList" type="view" />
+		<action name="dispPoomahhiSignupSelect" type="view" />
+
+		<!-- Front Controller -->
+		<action name="procPoomahhiInsertProduct" type="controller" />
+		<action name="procPoomahhiUpdateProduct" type="controller" />
+		<action name="procPoomahhiDeleteProduct" type="controller" />
+		<action name="procPoomahhiInsertApplication" type="controller" />
+		<action name="procPoomahhiUpdateApplicationStatus" type="controller" />
+		<action name="procPoomahhiApproveReview" type="controller" />
+		<action name="procPoomahhiDeleteApplication" type="controller" />
+		<action name="procPoomahhiInsertReview" type="controller" />
+		<action name="procPoomahhiUpdateReview" type="controller" />
+		<action name="procPoomahhiSaveReviewDraft" type="controller" />
+		<action name="procPoomahhiToggleWishlist" type="controller" />
+		<action name="procPoomahhiInsertReviewReply" type="controller" />
+		<action name="procPoomahhiInsertMemberReview" type="controller" />
+		<action name="procPoomahhiUpdateMemberReview" type="controller" />
+		<action name="procPoomahhiGetExtraDefsByTemplate" type="controller" />
+		<action name="procPoomahhiDeductPointForView" type="controller" />
+		<action name="procPoomahhiGetRegionWidgetContent" type="controller" />
+		<action name="procPoomahhiGetPopularDocsTabContent" type="controller" />
+
+		<!-- Admin View -->
+		<action name="dispPoomahhiAdminConfig" type="view" admin_index="true" />
+		<action name="dispPoomahhiAdminCategoryList" type="view" />
+		<action name="dispPoomahhiAdminChannelList" type="view" />
+		<action name="dispPoomahhiAdminExtraTemplate" type="view" />
+		<action name="dispPoomahhiAdminExtraDef" type="view" />
+		<action name="dispPoomahhiAdminProductList" type="view" />
+		<action name="dispPoomahhiAdminApplicationList" type="view" />
+		<action name="dispPoomahhiAdminSettlement" type="view" />
+
+		<action name="dispPoomahhiAdminRegionList" type="view" />
+
+		<!-- Admin Controller -->
+		<action name="procPoomahhiAdminSaveConfig" type="controller" />
+		<action name="procPoomahhiAdminSaveChannel" type="controller" />
+		<action name="procPoomahhiAdminDeleteChannel" type="controller" />
+		<action name="procPoomahhiAdminSortChannels" type="controller" />
+		<action name="procPoomahhiAdminSaveExtraTemplate" type="controller" />
+		<action name="procPoomahhiAdminDeleteExtraTemplate" type="controller" />
+		<action name="procPoomahhiAdminSortExtraTemplates" type="controller" />
+		<action name="procPoomahhiAdminSaveExtraDef" type="controller" />
+		<action name="procPoomahhiAdminDeleteExtraDef" type="controller" />
+		<action name="procPoomahhiAdminSortExtraDefs" type="controller" />
+		<action name="procPoomahhiAdminSaveRegion" type="controller" />
+		<action name="procPoomahhiAdminDeleteRegion" type="controller" />
+		<action name="procPoomahhiAdminSortRegions" type="controller" />
+	</actions>
+
+	<menus>
+		<menu name="product_list">
+			<title xml:lang="ko">품앗이 상품</title>
+		</menu>
+		<menu name="category">
+			<title xml:lang="ko">카테고리</title>
+		</menu>
+		<menu name="config">
+			<title xml:lang="ko">설정</title>
+		</menu>
+	</menus>
+</module>

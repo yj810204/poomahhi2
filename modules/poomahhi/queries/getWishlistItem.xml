@@ -1,0 +1,12 @@
+<query id="getWishlistItem" action="select">
+	<tables>
+		<table name="poomahhi_wishlist" alias="w" />
+	</tables>
+	<columns>
+		<column name="w.*" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="w.member_srl" var="member_srl" notnull="notnull" pipe="AND" />
+		<condition operation="equal" column="w.product_srl" var="product_srl" notnull="notnull" />
+	</conditions>
+</query>

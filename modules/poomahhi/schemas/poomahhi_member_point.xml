@@ -1,0 +1,7 @@
+<table name="poomahhi_member_point">
+	<column name="member_srl" type="number" size="11" notnull="notnull" primary_key="primary_key" />
+	<column name="point" type="number" size="11" default="0" />
+	<column name="accumulated_point" type="number" size="11" default="0" />
+	<column name="pending_point" type="number" size="11" default="0" />
+	<column name="last_update" type="date" />
+</table>

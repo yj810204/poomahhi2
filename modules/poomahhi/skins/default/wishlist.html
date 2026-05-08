@@ -1,0 +1,123 @@
+<load target="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+<include target="../../../member/skins/poomahhi/common_header.html" />
+
+<div class="member-contents">
+	<h1>관심 품앗이</h1>
+	<div class="mypage_wrap">
+		<div class="pmh-wishlist">
+
+			<!-- 탭: 전체 / 상품 품앗이 / 지역 품앗이 -->
+			<div class="poomahhi-tabs">
+				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiWishlist')}" class="poomahhi-tab <!--@if($current_wishlist_type == 'all')-->active<!--@end-->">전체</a>
+				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiWishlist', 'type', 'product')}" class="poomahhi-tab <!--@if($current_wishlist_type == 'product')-->active<!--@end-->">상품 품앗이</a>
+				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiWishlist', 'type', 'local')}" class="poomahhi-tab <!--@if($current_wishlist_type == 'local')-->active<!--@end-->">지역 품앗이</a>
+			</div>
+
+			<!--@if($XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/poomahhi/wishlist_toggle')-->
+			<div class="message {$XE_VALIDATOR_MESSAGE_TYPE}" style="margin-bottom:15px; border-radius:6px;">
+				<p>{$XE_VALIDATOR_MESSAGE}</p>
+			</div>
+			<!--@end-->
+
+			<!--@if($wishlist)-->
+			<div class="pmh-wishlist-list">
+				<!--@foreach($wishlist as $wish_item)-->
+				<!--@if($wish_item->product)-->
+				<div class="pmh-wishlist-card">
+					<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductDetail', 'product_srl', $wish_item->product_srl)}" class="pmh-wishlist-card-link">
+						<div class="pmh-wishlist-card-image">
+							<!--@if($wish_item->product->product_image)-->
+							<img src="{$wish_item->product->product_image}" alt="{$wish_item->product->title}" />
+							<!--@else-->
+							<div class="pmh-wishlist-noimg"></div>
+							<!--@end-->
+							<!--@if($wish_item->product->status == 'closed')-->
+							<span class="pmh-wishlist-badge closed">마감</span>
+							<!--@end-->
+						</div>
+
+						<div class="pmh-wishlist-card-body">
+							<div class="pmh-wishlist-tags tag">
+								<!--@if($wish_item->product->product_type == 'local' && $wish_item->product->region_title)-->
+								<span class="area 
+									<!--@if($wish_item->product->region_title == '수도권')-->seoul<!--@end-->
+									<!--@if($wish_item->product->region_title == '충청권')-->chungcheong<!--@end-->
+									<!--@if($wish_item->product->region_title == '호남권')-->honam<!--@end-->
+									<!--@if($wish_item->product->region_title == '영남권')-->yeongnam<!--@end-->
+									">
+								{$wish_item->product->region_title}</span>
+								<!--@elseif($wish_item->product->shopping_channel)-->
+								<span class="channel 
+									<!--@if($wish_item->product->shopping_channel == '올리브영')-->oliveyoung<!--@end-->
+									<!--@if($wish_item->product->shopping_channel == '쿠팡')-->coupang<!--@end-->
+									<!--@if($wish_item->product->shopping_channel == 'G마켓')-->gmarket<!--@end-->
+									<!--@if($wish_item->product->shopping_channel == '11번가')-->11st<!--@end-->
+									<!--@if($wish_item->product->shopping_channel == '자사몰')-->mall<!--@end-->
+									<!--@if($wish_item->product->shopping_channel == '마켓컬리')-->marketcurly<!--@end-->
+									<!--@if($wish_item->product->shopping_channel == '카카오선물하기')-->kakaogift<!--@end-->
+									<!--@if($wish_item->product->shopping_channel == '네이버 스마트스토어')-->smartstore<!--@end-->
+									<!--@if($wish_item->product->shopping_channel == '무신사')-->musinsa<!--@end-->
+									<!--@if($wish_item->product->shopping_channel == '옥션')-->auction<!--@end-->
+									<!--@if($wish_item->product->shopping_channel == '카카오쇼핑')-->kakaoshopping<!--@end-->
+									">
+								{$wish_item->product->shopping_channel}</span>
+								<!--@end-->
+								<!--@if($wish_item->product->dday_text)-->
+								<span class="pmh-wishlist-tag dday">{$wish_item->product->dday_text}</span>
+								<!--@end-->
+							</div>
+
+							<h3 class="pmh-wishlist-title">
+								<!--@if($wish_item->product->company_name)-->
+								<span class="pmh-wishlist-company">{$wish_item->product->company_name}</span>
+								<!--@end-->
+								<span class="pmh-wishlist-product">[{$wish_item->product->title}]</span>
+							</h3>
+
+							<!--@if($wish_item->product->content_summary)-->
+							<p class="pmh-wishlist-desc">{$wish_item->product->content_summary}</p>
+							<!--@end-->
+						</div>
+					</a>
+
+					<form action="./" method="post" class="pmh-wishlist-remove-form">
+						<input type="hidden" name="mid" value="{$mid}" />
+						<input type="hidden" name="act" value="procPoomahhiToggleWishlist" />
+						<input type="hidden" name="product_srl" value="{$wish_item->product_srl}" />
+						<!--@if($current_wishlist_type == 'all')-->
+						<input type="hidden" name="success_return_url" value="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiWishlist')}" />
+						<!--@else-->
+						<input type="hidden" name="success_return_url" value="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiWishlist', 'type', $current_wishlist_type)}" />
+						<!--@end-->
+						<input type="hidden" name="xe_validator_id" value="modules/poomahhi/wishlist_toggle" />
+						<button type="submit" class="pmh-btn-remove" onclick="return confirm('관심 목록에서 제거하시겠습니까?');"><i class="ri-heart-fill"></i></button>
+					</form>
+				</div>
+				<!--@end-->
+				<!--@end-->
+			</div>
+
+			<!-- 페이지네이션 -->
+			<!--@if($page_navigation && $page_navigation->total_page > 1)-->
+			<div class="pmh-pagination">
+				<!--@if($page_navigation->cur_page > 1)-->
+				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiWishlist', 'type', $current_wishlist_type, 'page', $page_navigation->cur_page - 1)}" class="pmh-page-link">&lsaquo;</a>
+				<!--@end-->
+				<!--@for($i = $page_navigation->first_page; $i <= $page_navigation->last_page; $i++)-->
+				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiWishlist', 'type', $current_wishlist_type, 'page', $i)}" class="pmh-page-link <!--@if($i == $page_navigation->cur_page)-->active<!--@end-->">{$i}</a>
+				<!--@end-->
+				<!--@if($page_navigation->cur_page < $page_navigation->total_page)-->
+				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiWishlist', 'type', $current_wishlist_type, 'page', $page_navigation->cur_page + 1)}" class="pmh-page-link">&rsaquo;</a>
+				<!--@end-->
+			</div>
+			<!--@end-->
+			<!--@else-->
+			<div class="pmh-empty">
+				<p>관심 등록한 품앗이가 없습니다.</p>
+			</div>
+			<!--@end-->
+		</div>
+	</div>
+</div>
+
+<include target="../../../member/skins/poomahhi/common_footer.html" />

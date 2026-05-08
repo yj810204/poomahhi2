@@ -1,0 +1,24 @@
+<query id="insertApplication" action="insert">
+	<tables>
+		<table name="poomahhi_application" />
+	</tables>
+	<columns>
+		<column name="application_srl" var="application_srl" />
+		<column name="product_srl" var="product_srl" />
+		<column name="member_srl" var="member_srl" />
+		<column name="status" var="status" />
+		<column name="applicant_comment" var="applicant_comment" />
+		<column name="applicant_name" var="applicant_name" />
+		<column name="birth_date" var="birth_date" />
+		<column name="gender" var="gender" />
+		<column name="phone" var="phone" />
+		<column name="applicant_contact_name" var="applicant_contact_name" />
+		<column name="applicant_contact_phone" var="applicant_contact_phone" />
+		<column name="applicant_zipcode" var="applicant_zipcode" />
+		<column name="applicant_address" var="applicant_address" />
+		<column name="applicant_address_detail" var="applicant_address_detail" />
+		<column name="privacy_agreed" var="privacy_agreed" />
+		<column name="deadline" var="deadline" />
+		<column name="regdate" var="regdate" />
+	</columns>
+</query>

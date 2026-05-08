@@ -1,0 +1,12 @@
+<query id="getApplicationCount" action="select">
+	<tables>
+		<table name="poomahhi_application" alias="a" />
+	</tables>
+	<columns>
+		<column name="count(*)" alias="count" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="a.product_srl" var="product_srl" pipe="AND" />
+		<condition operation="equal" column="a.member_srl" var="member_srl" pipe="AND" />
+	</conditions>
+</query>

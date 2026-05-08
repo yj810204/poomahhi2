@@ -1,0 +1,10 @@
+<query id="insertWishlist" action="insert">
+	<tables>
+		<table name="poomahhi_wishlist" />
+	</tables>
+	<columns>
+		<column name="wishlist_srl" var="wishlist_srl" />
+		<column name="member_srl" var="member_srl" />
+		<column name="product_srl" var="product_srl" />
+	</columns>
+</query>

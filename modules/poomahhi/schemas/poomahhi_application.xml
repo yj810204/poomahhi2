@@ -1,0 +1,24 @@
+<table name="poomahhi_application">
+	<column name="application_srl" type="number" size="11" notnull="notnull" primary_key="primary_key" />
+	<column name="product_srl" type="number" size="11" notnull="notnull" index="idx_product_srl" />
+	<column name="member_srl" type="number" size="11" notnull="notnull" index="idx_member_srl" />
+	<column name="status" type="varchar" size="20" default="applied" index="idx_status" />
+	<column name="applicant_comment" type="text" />
+	<column name="applicant_name" type="varchar" size="100" />
+	<column name="birth_date" type="varchar" size="20" />
+	<column name="gender" type="varchar" size="10" />
+	<column name="phone" type="varchar" size="20" />
+	<column name="applicant_contact_name" type="varchar" size="100" />
+	<column name="applicant_contact_phone" type="varchar" size="20" />
+	<column name="applicant_zipcode" type="varchar" size="20" />
+	<column name="applicant_address" type="varchar" size="500" />
+	<column name="applicant_address_detail" type="varchar" size="500" />
+	<column name="privacy_agreed" type="varchar" size="1" default="N" />
+	<column name="deadline" type="varchar" size="14" />
+	<column name="admin_memo" type="text" />
+	<column name="rejection_reason" type="varchar" size="100" />
+	<column name="rejection_detail" type="text" />
+	<column name="revision_request_content" type="text" />
+	<column name="regdate" type="date" index="idx_regdate" />
+	<column name="last_update" type="date" />
+</table>

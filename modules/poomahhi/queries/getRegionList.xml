@@ -1,0 +1,17 @@
+<query id="getRegionList" action="select">
+	<tables>
+		<table name="poomahhi_region" alias="r" />
+	</tables>
+	<columns>
+		<column name="r.*" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="r.module_srl" var="module_srl" pipe="AND" />
+	</conditions>
+	<navigation>
+		<index var="sort_index" default="list_order" order="asc" />
+		<list_count var="list_count" default="100" />
+		<page_count var="page_count" default="10" />
+		<page var="page" default="1" />
+	</navigation>
+</query>

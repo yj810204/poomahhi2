@@ -1,0 +1,173 @@
+<div class="pmh-business-layout">
+<include target="_business_sidebar.html" />
+<div class="member-contents pmh-business-main poomahhi-creator-dashboard">
+	<h1>비즈니스 홈</h1>
+
+	<div class="business_inner">
+		<!--@if($has_new_application_banner)-->
+		<div class="new_section">
+			<span><strong>NEW</strong>👤 새로운 <b>품앗이 신청</b>이 왔습니다.</span>
+			<!--@if($new_banner_product_srl)-->
+			<div class="ds-f ai-c">
+				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationManage', 'product_srl', $new_banner_product_srl)}" class="go_btn">보러가기</a>
+				<!--@end-->
+				<i class="ri-close-line close_new"></i>
+			</div>
+		</div>
+		<!--@end-->
+
+		<div class="pmg-chart-wrap">
+			<section class="pmh-stat-donut-card">
+				<div class="inner">
+					<h3>완료 · 진행 중 품앗이 통계</h3>
+					<div class="pmh-stat-donut-chart">
+						<!--@if($dash_product_total < 1)-->
+						<div class="pmh-donut-ring pmh-donut-ring--nodata">
+						<!--@elseif($dash_donut_completed_pct >= 100)-->
+						<div class="pmh-donut-ring pmh-donut-ring--full">
+						<!--@elseif($dash_donut_completed_pct <= 0)-->
+						<div class="pmh-donut-ring pmh-donut-ring--zero">
+						<!--@else-->
+						<div class="pmh-donut-ring" style="--pmh-donut-complete-deg: {$dash_donut_completed_deg}deg;">
+						<!--@end-->
+							<div class="pmh-donut-hole">
+								<span class="pmh-donut-hole-label">완료</span>
+								<strong class="pmh-donut-hole-pct"><!--@if($dash_product_total > 0)-->{$dash_donut_completed_pct}<!--@else-->0<!--@end-->%</strong>
+							</div>
+						</div>
+					</div>
+					<div class="pmh-donut-legend">
+						<div class="pmh-donut-legend-col">
+							<div class="pmh-donut-legend-head"><span class="pmh-donut-dot pmh-donut-dot-done"></span> 완료</div>
+							<div class="pmh-donut-legend-pct"><!--@if($dash_product_total > 0)-->{$dash_donut_completed_pct}<!--@else-->0<!--@end-->%</div>
+							<div class="pmh-donut-legend-count">{$completed_product_count}건</div>
+						</div>
+						<div class="pmh-donut-legend-divider"></div>
+						<div class="pmh-donut-legend-col">
+							<div class="pmh-donut-legend-head"><span class="pmh-donut-dot pmh-donut-dot-go"></span> 진행중</div>
+							<div class="pmh-donut-legend-pct"><!--@if($dash_product_total > 0)-->{$dash_donut_ongoing_pct}<!--@else-->0<!--@end-->%</div>
+							<div class="pmh-donut-legend-count">{$active_product_count}건</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="pmh-dashboard-kpi-row">
+				<div class="inner">
+					<h3>품앗이 신청 · 선정 현황</h3>
+					<div class="pmh-donut-legend bg_style">
+						<div class="pmh-donut-legend-col">
+							<div class="pmh-donut-legend-head">신청자</div>
+							<div class="pmh-donut-legend-pct">{$dash_total_applications}명</div>
+						</div>
+						<div class="pmh-donut-legend-divider"></div>
+						<div class="pmh-donut-legend-col">
+							<div class="pmh-donut-legend-head">선정자</div>
+							<div class="pmh-donut-legend-pct">{$dash_total_selected}명</div>
+						</div>
+					</div>
+				</div>
+				<div class="inner">
+					<h3>품앗이 검수대기 · 수정요청 현황</h3>
+					<div class="pmh-donut-legend bg_style">
+						<div class="pmh-donut-legend-col">
+							<div class="pmh-donut-legend-head">검수대기</div>
+							<div class="pmh-donut-legend-pct">{$dash_inspection_pending}명</div>
+						</div>
+						<div class="pmh-donut-legend-divider"></div>
+						<div class="pmh-donut-legend-col">
+							<div class="pmh-donut-legend-head">수정요청</div>
+							<div class="pmh-donut-legend-pct">{$dash_revision_pending}명</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="pmh-dashboard-rate-card">
+				<div class="inner">
+					<h3>{$lang_dash->dash_apply_rate_title}</h3>
+					<!--@if($dash_apply_rate_items)-->
+					<ul class="pmh-dashboard-rate-list">
+						<!--@foreach($dash_apply_rate_items as $dash_item)-->
+						<li class="pmh-dashboard-rate-item">
+							<div class="pmh-dashboard-rate-head">
+								<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductDetail', 'product_srl', $dash_item->product_srl)}" class="pmh-dashboard-rate-name"><!--@if($dash_item->title)-->{$dash_item->title}<!--@else-->#{$dash_item->product_srl}<!--@end--></a>
+								<span class="pmh-dashboard-rate-meta">
+									{@ 
+										$week = array("일", "월", "화", "수", "목", "금", "토");
+										$w = date('w', strtotime($dash_item->selection_date));
+									}
+									<!--@if($dash_item->selection_date)-->
+										선정자 발표 {zdate($dash_item->selection_date, 'm.d')}({$week[$w]})
+									<!--@else-->
+										선정자 발표 -
+									<!--@end-->
+								</span>
+							</div>
+							<div class="pmh-rate-bar-track">
+								<div class="pmh-rate-bar-fill" style="width:{$dash_item->pct}%;"></div>
+								<div class="pmh-rate-bar-text">
+									<span class="pmh-rate-bar-pct">{$dash_item->pct}%</span>
+									<span class="pmh-rate-bar-num"><b>{$dash_item->current}</b>/<!--@if($dash_item->max)-->{$dash_item->max}<!--@else-->0<!--@end-->명</span>
+								</div>
+							</div>
+						</li>
+						<!--@end-->
+					</ul>
+					<!--@else-->
+					<p class="empty">{$lang_dash->dash_apply_rate_empty}</p>
+					<!--@end-->
+				</div>
+			</section>
+
+			<section class="pmh-dashboard-rate-card">
+					<div class="inner">
+					<h3>{$lang_dash->dash_cert_rate_title}</h3>
+					<!--@if($dash_cert_rate_items)-->
+					<ul class="pmh-dashboard-rate-list">
+						<!--@foreach($dash_cert_rate_items as $cert_item)-->
+						<li class="pmh-dashboard-rate-item">
+							<div class="pmh-dashboard-rate-head">
+								{@ 
+									$week = array("일", "월", "화", "수", "목", "금", "토");
+									$w = date('w', strtotime($dash_item->selection_date));
+								}
+								<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductDetail', 'product_srl', $cert_item->product_srl)}" class="pmh-dashboard-rate-name"><!--@if($cert_item->title)-->{$cert_item->title}<!--@else-->#{$cert_item->product_srl}<!--@end--></a>
+								<span class="pmh-dashboard-rate-meta">
+									<!--@if($cert_item->review_start_date)-->
+										<!--@if($cert_item->review_end_date)-->
+										리뷰 등록기간 {zdate($cert_item->review_start_date, 'n.j')} ~ {zdate($cert_item->review_end_date, 'n.j')}
+										<!--@else-->
+										리뷰 등록기간 {zdate($cert_item->review_start_date, 'n.j')} ~
+										<!--@end-->
+										<!--@elseif($cert_item->review_end_date)-->
+										리뷰 등록기간 ~ {zdate($cert_item->review_end_date, 'n.j')}
+										<!--{zdate($cert_item->review_end_date, 'n.j')}({$week[$w]})-->
+										<!--@else-->리뷰 등록기간 -
+									<!--@end-->
+								</span>
+							</div>
+							<div class="pmh-rate-bar-track">
+								<div class="pmh-rate-bar-fill" style="width:{$cert_item->pct}%;"></div>
+								<div class="pmh-rate-bar-text">
+									<span class="pmh-rate-bar-pct">{$cert_item->pct}%</span>
+									<span class="pmh-rate-bar-num">{$cert_item->completed}/{$cert_item->selected}명</span>
+								</div>
+							</div>
+						</li>
+						<!--@end-->
+					</ul>
+					<!--@else-->
+					<p class="empty">{$lang_dash->dash_cert_rate_empty}</p>
+					<!--@end-->
+				</div>
+			</section>
+		</div>
+	</div>
+</div>
+
+<script>
+	$(".new_section .close_new").on('click', function(){
+		$(".new_section").hide();
+	});
+</script>

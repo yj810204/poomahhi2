@@ -1,0 +1,29 @@
+<query id="getMemberReviewListByTarget" action="select">
+	<tables>
+		<table name="poomahhi_member_review" alias="mr" />
+		<table name="poomahhi_product" alias="p" type="left join">
+			<conditions>
+				<condition operation="equal" column="mr.product_srl" default="p.product_srl" />
+			</conditions>
+		</table>
+	</tables>
+	<columns>
+		<column name="mr.*" />
+		<column name="p.title" alias="product_title" />
+		<column name="p.company_name" />
+		<column name="p.product_image" />
+		<column name="p.short_description" alias="product_description" />
+		<column name="p.product_type" />
+		<column name="p.region_srl" />
+		<column name="p.deadline_date" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="mr.target_member_srl" var="target_member_srl" notnull="notnull" />
+	</conditions>
+	<navigation>
+		<index var="sort_index" default="review_srl" order="desc" />
+		<list_count var="list_count" default="20" />
+		<page_count var="page_count" default="10" />
+		<page var="page" default="1" />
+	</navigation>
+</query>

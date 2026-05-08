@@ -1,0 +1,12 @@
+<query id="updateRegion" action="update">
+	<tables>
+		<table name="poomahhi_region" alias="r" />
+	</tables>
+	<columns>
+		<column name="title" var="title" />
+		<column name="list_order" var="list_order" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="r.region_srl" var="region_srl" pipe="AND" />
+	</conditions>
+</query>

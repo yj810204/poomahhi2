@@ -1,0 +1,9 @@
+<table name="poomahhi_point_log">
+	<column name="log_srl" type="number" size="11" notnull="notnull" primary_key="primary_key" index="idx_log_srl" />
+	<column name="member_srl" type="number" size="11" notnull="notnull" index="idx_member_srl" />
+	<column name="point" type="number" size="11" notnull="notnull" />
+	<column name="type" type="varchar" size="20" notnull="notnull" default="earn" index="idx_type" />
+	<column name="description" type="varchar" size="500" />
+	<column name="related_srl" type="number" size="11" default="0" />
+	<column name="regdate" type="varchar" size="14" index="idx_regdate" />
+</table>

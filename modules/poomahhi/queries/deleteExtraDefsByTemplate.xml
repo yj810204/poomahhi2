@@ -1,0 +1,8 @@
+<query id="deleteExtraDefsByTemplate" action="delete">
+	<tables>
+		<table name="poomahhi_extra_def" />
+	</tables>
+	<conditions>
+		<condition operation="equal" column="template_srl" var="template_srl" notnull="notnull" />
+	</conditions>
+</query>

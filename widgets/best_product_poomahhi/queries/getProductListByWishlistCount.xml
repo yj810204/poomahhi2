@@ -1,0 +1,28 @@
+<query id="getProductListByWishlistCount" action="select">
+	<tables>
+		<table name="poomahhi_product" alias="p" />
+		<table name="poomahhi_wishlist" alias="w" type="left join">
+			<conditions>
+				<condition operation="equal" column="p.product_srl" default="w.product_srl" />
+			</conditions>
+		</table>
+	</tables>
+	<columns>
+		<column name="p.*" />
+		<column name="count(w.wishlist_srl)" alias="wish_count" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="p.module_srl" var="module_srl" notnull="notnull" pipe="AND" />
+		<condition operation="equal" column="p.product_type" var="product_type" default="product" pipe="AND" />
+		<condition operation="equal" column="p.status" var="status" default="active" pipe="AND" />
+	</conditions>
+	<groups>
+		<group column="p.product_srl" />
+	</groups>
+	<navigation>
+		<index var="sort_index" default="wish_count" order="desc" />
+		<list_count var="list_count" default="9" />
+		<page_count var="page_count" default="1" />
+		<page var="page" default="1" />
+	</navigation>
+</query>

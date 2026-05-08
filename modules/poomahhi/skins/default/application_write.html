@@ -1,0 +1,310 @@
+<load target="css/product.scss" />
+<div class="pmh-apply pmh-detail">
+
+<div class="pmh-page-title">품앗이 신청하기</div>
+
+<!--@if($XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/poomahhi/application_write')-->
+<div class="pmh-apply-message pmh-apply-message-{$XE_VALIDATOR_MESSAGE_TYPE}">
+	<p>{$XE_VALIDATOR_MESSAGE}</p>
+</div>
+<!--@end-->
+
+<div class="pmh-detail-layout application_write">
+	<div class="pmh-detail-main">
+
+		<!--@if($product->product_url)-->
+		<div class="pmh-apply-section">
+			<div class="pmh-section-block ai-c jc-b">
+				<h3 class="pmh-block-title w-a">상품 보러가기</h3>
+				<div class="pmh-block-body w-a">
+					<a href="{$product->product_url}" target="_blank" class="pmh-link-product mg-0">상품 보러가기 <i class="ri-arrow-right-line fw-n"></i></a>
+				</div>
+			</div>
+		</div>
+		<!--@end-->
+
+		<!--@if($product->provision)-->
+		<div class="pmh-apply-section">
+			<div class="pmh-section-block">
+				<h3 class="pmh-block-title">제공 내역</h3>
+				<div class="pmh-block-body">
+					<div class="pmh-apply-provision">{$product->provision}</div>
+				</div>
+			</div>
+		</div>
+		<!--@end-->
+
+		<form action="./" method="post" id="applicationForm">
+			<input type="hidden" name="mid" value="{$mid}" />
+			<input type="hidden" name="act" value="procPoomahhiInsertApplication" />
+			<input type="hidden" name="product_srl" value="{$product->product_srl}" />
+			<input type="hidden" name="xe_validator_id" value="modules/poomahhi/application_write" />
+			<input type="hidden" name="success_return_url" value="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationList')}" />
+
+			<div class="pmh-apply-section">
+				<div class="pmh-section-block">
+					<h3 class="pmh-block-title">신청자 한마디</h3>
+					<div class="pmh-block-body">
+						<label class="pmh-apply-field-label"><span class="pmh-required">*</span>신청자 한마디</label>
+						<textarea name="applicant_comment" class="pmh-apply-textarea" rows="5" placeholder="내용을 입력해 주세요." required="required"></textarea>
+					</div>
+				</div>
+			</div>
+
+			<div class="pmh-apply-section">
+				<div class="pmh-section-block">
+					<h3 class="pmh-block-title">기본 정보</h3>
+					<div class="pmh-block-body">
+						<div class="pmh-apply-field-grid">
+							<div class="pmh-apply-field-col">
+								<label class="pmh-apply-field-label">
+									<span class="pmh-required">*</span>이름
+								</label>
+
+								<input type="text"
+									name="applicant_name"
+									class="pmh-apply-input"
+									placeholder="이름을 입력해 주세요."
+									value="<!--@if($member_info->nick_name)-->{$member_info->nick_name}<!--@end-->"
+									<!--@if(!$member_info->nick_name)-->required="required"<!--@end-->
+									disabled
+								/>
+							</div>
+
+							<div class="pmh-apply-field-col">
+								<label class="pmh-apply-field-label">
+									<span class="pmh-required">*</span>출생년도
+								</label>
+
+								<input type="text"
+									name="birth_date"
+									class="pmh-apply-input"
+									placeholder="예: 1997.03.20"
+									value="<!--@if($member_info->birthday)-->{$member_info->birthday}<!--@end-->"
+									<!--@if(!$member_info->birthday)-->required="required"<!--@end-->
+									disabled
+								/>
+							</div>
+						</div>
+
+						<div class="pmh-apply-field-grid">
+							<div class="pmh-apply-field-col">
+								<label class="pmh-apply-field-label">
+									<span class="pmh-required">*</span>성별
+								</label>
+
+								<select name="gender"
+									class="pmh-apply-select"
+									<!--@if(!$member_info->gender)-->required<!--@end-->
+									disabled
+								>
+									<option value="">선택해 주세요</option>
+									<option value="female" <!--@if($member_info->gender == '여')-->selected<!--@end-->>여</option>
+									<option value="male" <!--@if($member_info->gender == '남')-->selected<!--@end-->>남</option>
+								</select>
+							</div>
+
+							<div class="pmh-apply-field-col">
+								<label class="pmh-apply-field-label">
+									<span class="pmh-required">*</span>연락처
+								</label>
+
+								<input type="tel"
+									name="phone"
+									class="pmh-apply-input"
+									placeholder="010-0000-0000"
+									value="<!--@if($member_info->phone_number)-->{$member_info->phone_number}<!--@end-->"
+									<!--@if(!$member_info->phone_number)-->required="required"<!--@end-->
+									disabled
+								/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!--@if($product->product_type == 'local')-->
+			<div class="pmh-apply-section">
+				<div class="pmh-section-block">
+					<h3 class="pmh-block-title">신청 정보 입력</h3>
+					<div class="pmh-block-body">
+						<div class="pmh-apply-field-grid">
+							<div class="pmh-apply-field-col">
+								<label class="pmh-apply-field-label"><span class="pmh-required">*</span>이름</label>
+								<input type="text" name="applicant_contact_name" class="pmh-apply-input" placeholder="이름을 입력해 주세요." required="required" />
+							</div>
+							<div class="pmh-apply-field-col">
+								<label class="pmh-apply-field-label"><span class="pmh-required">*</span>연락처</label>
+								<input type="tel" name="applicant_contact_phone" class="pmh-apply-input" placeholder="010-0000-0000" required="required" />
+							</div>
+						</div>
+						<label class="pmh-apply-field-label"><span class="pmh-required">*</span>주소</label>
+						<div class="pmh-apply-address-wrap">
+							<div class="pmh-apply-address-row">
+								<input type="text" name="applicant_zipcode" id="applicant_zipcode" class="pmh-apply-input" style="flex:1;" placeholder="우편번호" readonly="readonly" />
+								<button type="button" class="pmh-apply-btn-address" onclick="searchAddressApplication();">검색</button>
+							</div>
+							<input type="text" name="applicant_address" id="applicant_address" class="pmh-apply-input" style="margin-top:4px;" placeholder="주소" readonly="readonly" />
+							<input type="text" name="applicant_address_detail" id="applicant_address_detail" class="pmh-apply-input" style="margin-top:4px;" placeholder="상세주소를 입력해 주세요." />
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--@end-->
+
+		<div class="pmh-apply-privacy">
+			<div class="pmh-apply-privacy-left">
+				<p><span class="bh_color_main">*</span>개인정보 수집이용에 대한 동의</p>
+				<!--@if($privacy_content)-->
+				<button type="button" class="pmh-apply-privacy-detail" onclick="togglePrivacyDetail();">자세히보기</button>
+				<!--@end-->
+			</div>
+				<div class="pmh-apply-privacy-right">
+					<label class="pmh-apply-radio"><input type="radio" name="privacy_agreed" value="Y" required="required" /> 동의</label>
+					<label class="pmh-apply-radio"><input type="radio" name="privacy_agreed" value="N" /> 비동의</label>
+				</div>
+			</div>
+
+		<!--@if($privacy_content)-->
+		<div class="pmh-apply-privacy-content" id="privacyContent" style="display:none;">
+			{$privacy_content}
+		</div>
+		<!--@end-->
+
+			<div class="pmh-submit-area">
+				<button type="submit" class="pmh-btn-submit">품앗이 신청하기</button>
+			</div>
+		</form>
+
+	</div>
+
+	<div class="pmh-detail-sidebar">
+		<div class="pmh-sidebar-card">
+			<div class="pmh-sidebar-top">
+				<div class="tag">
+					<!--@if($product->shopping_channel)-->
+					<span class="channel 
+					<!--@if($product->shopping_channel == '올리브영')-->oliveyoung<!--@end-->
+					<!--@if($product->shopping_channel == '쿠팡')-->coupang<!--@end-->
+					<!--@if($product->shopping_channel == 'G마켓')-->gmarket<!--@end-->
+					<!--@if($product->shopping_channel == '11번가')-->11st<!--@end-->
+					<!--@if($product->shopping_channel == '자사몰')-->mall<!--@end-->
+					<!--@if($product->shopping_channel == '마켓컬리')-->marketcurly<!--@end-->
+					<!--@if($product->shopping_channel == '카카오선물하기')-->kakaogift<!--@end-->
+					<!--@if($product->shopping_channel == '네이버 스마트스토어')-->smartstore<!--@end-->
+					<!--@if($product->shopping_channel == '무신사')-->musinsa<!--@end-->
+					<!--@if($product->shopping_channel == '옥션')-->auction<!--@end-->
+					<!--@if($product->shopping_channel == '카카오쇼핑')-->kakaoshopping<!--@end-->
+					">
+					{$product->shopping_channel}</span>
+					<!--@end-->
+					<!--@if($dday_text)-->
+					<span class="dday">{$dday_text}</span>
+					<!--@end-->
+				</div>
+
+				<h3 class="pmh-sidebar-title">
+					<!--@if($product->company_name)-->{$product->company_name} <!--@end-->[{$product->title}]
+				</h3>
+
+				<!--@if($product->actual_price)-->
+				<div class="pmh-sidebar-price">
+					<span class="pmh-price-label">실구매가</span>
+					<span class="pmh-price-value">{number_format($product->actual_price)}<small>원</small></span>
+				</div>
+				<!--@end-->
+			</div>
+
+			<div class="pmh-sidebar-info">
+				<!--@if($product->apply_start_date && $product->apply_end_date)-->
+				<div class="pmh-info-row">
+					<span class="pmh-info-label">품앗이 신청기간</span>
+					<span class="pmh-info-value pmh-info-highlight"><span class="pmh-count-highlight">{zdate($product->apply_start_date, 'm.d')}({zdate($product->apply_start_date, 'D')}) ~ {zdate($product->apply_end_date, 'm.d')}({zdate($product->apply_end_date, 'D')})</span></span>
+				</div>
+				<!--@end-->
+				<!--@if($product->selection_date)-->
+				<div class="pmh-info-row">
+					<span class="pmh-info-label">선정자 발표</span>
+					<span class="pmh-info-value">{zdate($product->selection_date, 'm.d')}({zdate($product->selection_date, 'D')})</span>
+				</div>
+				<!--@end-->
+				<!--@if($product->review_start_date && $product->review_end_date)-->
+				<div class="pmh-info-row">
+					<span class="pmh-info-label">품앗이 등록기간</span>
+					<span class="pmh-info-value">{zdate($product->review_start_date, 'm.d')}({zdate($product->review_start_date, 'D')}) ~ {zdate($product->review_end_date, 'm.d')}({zdate($product->review_end_date, 'D')})</span>
+				</div>
+				<!--@end-->
+				<!--@if($product->result_date)-->
+				<div class="pmh-info-row">
+					<span class="pmh-info-label">품앗이 결과발표</span>
+					<span class="pmh-info-value">{zdate($product->result_date, 'm.d')}({zdate($product->result_date, 'D')})</span>
+				</div>
+				<!--@end-->
+				<div class="pmh-info-row">
+					<span class="pmh-info-label">신청자</span>
+					<span class="pmh-info-value"><span class="pmh-count-highlight">{$application_count}</span><!--@if($product->max_applicants > 0)-->/{$product->max_applicants}명<!--@else-->명<!--@end--></span>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+</div>
+
+<!--@if($product->product_type == 'local')-->
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<!--@end-->
+<script>
+function togglePrivacyDetail(){
+	var el = document.getElementById('privacyContent');
+	if(el.style.display === 'none'){
+		el.style.display = 'block';
+	} else {
+		el.style.display = 'none';
+	}
+}
+<!--@if($product->product_type == 'local')-->
+function searchAddressApplication(){
+	new daum.Postcode({
+		oncomplete: function(data){
+			document.getElementById('applicant_zipcode').value = data.zonecode;
+			document.getElementById('applicant_address').value = data.roadAddress || data.jibunAddress;
+			document.getElementById('applicant_address_detail').focus();
+		}
+	}).open();
+}
+<!--@end-->
+
+document.getElementById('applicationForm').addEventListener('submit', function(e){
+	var privacy = document.querySelector('input[name="privacy_agreed"]:checked');
+	if(!privacy || privacy.value !== 'Y'){
+		e.preventDefault();
+		alert('개인정보 수집이용에 동의해 주세요.');
+		return false;
+	}
+	var zipEl = document.getElementById('applicant_zipcode');
+	if(zipEl && (!zipEl.value || !document.getElementById('applicant_address').value)){
+		e.preventDefault();
+		alert('주소를 입력해 주세요. (주소 검색을 이용해 주세요.)');
+		return false;
+	}
+	if(!confirm('품앗이에 신청하시겠습니까?')){
+		e.preventDefault();
+		return false;
+	}
+});
+</script>
+
+<style>
+
+
+.pmh-submit-area {
+	margin-top: 50px;
+}
+
+@media (max-width: 960px) {
+	.pmh-submit-area {
+		margin-top: 30px;
+	}
+}
+</style>

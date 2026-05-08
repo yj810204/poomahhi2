@@ -1,0 +1,11 @@
+<query id="getProduct" action="select">
+	<tables>
+		<table name="poomahhi_product" alias="p" />
+	</tables>
+	<columns>
+		<column name="p.*" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="p.product_srl" var="product_srl" notnull="notnull" />
+	</conditions>
+</query>

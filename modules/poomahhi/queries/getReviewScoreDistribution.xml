@@ -1,0 +1,15 @@
+<query id="getReviewScoreDistribution" action="select">
+	<tables>
+		<table name="poomahhi_review" alias="r" />
+	</tables>
+	<columns>
+		<column name="SUM(CASE WHEN r.score = 5 THEN 1 ELSE 0 END)" alias="score_5_count" />
+		<column name="SUM(CASE WHEN r.score = 4 THEN 1 ELSE 0 END)" alias="score_4_count" />
+		<column name="SUM(CASE WHEN r.score = 3 THEN 1 ELSE 0 END)" alias="score_3_count" />
+		<column name="SUM(CASE WHEN r.score = 2 THEN 1 ELSE 0 END)" alias="score_2_count" />
+		<column name="SUM(CASE WHEN r.score = 1 THEN 1 ELSE 0 END)" alias="score_1_count" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="r.member_srl" var="member_srl" notnull="notnull" />
+	</conditions>
+</query>

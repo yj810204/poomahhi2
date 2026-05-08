@@ -1,0 +1,16 @@
+<query id="insertMemberReview" action="insert">
+	<tables>
+		<table name="poomahhi_member_review" />
+	</tables>
+	<columns>
+		<column name="review_srl" var="review_srl" />
+		<column name="application_srl" var="application_srl" />
+		<column name="product_srl" var="product_srl" />
+		<column name="reviewer_member_srl" var="reviewer_member_srl" />
+		<column name="target_member_srl" var="target_member_srl" />
+		<column name="score" var="score" />
+		<column name="content" var="content" />
+		<column name="regdate" var="regdate" />
+		<column name="last_update" var="last_update" />
+	</columns>
+</query>

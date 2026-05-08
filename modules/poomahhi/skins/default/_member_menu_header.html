@@ -1,0 +1,21 @@
+<!-- 품앗이 마이페이지 공통 헤더: 회원정보/작성글/관심 품앗이/내 신청 현황/내가 작성한 리뷰 이동 탭 -->
+<!--@if($is_logged && $logged_info->menu_list)-->
+<section class="pmh-member-menu-header">
+	<ul class="nav nav-tabs">
+		<li loop="$logged_info->menu_list=>$key,$val" class="active"|cond="$key==$act">
+			<!--@if(strpos($key, 'dispPoomahhi') === 0)-->
+			<a href="{getUrl('', 'act', $key, 'mid', $mid)}">{$val}</a>
+			<!--@else-->
+			<a href="{getUrl('', 'act', $key, 'mid', $member_mid)}">{$val}</a>
+			<!--@end-->
+		</li>
+	</ul>
+</section>
+<!--@end-->
+<style>
+.pmh-member-menu-header { margin-bottom: 20px; }
+.pmh-member-menu-header .nav-tabs { border-bottom: 1px solid #ddd; }
+.pmh-member-menu-header .nav-tabs li { margin-bottom: -1px; }
+.pmh-member-menu-header .nav-tabs a { padding: 10px 15px; display: inline-block; text-decoration: none; color: #555; }
+.pmh-member-menu-header .nav-tabs li.active a { font-weight: 600; color: #333; border-bottom: 2px solid #333; }
+</style>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module version="0.2">
+	<title xml:lang="ko">품앗이</title>
+	<title xml:lang="en">Poomahhi</title>
+	<description xml:lang="ko">체험단(품앗이) 플랫폼 모듈</description>
+	<description xml:lang="en">Experience review platform module</description>
+	<version>1.0.0</version>
+	<date>2026-02-09</date>
+	<category>service</category>
+	<author>
+		<name xml:lang="ko">WP</name>
+		<name xml:lang="en">WP</name>
+	</author>
+</module>

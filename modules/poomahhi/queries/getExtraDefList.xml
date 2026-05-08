@@ -1,0 +1,18 @@
+<query id="getExtraDefList" action="select">
+	<tables>
+		<table name="poomahhi_extra_def" alias="ed" />
+	</tables>
+	<columns>
+		<column name="ed.*" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="ed.module_srl" var="module_srl" pipe="AND" />
+		<condition operation="equal" column="ed.template_srl" var="template_srl" pipe="AND" />
+	</conditions>
+	<navigation>
+		<index var="sort_index" default="list_order" order="asc" />
+		<list_count var="list_count" default="100" />
+		<page_count var="page_count" default="10" />
+		<page var="page" default="1" />
+	</navigation>
+</query>

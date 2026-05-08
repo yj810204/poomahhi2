@@ -1,0 +1,23 @@
+<query id="getRecentReviewsByOrganizer" action="select">
+	<tables>
+		<table name="poomahhi_review" alias="r" />
+		<table name="poomahhi_product" alias="p" type="inner">
+			<conditions>
+				<condition operation="equal" column="r.product_srl" default="p.product_srl" />
+			</conditions>
+		</table>
+	</tables>
+	<columns>
+		<column name="r.*" />
+		<column name="p.title" alias="product_title" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="p.member_srl" var="member_srl" notnull="notnull" pipe="AND" />
+	</conditions>
+	<navigation>
+		<index var="sort_index" default="r.regdate" order="desc" />
+		<list_count var="list_count" default="10" />
+		<page_count var="page_count" default="5" />
+		<page var="page" default="1" />
+	</navigation>
+</query>

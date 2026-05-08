@@ -1,0 +1,17 @@
+<query id="getFulfillmentStats" action="select">
+	<tables>
+		<table name="poomahhi_application" alias="a" />
+		<table name="poomahhi_review" alias="r" type="left join">
+			<conditions>
+				<condition operation="equal" column="a.application_srl" default="r.application_srl" />
+			</conditions>
+		</table>
+	</tables>
+	<columns>
+		<column name="SUM(CASE WHEN a.status = 'completed' AND r.review_srl IS NOT NULL THEN 1 ELSE 0 END)" alias="fulfilled_count" />
+		<column name="SUM(CASE WHEN a.status IN ('selected','under_review','revision_requested') AND (r.review_srl IS NULL OR a.deadline &lt; NOW()) THEN 1 ELSE 0 END)" alias="unfulfilled_count" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="a.member_srl" var="member_srl" notnull="notnull" />
+	</conditions>
+</query>

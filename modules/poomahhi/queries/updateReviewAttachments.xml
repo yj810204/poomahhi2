@@ -1,0 +1,12 @@
+<query id="updateReviewAttachments" action="update">
+	<tables>
+		<table name="poomahhi_review" />
+	</tables>
+	<columns>
+		<column name="certification_attachment_paths" var="certification_attachment_paths" />
+		<column name="purchase_attachment_paths" var="purchase_attachment_paths" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="review_srl" var="review_srl" notnull="notnull" />
+	</conditions>
+</query>

@@ -1,0 +1,12 @@
+<query id="updateMemberFulfillmentExtraIncrement" action="update">
+	<tables>
+		<table name="poomahhi_member_fulfillment_extra" />
+	</tables>
+	<columns>
+		<column name="unfulfilled_count" var="unfulfilled_count" />
+		<column name="last_update" var="last_update" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="member_srl" var="member_srl" notnull="notnull" />
+	</conditions>
+</query>

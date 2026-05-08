@@ -1,0 +1,11 @@
+<query id="getExtraTemplate" action="select">
+	<tables>
+		<table name="poomahhi_extra_template" alias="et" />
+	</tables>
+	<columns>
+		<column name="et.*" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="et.template_srl" var="template_srl" notnull="notnull" />
+	</conditions>
+</query>

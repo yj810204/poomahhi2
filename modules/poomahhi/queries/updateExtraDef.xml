@@ -1,0 +1,16 @@
+<query id="updateExtraDef" action="update">
+	<tables>
+		<table name="poomahhi_extra_def" />
+	</tables>
+	<columns>
+		<column name="var_name" var="var_name" />
+		<column name="var_label" var="var_label" />
+		<column name="var_type" var="var_type" />
+		<column name="var_options" var="var_options" />
+		<column name="is_required" var="is_required" />
+		<column name="list_order" var="list_order" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="extra_def_srl" var="extra_def_srl" notnull="notnull" />
+	</conditions>
+</query>

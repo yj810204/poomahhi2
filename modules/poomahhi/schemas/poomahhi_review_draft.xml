@@ -1,0 +1,11 @@
+<table name="poomahhi_review_draft">
+	<column name="draft_srl" type="number" size="11" notnull="notnull" primary_key="primary_key" />
+	<column name="application_srl" type="number" size="11" notnull="notnull" index="idx_application_srl" />
+	<column name="member_srl" type="number" size="11" notnull="notnull" index="idx_member_srl" />
+	<column name="score" type="number" size="1" notnull="notnull" default="5" />
+	<column name="content" type="bigtext" />
+	<column name="certification_attachment_paths" type="text" />
+	<column name="purchase_attachment_paths" type="text" />
+	<column name="regdate" type="date" index="idx_regdate" />
+	<column name="last_update" type="date" />
+</table>

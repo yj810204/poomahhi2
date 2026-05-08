@@ -1,0 +1,135 @@
+<load target="css/business.scss" />
+<load target="../../../member/css/member.scss" />
+
+<div class="pmh-business-layout">
+<include target="_business_sidebar.html" />
+<div class="member-contents pmh-business-main pmh-product-manage-list">
+	<h1>품앗이 관리</h1>
+	<div class="business_inner">
+		<div class="list_wrap">
+			<div class="pmh-pml-panel-head">
+				<h3>품앗이 목록</h3>
+				<form action="./" method="get" no-error-return-url="true" class="pmh-pml-search pmh-pml-search--head">
+					<input type="hidden" name="mid" value="{$mid}" />
+					<input type="hidden" name="act" value="dispPoomahhiProductManageList" />
+					<input type="hidden" name="list_filter" value="{$list_filter}" />
+					<div class="pmh-pml-search-field">
+						<input type="search" name="search_keyword" id="pmh_pml_kw" value="{$search_keyword}" placeholder="검색어를 입력해 주세요" class="pmh-pml-search-input" />
+					</div>
+					<button type="submit" class="pmh-sr-only"><i class="ri-search-line"></i></button>
+				</form>
+			</div>
+
+			<div class="poomahhi-tabs">
+				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductManageList', 'list_filter', '', 'search_keyword', $search_keyword)}" class="poomahhi-tab <!--@if(!$list_filter)-->active<!--@end-->">전체</a>
+				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductManageList', 'list_filter', 'applying', 'search_keyword', $search_keyword)}" class="poomahhi-tab <!--@if($list_filter == 'applying')-->active<!--@end-->">신청중</a>
+				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductManageList', 'list_filter', 'selecting', 'search_keyword', $search_keyword)}" class="poomahhi-tab <!--@if($list_filter == 'selecting')-->active<!--@end-->">선정중</a>
+				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductManageList', 'list_filter', 'review_wait', 'search_keyword', $search_keyword)}" class="poomahhi-tab <!--@if($list_filter == 'review_wait')-->active<!--@end-->">리뷰대기중</a>
+				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductManageList', 'list_filter', 'completed', 'search_keyword', $search_keyword)}" class="poomahhi-tab <!--@if($list_filter == 'completed')-->active<!--@end-->">완료</a>
+			</div>
+
+			<!--@if($product_manage_list)-->
+			<div class="pmh-pml-table-wrap">
+				<table class="pmh-pml-table">
+					<tr class="table-row">
+						<th class="th status">상태</th>
+						<th class="th product">상품정보</th>
+						<th class="th apps">신청자</th>
+						<th class="th date">작성일</th>
+						<th class="th actions">관리</th>
+					</tr>
+					<tbody class="table-list-wrap">
+						<!--@foreach($product_manage_list as $pitem)-->
+						<tr class="table-row">
+							<td class="td status">
+								<!--@if($pitem->manage_phase == 'applying')-->
+								<span class="pmh-pml-status pmh-pml-status--apply">신청중</span>
+								<!--@elseif($pitem->manage_phase == 'selecting')-->
+								<span class="pmh-pml-status pmh-pml-status--select">선정중</span>
+								<!--@elseif($pitem->manage_phase == 'review_wait')-->
+								<span class="pmh-pml-status pmh-pml-status--review">리뷰대기중</span>
+								<!--@elseif($pitem->manage_phase == 'completed')-->
+								<span class="pmh-pml-status pmh-pml-status--done">완료</span>
+								<!--@else-->
+								<span class="pmh-pml-status pmh-pml-status--done">-</span>
+								<!--@end-->
+							</td>
+							<td class="td product">
+								<div class="pmh-pml-prod">
+									<div class="pmh-pml-prod-thumb">
+										<!--@if($pitem->product_image)-->
+										<img src="{$pitem->product_image}" />
+										<!--@end-->
+									</div>
+									<div class="pmh-pml-prod-text">
+										<div class="pmh-pml-prod-headline">
+											<!--@if($pitem->list_tag_label)-->
+											<div class="tag">
+												<!--@if($pitem->product_type == 'local')-->
+												<span class="area 
+													<!--@if($pitem->list_tag_label == '수도권')-->seoul<!--@end-->
+													<!--@if($pitem->list_tag_label == '충청권')-->chungcheong<!--@end-->
+													<!--@if($pitem->list_tag_label == '호남권')-->honam<!--@end-->
+													<!--@if($pitem->list_tag_label == '영남권')-->yeongnam<!--@end-->
+													">
+												{$pitem->list_tag_label}</span>
+												<!--@else-->
+												<span class="channel 
+													<!--@if($pitem->list_tag_label == '올리브영')-->oliveyoung<!--@end-->
+													<!--@if($pitem->list_tag_label == '쿠팡')-->coupang<!--@end-->
+													<!--@if($pitem->list_tag_label == 'G마켓')-->gmarket<!--@end-->
+													<!--@if($pitem->list_tag_label == '11번가')-->11st<!--@end-->
+													<!--@if($pitem->list_tag_label == '자사몰')-->mall<!--@end-->
+													<!--@if($pitem->list_tag_label == '마켓컬리')-->marketcurly<!--@end-->
+													<!--@if($pitem->list_tag_label == '카카오선물하기')-->kakaogift<!--@end-->
+													<!--@if($pitem->list_tag_label == '네이버 스마트스토어')-->smartstore<!--@end-->
+													<!--@if($pitem->list_tag_label == '무신사')-->musinsa<!--@end-->
+													<!--@if($pitem->list_tag_label == '옥션')-->auction<!--@end-->
+													<!--@if($pitem->list_tag_label == '카카오쇼핑')-->kakaoshopping<!--@end-->
+													">
+												{$pitem->list_tag_label}</span>
+												<!--@end-->
+											</div>
+											<!--@end-->
+											<div class="pmh-pml-prod-title"><a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductDetail', 'product_srl', $pitem->product_srl)}">{$pitem->title}</a></div>
+										</div>
+										<!--@if($pitem->list_summary)-->
+										<div class="pmh-pml-prod-desc">{$pitem->list_summary}</div>
+										<!--@end-->
+									</div>
+								</div>
+							</td>
+							<td class="td apps">
+								<span class="pmh-pml-apps-line"><b class="pmh-pml-apps-num"><!--@if($pitem->settlement->total_applications)-->{$pitem->settlement->total_applications}<!--@else-->0<!--@end--></b>/<span class="pmh-pml-apps-max"><!--@if($pitem->max_applicants)-->{$pitem->max_applicants}<!--@else-->0<!--@end--></span>명</span>
+							</td>
+							<td class="td date">
+								<!--@if($pitem->regdate)-->{zdate($pitem->regdate, 'y.m.d')}<!--@else-->-<!--@end-->
+							</td>
+							<td class="td actions">
+								<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductWrite', 'product_srl', $pitem->product_srl)}" class="pmh-btn-pink-outline pmh-pml-btn1">수정</a>
+								<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationManage', 'product_srl', $pitem->product_srl)}" class="pmh-btn-pink pmh-pml-btn2">신청자관리</a>
+							</td>
+						</tr>
+						<!--@end-->
+					</tbody>
+				</table>
+			</div>
+			<!--@else-->
+			<p class="empty">등록된 품앗이가 없습니다.</p>
+			<!--@end-->
+		</div>
+	</div>
+
+	<!--@if($page_navigation && $page_navigation->total_page > 1)-->
+	<div class="pmh-pml-pagination">
+		<!--@for($pi = $page_navigation->first_page; $pi <= $page_navigation->last_page; $pi++)-->
+		<!--@if($pi == $page_navigation->cur_page)-->
+		<span class="pmh-pml-page is-current">{$pi}</span>
+		<!--@else-->
+		<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductManageList', 'list_filter', $list_filter, 'search_keyword', $search_keyword, 'page', $pi)}" class="pmh-pml-page">{$pi}</a>
+		<!--@end-->
+		<!--@end-->
+	</div>
+	<!--@end-->
+</div>
+</div>

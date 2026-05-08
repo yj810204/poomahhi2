@@ -1,0 +1,11 @@
+<query id="insertRegion" action="insert">
+	<tables>
+		<table name="poomahhi_region" />
+	</tables>
+	<columns>
+		<column name="region_srl" var="region_srl" />
+		<column name="module_srl" var="module_srl" />
+		<column name="title" var="title" />
+		<column name="list_order" var="list_order" />
+	</columns>
+</query>

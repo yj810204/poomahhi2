@@ -1,0 +1,11 @@
+<query id="getExtraDef" action="select">
+	<tables>
+		<table name="poomahhi_extra_def" alias="ed" />
+	</tables>
+	<columns>
+		<column name="ed.*" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="ed.extra_def_srl" var="extra_def_srl" notnull="notnull" />
+	</conditions>
+</query>

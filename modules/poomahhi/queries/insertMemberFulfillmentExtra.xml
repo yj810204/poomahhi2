@@ -1,0 +1,10 @@
+<query id="insertMemberFulfillmentExtra" action="insert">
+	<tables>
+		<table name="poomahhi_member_fulfillment_extra" />
+	</tables>
+	<columns>
+		<column name="member_srl" var="member_srl" />
+		<column name="unfulfilled_count" var="unfulfilled_count" />
+		<column name="last_update" var="last_update" />
+	</columns>
+</query>

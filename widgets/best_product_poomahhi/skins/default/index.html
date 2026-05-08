@@ -1,0 +1,87 @@
+<load target="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+<load target="widget.scss" />
+
+<div class="bpp-widget">
+	<div class="common_title">
+		<a href="{getUrl('', 'mid', $poomahhi_mid, 'act', 'dispPoomahhiProductList')}">
+			<h3>BEST 상품 품앗이</h3>
+			<i class="ri-arrow-right-s-line"></i>
+		</a>
+	</div>
+
+	<!--@if($list)-->
+	<div class="bpp-grid common_product_display">
+		<!--@foreach($list as $item)-->
+		<div class="bpp-card <!--@if($item->is_paid)-->card-paid<!--@end--> card_wrap">
+			<a href="{getUrl('', 'mid', $poomahhi_mid, 'act', 'dispPoomahhiProductDetail', 'product_srl', $item->product_srl)}" class="bpp-card-link">
+				<div class="bpp-card-image image_wrap">
+					<!--@if($item->product_image)-->
+					<img src="{$item->product_image}" alt="{$item->title}" />
+					<!--@else-->
+					<div class="card-noimg"></div>
+					<!--@end-->
+					<!--@if($item->is_paid)-->
+					<span class="badge-paid paid"><i class="ri-lock-line fw-n"></i></i> <!--@if($item->point_cost_display)-->{$item->point_cost_display}<!--@else-->0<!--@end-->P</span>
+					<!--@end-->
+					<!--@if($logged_info)-->
+					<button type="button" class="wishlist-btn <!--@if($wishlist_map[$item->product_srl])-->active<!--@end-->" data-product-srl="{$item->product_srl}" onclick="event.preventDefault(); event.stopPropagation(); bppToggleWishlist(this); return false;">
+						<i class="<!--@if($wishlist_map[$item->product_srl])-->ri-heart-line<!--@else-->ri-heart-fill<!--@end-->"></i>
+					</button>
+					<!--@end-->
+				</div>
+
+				<div class="bpp-card-body body_wrap">
+					<div class="bpp-row row">
+						<div class="bpp-card-meta title">
+							<!--@if($item->company_name)--><span class="bpp-company">{$item->company_name}</span><!--@end-->
+							<span class="bpp-card-title">[{$item->title}]</span>
+						</div>
+						<div class="bpp-card-tags tag">
+							<!--@if($item->shopping_channel)-->
+								<span class="bpp-tag channel 
+								<!--@if($item->shopping_channel == '올리브영')-->oliveyoung<!--@end-->
+								<!--@if($item->shopping_channel == '쿠팡')-->coupang<!--@end-->
+								<!--@if($item->shopping_channel == 'G마켓')-->gmarket<!--@end-->
+								<!--@if($item->shopping_channel == '11번가')-->11st<!--@end-->
+								<!--@if($item->shopping_channel == '자사몰')-->mall<!--@end-->
+								<!--@if($item->shopping_channel == '마켓컬리')-->marketcurly<!--@end-->
+								<!--@if($item->shopping_channel == '카카오선물하기')-->kakaogift<!--@end-->
+								<!--@if($item->shopping_channel == '네이버 스마트스토어')-->smartstore<!--@end-->
+								<!--@if($item->shopping_channel == '무신사')-->musinsa<!--@end-->
+								<!--@if($item->shopping_channel == '옥션')-->auction<!--@end-->
+								<!--@if($item->shopping_channel == '카카오쇼핑')-->kakaoshopping<!--@end-->
+								">
+								{$item->shopping_channel}</span>
+							<!--@end-->
+							<!--@if($item->dday_text)--><span class="bpp-tag dday">{$item->dday_text}</span><!--@end-->
+						</div>
+					</div>
+					<!--@if($item->content_summary)-->
+					<p class="bpp-card-desc desc">{$item->content_summary}</p>
+					<!--@end-->
+				</div>
+			</a>
+		</div>
+		<!--@end-->
+	</div>
+	<!--@else-->
+	<p class="bpp-empty">등록된 상품이 없습니다.</p>
+	<!--@end-->
+</div>
+
+<script>
+function bppToggleWishlist(btn){
+	var product_srl = btn.getAttribute('data-product-srl');
+	if(!product_srl) return;
+	jQuery.exec_json('poomahhi.procPoomahhiToggleWishlist', {product_srl: product_srl}, function(ret){
+		if(ret.error != 0){ alert(ret.message); return; }
+		if(ret.action === 'added'){
+			btn.querySelector('i').className = 'ri-heart-fill';
+			btn.classList.add('active');
+		} else {
+			btn.querySelector('i').className = 'ri-heart-line';
+			btn.classList.remove('active');
+		}
+	});
+}
+</script>

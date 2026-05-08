@@ -1,0 +1,17 @@
+<query id="getApplicationListByMemberAll" action="select">
+	<tables>
+		<table name="poomahhi_application" alias="a" />
+	</tables>
+	<columns>
+		<column name="a.*" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="a.member_srl" var="member_srl" notnull="notnull" pipe="AND" />
+	</conditions>
+	<navigation>
+		<index var="sort_index" default="application_srl" order="desc" />
+		<list_count var="list_count" default="20" />
+		<page_count var="page_count" default="10" />
+		<page var="page" default="1" />
+	</navigation>
+</query>

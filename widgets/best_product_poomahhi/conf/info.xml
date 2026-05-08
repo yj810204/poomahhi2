@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget version="0.2">
+	<title>베스트 상품 품앗이</title>
+	<description>찜 수 많은 순으로 상품 품앗이를 표시</description>
+	<version>1.0.0</version>
+	<date>2026-02-24</date>
+	<author>
+		<name>WP</name>
+	</author>
+	<extra_vars>
+		<var name="list_count" type="text" default="9">
+			<title>목록 수</title>
+			<description>출력할 상품 수 (기본 9)</description>
+		</var>
+		<var id="module_srl_list">
+			<type>module_srl_list</type>
+			<title>품앗이 모듈</title>
+			<description>품앗이 모듈 선택 (상품 데이터 및 링크에 사용)</description>
+		</var>
+	</extra_vars>
+</widget>

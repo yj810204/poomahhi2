@@ -1,0 +1,188 @@
+<include target="_header.html" />
+
+<div class="poomahhi-admin-fullwidth" style="width:100%;">
+
+<!--@if($XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/poomahhi/config_save')-->
+<div class="alert alert-danger" style="margin-bottom:15px;">
+	<p>{$XE_VALIDATOR_MESSAGE}</p>
+</div>
+<!--@end-->
+
+<form action="./" method="post">
+	<input type="hidden" name="module" value="admin" />
+	<input type="hidden" name="act" value="procPoomahhiAdminSaveConfig" />
+	<input type="hidden" name="xe_validator_id" value="modules/poomahhi/config_save" />
+
+	<!-- 디자인 설정 -->
+	<section style="margin-bottom:30px;">
+		<h3 style="border-bottom:2px solid #333; padding-bottom:8px; margin-bottom:15px;">디자인 설정</h3>
+		<table class="table table-bordered" style="width:100%;">
+			<tbody>
+				<tr>
+					<th scope="row" style="width:180px;">레이아웃</th>
+					<td>
+						<select name="layout_srl" class="form-control" style="width:400px;">
+							<option value="0">기본 레이아웃</option>
+							<!--@foreach($layout_list as $layout)-->
+							<option value="{$layout->layout_srl}" selected|cond="$module_info && $module_info->layout_srl == $layout->layout_srl">{$layout->title} ({$layout->layout})</option>
+							<!--@end-->
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">스킨</th>
+					<td>
+						<select name="skin" class="form-control" style="width:400px;">
+							<!--@foreach($skin_list as $skin_name => $skin_info)-->
+							<option value="{$skin_name}" selected|cond="$module_info && $module_info->skin == $skin_name"><!--@if(is_object($skin_info))-->{$skin_info->title}<!--@else-->{$skin_info}<!--@end--></option>
+							<!--@end-->
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">모바일 스킨</th>
+					<td>
+						<select name="mskin" class="form-control" style="width:400px;">
+							<option value="">PC와 동일</option>
+							<!--@foreach($mskin_list as $skin_name => $skin_info)-->
+							<option value="{$skin_name}" selected|cond="$module_info && $module_info->mskin == $skin_name"><!--@if(is_object($skin_info))-->{$skin_info->title}<!--@else-->{$skin_info}<!--@end--></option>
+							<!--@end-->
+						</select>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</section>
+
+	<!-- 회원 설정 -->
+	<section style="margin-bottom:30px;">
+		<h3 style="border-bottom:2px solid #333; padding-bottom:8px; margin-bottom:15px;">회원 설정</h3>
+		<table class="table table-bordered" style="width:100%;">
+			<tbody>
+				<tr>
+					<th scope="row" style="width:180px;">일반회원 그룹</th>
+					<td>
+						<select name="general_group_srl" class="form-control" style="width:300px;">
+							<option value="">-- 선택 --</option>
+							<!--@foreach($group_list as $group)-->
+							<option value="{$group->group_srl}" selected|cond="$config->general_group_srl == $group->group_srl">{$group->title}</option>
+							<!--@end-->
+						</select>
+						<p style="color:#999; margin-top:5px;">가입 시 일반회원으로 자동 배정할 그룹</p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">비즈니스회원 그룹</th>
+					<td>
+						<select name="business_group_srl" class="form-control" style="width:300px;">
+							<option value="">-- 선택 --</option>
+							<!--@foreach($group_list as $group)-->
+							<option value="{$group->group_srl}" selected|cond="$config->business_group_srl == $group->group_srl">{$group->title}</option>
+							<!--@end-->
+						</select>
+						<p style="color:#999; margin-top:5px;">가입 시 비즈니스회원으로 자동 배정할 그룹</p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">회원가입 유형 선택 페이지 mid</th>
+					<td>
+						<input type="text" name="signup_select_mid" value="<!--@if($config->signup_select_mid)-->{$config->signup_select_mid}<!--@else-->poomahhi<!--@end-->" class="form-control" style="width:200px;" placeholder="poomahhi" />
+						<p style="color:#999; margin-top:5px;">mid=member&amp;act=dispMemberSignUpForm 접속 시 이 mid의 유형 선택 페이지로 리다이렉트. 비우면 품앗이 mid 중 첫 번째 사용</p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</section>
+
+	<!-- 리뷰/이미지 설정 -->
+	<section style="margin-bottom:30px;">
+		<h3 style="border-bottom:2px solid #333; padding-bottom:8px; margin-bottom:15px;">리뷰 / 이미지 설정</h3>
+		<table class="table table-bordered" style="width:100%;">
+			<tbody>
+				<tr>
+					<th scope="row" style="width:180px;">인증샷 최대 장수</th>
+					<td>
+						<input type="number" name="max_certification_images" value="<!--@if($config->max_certification_images)-->{$config->max_certification_images}<!--@else-->10<!--@end-->" class="form-control" style="width:120px;" min="1" />
+						<p style="color:#999; margin-top:5px;">리뷰 인증샷 최대 업로드 수</p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">구매경로 최대 장수</th>
+					<td>
+						<input type="number" name="max_purchase_images" value="<!--@if($config->max_purchase_images)-->{$config->max_purchase_images}<!--@else-->10<!--@end-->" class="form-control" style="width:120px;" min="1" />
+						<p style="color:#999; margin-top:5px;">구매경로 인증샷 최대 업로드 수</p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">리뷰 등록 기한 (일)</th>
+					<td>
+						<input type="number" name="review_deadline_days" value="<!--@if($config->review_deadline_days)-->{$config->review_deadline_days}<!--@else-->14<!--@end-->" class="form-control" style="width:120px;" min="1" />
+						<p style="color:#999; margin-top:5px;">선정 후 리뷰 등록 기한 (일)</p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</section>
+
+	<!-- 개인정보 수집이용 동의 설정 -->
+	<section style="margin-bottom:30px;">
+		<h3 style="border-bottom:2px solid #333; padding-bottom:8px; margin-bottom:15px;">개인정보 수집이용 동의 내용</h3>
+		<table class="table table-bordered" style="width:100%;">
+			<tbody>
+				<tr>
+					<th scope="row" style="width:180px;">개인정보 수집이용 동의 내용</th>
+					<td>
+						<textarea name="privacy_content" class="form-control" style="width:100%; min-height:200px;"><!--@if($config->privacy_content)-->{$config->privacy_content}<!--@end--></textarea>
+						<p style="color:#999; margin-top:5px;">품앗이 신청 시 표시되는 개인정보 수집이용 동의 내용을 입력합니다. HTML 태그를 사용할 수 있습니다.</p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</section>
+
+	<!-- 유료 콘텐츠 포인트 설정 -->
+	<section style="margin-bottom:30px;">
+		<h3 style="border-bottom:2px solid #333; padding-bottom:8px; margin-bottom:15px;">유료 콘텐츠 포인트 설정</h3>
+		<table class="table table-bordered" style="width:100%;">
+			<tbody>
+				<tr>
+					<th scope="row" style="width:180px;">포인트 유형</th>
+					<td>
+						<select name="content_point_type" class="form-control" style="width:300px;">
+							<option value="poomahhi" selected|cond="!$config->content_point_type || $config->content_point_type == 'poomahhi'">품앗이 자체 포인트</option>
+							<option value="rhymix" selected|cond="$config->content_point_type == 'rhymix'">라이믹스 포인트</option>
+						</select>
+						<p style="color:#999; margin-top:5px;">유료 콘텐츠 열람 시 차감할 포인트 유형. 자체 포인트는 품앗이 모듈 포인트, 라이믹스 포인트는 포인트 모듈 포인트를 사용합니다.</p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</section>
+
+	<!-- 목록 설정 -->
+	<section style="margin-bottom:30px;">
+		<h3 style="border-bottom:2px solid #333; padding-bottom:8px; margin-bottom:15px;">목록 설정</h3>
+		<table class="table table-bordered" style="width:100%;">
+			<tbody>
+				<tr>
+					<th scope="row" style="width:180px;">목록 페이지당 건수</th>
+					<td>
+						<input type="number" name="default_list_count" value="<!--@if($config->default_list_count)-->{$config->default_list_count}<!--@else-->20<!--@end-->" class="form-control" style="width:120px;" min="1" />
+						<p style="color:#999; margin-top:5px;">페이지당 목록 표시 건수</p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</section>
+
+	<div class="x_clearfix" style="margin-top:20px;">
+		<button type="submit" class="btn btn-primary" style="padding:8px 30px;">저장</button>
+	</div>
+</form>
+</div>
+
+<style>
+.poomahhi-admin-fullwidth { width: 100% !important; max-width: none !important; }
+.poomahhi-admin-fullwidth .x_page-header { width: 100% !important; max-width: none !important; }
+.poomahhi-admin-fullwidth .table { width: 100% !important; max-width: none !important; }
+</style>

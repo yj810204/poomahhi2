@@ -1,0 +1,17 @@
+<query id="insertReview" action="insert">
+	<tables>
+		<table name="poomahhi_review" />
+	</tables>
+	<columns>
+		<column name="review_srl" var="review_srl" />
+		<column name="application_srl" var="application_srl" />
+		<column name="product_srl" var="product_srl" />
+		<column name="member_srl" var="member_srl" />
+		<column name="score" var="score" />
+		<column name="content" var="content" />
+		<column name="certification_attachment_paths" var="certification_attachment_paths" />
+		<column name="purchase_attachment_paths" var="purchase_attachment_paths" />
+		<column name="regdate" var="regdate" />
+		<column name="last_update" var="last_update" />
+	</columns>
+</query>

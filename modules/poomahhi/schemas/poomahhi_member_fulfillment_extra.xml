@@ -1,0 +1,5 @@
+<table name="poomahhi_member_fulfillment_extra">
+	<column name="member_srl" type="number" size="11" notnull="notnull" primary_key="primary_key" />
+	<column name="unfulfilled_count" type="number" size="11" notnull="notnull" default="0" />
+	<column name="last_update" type="date" />
+</table>

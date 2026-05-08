@@ -1,0 +1,6 @@
+<table name="poomahhi_wishlist">
+	<column name="wishlist_srl" type="number" size="11" notnull="notnull" primary_key="primary_key" />
+	<column name="member_srl" type="number" size="11" notnull="notnull" index="idx_member_srl" />
+	<column name="product_srl" type="number" size="11" notnull="notnull" index="idx_product_srl" />
+	<column name="regdate" type="date" />
+</table>

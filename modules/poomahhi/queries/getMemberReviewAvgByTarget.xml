@@ -1,0 +1,12 @@
+<query id="getMemberReviewAvgByTarget" action="select">
+	<tables>
+		<table name="poomahhi_member_review" alias="mr" />
+	</tables>
+	<columns>
+		<column name="mr.target_member_srl" />
+		<column name="AVG(mr.score)" alias="avg_score" />
+	</columns>
+	<groups>
+		<group column="mr.target_member_srl" />
+	</groups>
+</query>

@@ -1,0 +1,14 @@
+<query id="updateMemberPoint" action="update">
+	<tables>
+		<table name="poomahhi_member_point" />
+	</tables>
+	<columns>
+		<column name="point" var="point" />
+		<column name="accumulated_point" var="accumulated_point" />
+		<column name="pending_point" var="pending_point" />
+		<column name="last_update" var="last_update" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="member_srl" var="member_srl" notnull="notnull" />
+	</conditions>
+</query>

@@ -1,0 +1,15 @@
+<query id="getApplicationStatusCountsByProduct" action="select">
+	<tables>
+		<table name="poomahhi_application" alias="a" />
+	</tables>
+	<columns>
+		<column name="a.status" alias="status" />
+		<column name="count(*)" alias="cnt" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="a.product_srl" var="product_srl" notnull="notnull" pipe="AND" />
+	</conditions>
+	<groups>
+		<group column="a.status" />
+	</groups>
+</query>

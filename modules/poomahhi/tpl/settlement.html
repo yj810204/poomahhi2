@@ -1,0 +1,77 @@
+<include target="_header.html" />
+
+<div class="poomahhi-admin-fullwidth" style="width:100%;">
+
+<!-- 기간 필터 -->
+<div style="margin-bottom:20px;">
+	<form action="./" method="get" no-error-return-url="true" style="display:flex; gap:10px; align-items:center;">
+		<input type="hidden" name="module" value="admin" />
+		<input type="hidden" name="act" value="dispPoomahhiAdminSettlement" />
+		<label>시작일:</label>
+		<input type="date" name="start_date" value="<!--@if($start_date)-->{$start_date}<!--@else--><!--@end-->" class="form-control" style="width:180px;" />
+		<label>종료일:</label>
+		<input type="date" name="end_date" value="<!--@if($end_date)-->{$end_date}<!--@else--><!--@end-->" class="form-control" style="width:180px;" />
+		<button type="submit" class="btn btn-default">조회</button>
+	</form>
+</div>
+
+<!-- 정산 목록 -->
+<!--@if($settlement_list)-->
+<table class="table table-bordered table-hover">
+	<thead>
+		<tr>
+			<th>비즈니스 회원</th>
+			<th>업체명</th>
+			<th style="width:80px;">상품수</th>
+			<th style="width:100px;">총 신청수</th>
+			<th style="width:80px;">완료 수</th>
+			<th style="width:100px;">평균 점수</th>
+		</tr>
+	</thead>
+	<tbody>
+		<!--@foreach($settlement_list as $item)-->
+		<tr>
+			<td>
+				<!--@if($item->member_info)-->
+				{$item->member_info->nick_name}
+				<small style="color:#999;">({$item->member_info->user_id})</small>
+				<!--@else-->
+				회원 #{$item->business_member_srl}
+				<!--@end-->
+			</td>
+			<td><!--@if($item->company_name)-->{$item->company_name}<!--@else-->-<!--@end--></td>
+			<td style="text-align:center;"><!--@if($item->product_count)-->{$item->product_count}<!--@else-->0<!--@end--></td>
+			<td style="text-align:center;"><!--@if($item->total_applications)-->{$item->total_applications}<!--@else-->0<!--@end--></td>
+			<td style="text-align:center;"><!--@if($item->completed_count)-->{$item->completed_count}<!--@else-->0<!--@end--></td>
+			<td style="text-align:center;">
+				<!--@if($item->avg_score)-->
+				<span style="color:#FF9800;">{$item->avg_score}</span>
+				<!--@else-->
+				-
+				<!--@end-->
+			</td>
+		</tr>
+		<!--@end-->
+	</tbody>
+</table>
+
+<!-- 페이지네이션 -->
+<!--@if($page_navigation)-->
+<div class="pagination" style="text-align:center;">
+	<!--@for($i = $page_navigation->first_page; $i <= $page_navigation->last_page; $i++)-->
+	<!--@if($i == $page_navigation->cur_page)-->
+	<strong>[{$i}]</strong>
+	<!--@else-->
+	<a href="{getUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminSettlement', 'start_date', $start_date, 'end_date', $end_date, 'page', $i)}">[{$i}]</a>
+	<!--@end-->
+	<!--@end-->
+</div>
+<!--@end-->
+<!--@else-->
+<p style="text-align:center; padding:40px 0; color:#999;">정산 데이터가 없습니다.</p>
+<!--@end-->
+</div><style>
+.poomahhi-admin-fullwidth { width: 100% !important; max-width: none !important; }
+.poomahhi-admin-fullwidth .x_page-header { width: 100% !important; max-width: none !important; }
+.poomahhi-admin-fullwidth .table { width: 100% !important; max-width: none !important; }
+</style>

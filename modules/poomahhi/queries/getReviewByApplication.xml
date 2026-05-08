@@ -1,0 +1,11 @@
+<query id="getReviewByApplication" action="select">
+	<tables>
+		<table name="poomahhi_review" alias="r" />
+	</tables>
+	<columns>
+		<column name="r.*" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="r.application_srl" var="application_srl" notnull="notnull" />
+	</conditions>
+</query>

@@ -1,0 +1,14 @@
+<query id="insertReviewDraft" action="insert">
+	<tables>
+		<table name="poomahhi_review_draft" />
+	</tables>
+	<columns>
+		<column name="draft_srl" var="draft_srl" />
+		<column name="application_srl" var="application_srl" />
+		<column name="member_srl" var="member_srl" />
+		<column name="score" var="score" />
+		<column name="content" var="content" />
+		<column name="certification_attachment_paths" var="certification_attachment_paths" />
+		<column name="purchase_attachment_paths" var="purchase_attachment_paths" />
+	</columns>
+</query>

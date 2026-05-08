@@ -1,0 +1,60 @@
+<load target="css/business.scss" />
+<load target="../../../member/skins/poomahhi/css/member.scss" />
+<load target="../../../member/skins/poomahhi/js/member.js" />
+
+<div class="nav nav-tabs">
+	<div class="top_info">
+		<div class="profile_wrap">
+			<img src="{$logged_info->profile_image->src}" alt="{$logged_info->nick_name}" cond="$logged_info->profile_image">
+			<img src="img/noimage.png" alt="no profile" cond="!$logged_info->profile_image">
+			
+			<span class="nickname">{$logged_info->nick_name}</span>
+		</div>
+		<a href="{getUrl('', 'mid', $mid ?? '', 'act', 'dispMemberLogout')}"><span>{$lang->cmd_logout}</span><i class="ri-logout-circle-r-line"></i></a>
+	</div>
+
+	<div class="img_menu">
+		<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductWriteSelect')}">
+			<img src="img/nav_img1.png" alt="nav1">
+			<span>품앗이 등록</span>
+		</a>
+		<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductManageList')}">
+			<img src="img/nav_img2.png" alt="nav2">
+			<span>품앗이 관리</span>
+		</a>
+		<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiBusinessNotifications')}">
+			<img src="img/nav_img3.png" alt="nav3">
+			<span>알림</span>
+		</a>
+	</div>
+	
+	<ul class="mypage_menu">
+		<li class="active"|cond="$business_active_menu == 'home'">
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiCreatorDashboard')}">비즈니스 홈</a>
+		</li>
+		<li class="active"|cond="$business_active_menu == 'register'">
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductWriteSelect')}">품앗이 등록</a>
+		</li>
+		<li class="active"|cond="$business_active_menu == 'manage'">
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductManageList')}">품앗이 관리</a>
+		</li>
+		<li class="active"|cond="$business_active_menu == 'reviews'">
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiMyReviews')}">내가 작성한 리뷰</a>
+		</li>
+		<li class="active"|cond="$business_active_menu == 'notifications'">
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiBusinessNotifications')}">알림
+				<!--
+				<!--@if($notify_unread_count > 0)--><span class="pmh-sidebar-notify-badge">{$notify_unread_count}</span><!--@end-->
+				-->
+			</a>
+		</li>
+		<!--@if($member_mid)-->
+		<li class="active"|cond="$business_active_menu == 'member'">
+			<a href="{getUrl('', 'mid', $member_mid, 'act', 'dispMemberInfo')}">회원정보</a>
+		</li>
+		<!--@end-->
+		<li class="active"|cond="$mid == 'board_inquiry'">
+			<a href="/board_inquiry">1:1 문의글</a>
+		</li>
+	</ul>
+</div>

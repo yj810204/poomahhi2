@@ -1,0 +1,232 @@
+<load target="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+<load target="css/product.scss" />
+
+	<div class="ds-f ai-c jc-b">
+		<div class="lg:ds-b ds-n">
+			<!-- 타이틀 -->
+			<!--@if($product_type == 'local')-->
+			<h2 class="pmh-page-title">지역 품앗이</h2>
+			<!--@else-->
+			<h2 class="pmh-page-title">품앗이 목록</h2>
+			<!--@end-->
+		</div>
+		<!--@if($logged_info)-->
+		<div class="pmh-action-group">
+			<div class="pmh-search-box ds-n">
+				<form action="./" method="get" no-error-return-url="true">
+					<input type="hidden" name="mid" value="{$mid}" />
+					<input type="hidden" name="act" value="dispPoomahhiProductList" />
+					<!--@if(Context::get('category_srl'))-->
+					<input type="hidden" name="category_srl" value="{Context::get('category_srl')}" />
+					<!--@end-->
+					<!--@if(Context::get('region_srl'))-->
+					<input type="hidden" name="region_srl" value="{Context::get('region_srl')}" />
+					<!--@end-->
+					<input type="text" name="search_keyword" value="<!--@if(Context::get('search_keyword'))-->{Context::get('search_keyword')}<!--@else--><!--@end-->" placeholder="검색어 입력" class="pmh-search-input" />
+					<button type="submit" class="pmh-search-btn"><i class="bi bi-search"></i></button>
+				</form>
+			</div>
+			
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductWrite')}" class="pmh-btn-write">글쓰기 <i class="ri-arrow-right-line"></i></a>
+		</div>
+		<!--@end-->
+	</div>
+
+	<!-- 지역 품앗이: 지역 탭 필터 -->
+	<!--@if($product_type == 'local' && $region_list)-->
+	<div class="pmh-region-bar">
+		{@ $i = 0; }
+		<!--@foreach($region_list as $rg)-->
+
+		<!--@if(Context::get('category_srl'))-->
+		<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductList', 'region_srl', $rg->region_srl, 'category_srl', Context::get('category_srl'))}"
+		class="pmh-region-item 
+		<!--@if(Context::get('region_srl') == $rg->region_srl || (!Context::get('region_srl') && $i == 0))-->active<!--@end-->">
+			{$rg->title}
+		</a>
+		<!--@else-->
+		<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductList', 'region_srl', $rg->region_srl)}"
+		class="pmh-region-item 
+		<!--@if(Context::get('region_srl') == $rg->region_srl || (!Context::get('region_srl') && $i == 0))-->active<!--@end-->">
+			{$rg->title}
+		</a>
+		<!--@end-->
+
+		{@ $i++; }
+		<!--@end-->
+	</div>
+	<!--@end-->
+
+	<!-- 카테고리 아이콘 영역 -->
+	<!--@if($category_list)-->
+	<div class="pmh-category-bar">
+		{@ $i = 0; }
+		<!--@foreach($category_list as $cat)-->
+
+		<!--@if(Context::get('region_srl'))-->
+		<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductList', 'category_srl', $cat->category_srl, 'region_srl', Context::get('region_srl'))}"
+		class="pmh-cat-item 
+		<!--@if(Context::get('category_srl') == $cat->category_srl || (!Context::get('category_srl') && $i == 0))-->active<!--@end-->">
+			<div class="img"></div>
+			<span>{$cat->title}</span>
+		</a>
+		<!--@else-->
+		<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductList', 'category_srl', $cat->category_srl)}"
+		class="pmh-cat-item 
+		<!--@if(Context::get('category_srl') == $cat->category_srl || (!Context::get('category_srl') && $i == 0))-->active<!--@end-->">
+			<div class="img"></div>
+			<span>{$cat->title}</span>
+		</a>
+		<!--@end-->
+
+		{@ $i++; }
+		<!--@end-->
+	</div>
+	<!--@end-->
+
+	<!-- 필터 및 등록 버튼 -->
+	<div class="pmh-filter-bar">
+		<form action="./" method="get" no-error-return-url="true" class="pmh-filter-form">
+			<input type="hidden" name="mid" value="{$mid}" />
+			<input type="hidden" name="act" value="dispPoomahhiProductList" />
+			<!--@if(Context::get('category_srl'))-->
+			<input type="hidden" name="category_srl" value="{Context::get('category_srl')}" />
+			<!--@end-->
+			<!--@if(Context::get('region_srl'))-->
+			<input type="hidden" name="region_srl" value="{Context::get('region_srl')}" />
+			<!--@end-->
+
+			<div class="pmh-filter-group">
+				<!--@if($product_type != 'local' && $channel_list)-->
+				<select name="shopping_channel" class="pmh-select" onchange="this.form.submit();">
+					<option value="">쇼핑채널</option>
+					<!--@foreach($channel_list as $ch)-->
+					<option value="{$ch->title}" selected|cond="Context::get('shopping_channel') == $ch->title">{$ch->title}</option>
+					<!--@end-->
+				</select>
+				<!--@end-->
+
+				<select name="sort" class="pmh-select" onchange="this.form.submit();">
+					<option value="" selected|cond="!Context::get('sort')">신규오픈</option>
+					<option value="deadline" selected|cond="Context::get('sort') == 'deadline'">마감임박</option>
+				</select>
+			</div>
+		</form>
+	</div>
+
+	<!-- 상품 카드 그리드 -->
+	<!--@if($product_list)-->
+	<div class="pmh-card-grid common_product_display product_list">
+		<!--@foreach($product_list as $product)-->
+		<div class="pmh-card card_wrap">
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductDetail', 'product_srl', $product->product_srl)}" class="pmh-card-link">
+				<div class="pmh-card-image image_wrap">
+					<!--@if($product->product_image)-->
+					<img src="{$product->product_image}" alt="{$product->title}" />
+					<!--@else-->
+					<div class="pmh-card-noimg"></div>
+					<!--@end-->
+
+					<!-- 위시리스트 하트 -->
+					<!--@if($logged_info)-->
+					<button type="button" class="wishlist-btn <!--@if($wishlist_map[$product->product_srl])-->active<!--@end-->" data-product-srl="{$product->product_srl}" onclick="event.preventDefault(); event.stopPropagation(); toggleWishlist(this);">
+						<i class="<!--@if($wishlist_map[$product->product_srl])-->ri-heart-fill<!--@else-->ri-heart-line<!--@end-->"></i>
+					</button>
+					<!--@end-->
+
+					<!-- 상태 배지 -->
+					<!--@if($product->status == 'closed')-->
+					<span class="pmh-badge-status closed">마감</span>
+					<!--@end-->
+				</div>
+
+				<div class="pmh-card-body body_wrap">
+					<div class="row">
+						<div class="pmh-card-meta title">
+							<!--@if($product->company_name)-->
+							<span class="pmh-company">{$product->company_name}</span>
+							<!--@end-->
+							<span class="pmh-card-title">[{$product->title}]</span>
+						</div>
+
+						<div class="pmh-card-tags tag">
+							<!--@if($product->product_type == 'local' && $product->region_title)-->
+							<span class="rp-tag area 
+								<!--@if($product->region_title == '수도권')-->seoul<!--@end-->
+								<!--@if($product->region_title == '충청권')-->chungcheong<!--@end-->
+								<!--@if($product->region_title == '호남권')-->honam<!--@end-->
+								<!--@if($product->region_title == '영남권')-->yeongnam<!--@end-->
+								">
+							{$product->region_title}</span>
+							<!--@elseif($product->shopping_channel)-->
+							<span class="channel 
+								<!--@if($product->shopping_channel == '올리브영')-->oliveyoung<!--@end-->
+								<!--@if($product->shopping_channel == '쿠팡')-->coupang<!--@end-->
+								<!--@if($product->shopping_channel == 'G마켓')-->gmarket<!--@end-->
+								<!--@if($product->shopping_channel == '11번가')-->11st<!--@end-->
+								<!--@if($product->shopping_channel == '자사몰')-->mall<!--@end-->
+								<!--@if($product->shopping_channel == '마켓컬리')-->marketcurly<!--@end-->
+								<!--@if($product->shopping_channel == '카카오선물하기')-->kakaogift<!--@end-->
+								<!--@if($product->shopping_channel == '네이버 스마트스토어')-->smartstore<!--@end-->
+								<!--@if($product->shopping_channel == '무신사')-->musinsa<!--@end-->
+								<!--@if($product->shopping_channel == '옥션')-->auction<!--@end-->
+								<!--@if($product->shopping_channel == '카카오쇼핑')-->kakaoshopping<!--@end-->
+								">
+								{$product->shopping_channel}</span>
+							<!--@end-->
+							<!--@if($product->dday_text)-->
+							<span class="pmh-tag dday">{$product->dday_text}</span>
+							<!--@end-->
+						</div>
+					</div>
+
+					<!--@if($product->content_summary)-->
+					<p class="pmh-card-desc desc">{$product->content_summary}</p>
+					<!--@end-->
+				</div>
+			</a>
+		</div>
+		<!--@end-->
+	</div>
+
+	<!-- 페이지네이션 -->
+	<!--@if($page_navigation && $page_navigation->total_page > 1)-->
+	<div class="pmh-pagination">
+		<!--@if($page_navigation->cur_page > 1)-->
+		<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductList', 'page', $page_navigation->cur_page - 1, 'category_srl', Context::get('category_srl'), 'region_srl', Context::get('region_srl'), 'shopping_channel', Context::get('shopping_channel'), 'sort', Context::get('sort'), 'search_keyword', Context::get('search_keyword'))}" class="pmh-page-link">&lsaquo;</a>
+		<!--@end-->
+		<!--@for($i = $page_navigation->first_page; $i <= $page_navigation->last_page; $i++)-->
+		<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductList', 'page', $i, 'category_srl', Context::get('category_srl'), 'region_srl', Context::get('region_srl'), 'shopping_channel', Context::get('shopping_channel'), 'sort', Context::get('sort'), 'search_keyword', Context::get('search_keyword'))}" class="pmh-page-link <!--@if($i == $page_navigation->cur_page)-->active<!--@end-->">{$i}</a>
+		<!--@end-->
+		<!--@if($page_navigation->cur_page < $page_navigation->total_page)-->
+		<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductList', 'page', $page_navigation->cur_page + 1, 'category_srl', Context::get('category_srl'), 'region_srl', Context::get('region_srl'), 'shopping_channel', Context::get('shopping_channel'), 'sort', Context::get('sort'), 'search_keyword', Context::get('search_keyword'))}" class="pmh-page-link">&rsaquo;</a>
+		<!--@end-->
+	</div>
+	<!--@end-->
+
+	<!--@else-->
+	<div class="pmh-empty">
+		<p>등록된 품앗이 상품이 없습니다.</p>
+	</div>
+	<!--@end-->
+
+<script>
+function toggleWishlist(btn){
+	var product_srl = btn.getAttribute('data-product-srl');
+	if(!product_srl) return;
+
+	jQuery.exec_json('poomahhi.procPoomahhiToggleWishlist', {product_srl: product_srl}, function(ret){
+		if(ret.error != 0){
+			alert(ret.message);
+			return;
+		}
+		if(ret.action === 'added'){
+			btn.innerHTML = '<i class="ri-heart-fill"></i>';
+			btn.classList.add('active');
+		} else {
+			btn.innerHTML = '<i class="ri-heart-line"></i>';
+			btn.classList.remove('active');
+		}
+	});
+}
+</script>

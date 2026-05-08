@@ -1,0 +1,8 @@
+<query id="getMemberReviewRankingTotal" action="select">
+	<tables>
+		<table name="poomahhi_member_review" alias="mr" />
+	</tables>
+	<columns>
+		<column name="COUNT(DISTINCT mr.target_member_srl)" alias="total_count" />
+	</columns>
+</query>

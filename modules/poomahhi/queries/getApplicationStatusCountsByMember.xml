@@ -1,0 +1,15 @@
+<query id="getApplicationStatusCountsByMember" action="select">
+	<tables>
+		<table name="poomahhi_application" alias="a" />
+	</tables>
+	<columns>
+		<column name="a.status" alias="status" />
+		<column name="count(*)" alias="cnt" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="a.member_srl" var="member_srl" pipe="AND" />
+	</conditions>
+	<groups>
+		<group column="a.status" />
+	</groups>
+</query>

@@ -1,0 +1,43 @@
+<query id="insertProduct" action="insert">
+	<tables>
+		<table name="poomahhi_product" />
+	</tables>
+	<columns>
+		<column name="product_srl" var="product_srl" />
+		<column name="module_srl" var="module_srl" />
+		<column name="category_srl" var="category_srl" />
+		<column name="extra_template_srl" var="extra_template_srl" />
+		<column name="member_srl" var="member_srl" />
+		<column name="title" var="title" />
+		<column name="short_description" var="short_description" />
+		<column name="content" var="content" />
+		<column name="shopping_channel" var="shopping_channel" />
+		<column name="company_name" var="company_name" />
+		<column name="product_url" var="product_url" />
+		<column name="product_image" var="product_image" />
+		<column name="actual_price" var="actual_price" />
+		<column name="max_applicants" var="max_applicants" />
+		<column name="apply_start_date" var="apply_start_date" />
+		<column name="apply_end_date" var="apply_end_date" />
+		<column name="selection_date" var="selection_date" />
+		<column name="review_start_date" var="review_start_date" />
+		<column name="review_end_date" var="review_end_date" />
+		<column name="result_date" var="result_date" />
+		<column name="provision" var="provision" />
+		<column name="mission" var="mission" />
+		<column name="mission_tags" var="mission_tags" />
+		<column name="keywords" var="keywords" />
+		<column name="notice" var="notice" />
+		<column name="deadline_date" var="deadline_date" />
+		<column name="product_type" var="product_type" />
+		<column name="region_srl" var="region_srl" />
+		<column name="contact" var="contact" />
+		<column name="zipcode" var="zipcode" />
+		<column name="address" var="address" />
+		<column name="address_detail" var="address_detail" />
+		<column name="visit_info" var="visit_info" />
+		<column name="status" var="status" />
+		<column name="content_access_type" var="content_access_type" />
+		<column name="point_cost" var="point_cost" />
+	</columns>
+</query>

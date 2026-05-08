@@ -1,0 +1,16 @@
+<query id="updateApplicationStatus" action="update">
+	<tables>
+		<table name="poomahhi_application" />
+	</tables>
+	<columns>
+		<column name="status" var="status" />
+		<column name="admin_memo" var="admin_memo" />
+		<column name="rejection_reason" var="rejection_reason" />
+		<column name="rejection_detail" var="rejection_detail" />
+		<column name="revision_request_content" var="revision_request_content" />
+		<column name="last_update" var="last_update" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="application_srl" var="application_srl" notnull="notnull" />
+	</conditions>
+</query>

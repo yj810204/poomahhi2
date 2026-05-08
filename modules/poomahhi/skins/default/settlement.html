@@ -1,0 +1,76 @@
+<load target="css/business.css" />
+<div class="pmh-business-layout">
+<include target="_business_sidebar.html" />
+<div class="pmh-business-main pmh-settlement">
+	<h2 class="pmh-pml-page-title">정산</h2>
+
+	<div class="pmh-pml-panel">
+		<div class="pmh-pml-panel-head">
+			<h3 class="pmh-pml-panel-title">내 정산</h3>
+			<form action="./" method="get" no-error-return-url="true" class="pmh-st-filter-form">
+				<input type="hidden" name="mid" value="{$mid}" />
+				<input type="hidden" name="act" value="dispPoomahhiSettlement" />
+				<div class="pmh-st-filter-fields">
+					<label for="pmh_st_start" class="pmh-st-filter-label">시작일</label>
+					<input type="date" name="start_date" id="pmh_st_start" value="<!--@if($start_date)-->{$start_date}<!--@else--><!--@end-->" class="pmh-st-date-input" />
+					<span class="pmh-st-filter-sep" aria-hidden="true">~</span>
+					<label for="pmh_st_end" class="pmh-st-filter-label">종료일</label>
+					<input type="date" name="end_date" id="pmh_st_end" value="<!--@if($end_date)-->{$end_date}<!--@else--><!--@end-->" class="pmh-st-date-input" />
+				</div>
+				<button type="submit" class="pmh-btn-pink sm">조회</button>
+			</form>
+		</div>
+
+		<!--@if($settlement_list)-->
+		<div class="pmh-pml-table-wrap">
+			<table class="pmh-pml-table pmh-st-table">
+				<thead>
+					<tr>
+						<th class="pmh-st-col-product">상품명</th>
+						<th class="pmh-st-col-num">총 신청수</th>
+						<th class="pmh-st-col-num">선정 수</th>
+						<th class="pmh-st-col-num">완료 수</th>
+						<th class="pmh-st-col-num">평균 점수</th>
+					</tr>
+				</thead>
+				<tbody>
+					<!--@foreach($settlement_list as $item)-->
+					<tr class="pmh-st-tr">
+						<td class="pmh-st-td-product">
+							<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductDetail', 'product_srl', $item->product_srl)}" class="pmh-st-product-link">
+								<!--@if($item->product_title)-->{$item->product_title}<!--@else-->상품 #{$item->product_srl}<!--@end-->
+							</a>
+						</td>
+						<td class="pmh-st-td-num"><!--@if($item->total_applications)-->{$item->total_applications}<!--@else-->0<!--@end--></td>
+						<td class="pmh-st-td-num"><!--@if($item->selected_count)-->{$item->selected_count}<!--@else-->0<!--@end--></td>
+						<td class="pmh-st-td-num"><!--@if($item->completed_count)-->{$item->completed_count}<!--@else-->0<!--@end--></td>
+						<td class="pmh-st-td-num">
+							<!--@if($item->avg_score)-->
+							<span class="pmh-st-score">{$item->avg_score}</span>
+							<!--@else-->
+							<span class="pmh-st-dash">-</span>
+							<!--@end-->
+						</td>
+					</tr>
+					<!--@end-->
+				</tbody>
+			</table>
+		</div>
+		<!--@else-->
+		<p class="pmh-pml-empty">정산 데이터가 없습니다.</p>
+		<!--@end-->
+	</div>
+
+	<!--@if($page_navigation && $page_navigation->total_page > 1)-->
+	<div class="pmh-pml-pagination">
+		<!--@for($pi = $page_navigation->first_page; $pi <= $page_navigation->last_page; $pi++)-->
+		<!--@if($pi == $page_navigation->cur_page)-->
+		<span class="pmh-pml-page is-current">{$pi}</span>
+		<!--@else-->
+		<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiSettlement', 'start_date', $start_date, 'end_date', $end_date, 'page', $pi)}" class="pmh-pml-page">{$pi}</a>
+		<!--@end-->
+		<!--@end-->
+	</div>
+	<!--@end-->
+</div>
+</div>

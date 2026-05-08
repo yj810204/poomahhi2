@@ -1,0 +1,11 @@
+<query id="getRegion" action="select">
+	<tables>
+		<table name="poomahhi_region" alias="r" />
+	</tables>
+	<columns>
+		<column name="r.*" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="r.region_srl" var="region_srl" pipe="AND" />
+	</conditions>
+</query>

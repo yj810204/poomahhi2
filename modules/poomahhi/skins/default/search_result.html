@@ -1,0 +1,158 @@
+<load target="css/product.scss" />
+<div class="pmh-search-result">
+
+	<!-- 상품 검색 결과 -->
+	<h3 class="pmh-page-title"><span class="bh_color_main">{$search_keyword}</span> 검색결과</h3>
+	<!--@if($product_list)-->
+	<div class="pmh-card-grid common_product_display">
+		<!--@foreach($product_list as $item)-->
+		<div class="pmh-card <!--@if($item->is_paid)-->pmh-card-paid<!--@end--> card_wrap">
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductDetail', 'product_srl', $item->product_srl)}" class="pmh-card-link">
+				<div class="pmh-card-image image_wrap">
+					<!--@if($item->product_image)-->
+					<img src="{$item->product_image}" alt="{$item->title}" />
+					<!--@else-->
+					<div class="pmh-card-noimg"></div>
+					<!--@end-->
+
+					<!--@if($item->is_paid)-->
+					<span class="pmh-badge-paid"><i class="bi bi-lock-fill"></i> <!--@if($item->point_cost_display)-->{$item->point_cost_display}<!--@else-->0<!--@end-->P</span>
+					<!--@end-->
+
+					<!--@if($logged_info)-->
+					<button type="button" class="wishlist-btn <!--@if($wishlist_map[$item->product_srl])-->active<!--@end-->" data-product-srl="{$item->product_srl}" onclick="event.preventDefault(); event.stopPropagation(); toggleWishlist(this);">
+						<i class="<!--@if($wishlist_map[$item->product_srl])-->ri-heart-fill<!--@else-->ri-heart-line<!--@end-->"></i>
+					</button>
+					<!--@end-->
+
+					<!--@if($item->status == 'closed')-->
+					<span class="pmh-badge-status closed">마감</span>
+					<!--@end-->
+				</div>
+
+				<div class="pmh-card-body body_wrap">
+					<div class="pmh-card-meta row">
+						<div class="title">
+							<!--@if($item->company_name)-->
+							<span class="pmh-company">{$item->company_name}</span>
+							<!--@end-->
+							<span class="pmh-card-title">[{$item->title}]</span>
+						</div>
+						<div class="pmh-card-tags tag">
+							<!--@if($item->shopping_channel)-->
+							<span class="channel 
+								<!--@if($item->shopping_channel == '올리브영')-->oliveyoung<!--@end-->
+								<!--@if($item->shopping_channel == '쿠팡')-->coupang<!--@end-->
+								<!--@if($item->shopping_channel == 'G마켓')-->gmarket<!--@end-->
+								<!--@if($item->shopping_channel == '11번가')-->11st<!--@end-->
+								<!--@if($item->shopping_channel == '자사몰')-->mall<!--@end-->
+								<!--@if($item->shopping_channel == '마켓컬리')-->marketcurly<!--@end-->
+								<!--@if($item->shopping_channel == '카카오선물하기')-->kakaogift<!--@end-->
+								<!--@if($item->shopping_channel == '네이버 스마트스토어')-->smartstore<!--@end-->
+								<!--@if($item->shopping_channel == '무신사')-->musinsa<!--@end-->
+								<!--@if($item->shopping_channel == '옥션')-->auction<!--@end-->
+								<!--@if($item->shopping_channel == '카카오쇼핑')-->kakaoshopping<!--@end-->
+								">{$item->shopping_channel}</span>
+							<!--@end-->
+							<!--@if($item->dday_text)-->
+							<span class="pmh-tag dday">{$item->dday_text}</span>
+							<!--@end-->
+						</div>
+					</div>
+
+					<!--@if($item->content_summary)-->
+					<p class="pmh-card-desc desc">{$item->content_summary}</p>
+					<!--@end-->
+				</div>
+			</a>
+		</div>
+		<!--@end-->
+	</div>
+	<!--@else-->
+	<div class="pmh-empty-section">
+		<p>검색 결과가 없습니다.</p>
+	</div>
+	<!--@end-->
+
+	<!-- 지역 품앗이 검색 결과 -->
+	<h3 class="pmh-page-title lg:mt-100 mt-20"><span class="bh_color_main">{$search_keyword}</span> 검색결과</h3>
+	<!--@if($local_list)-->
+	<div class="pmh-card-grid pmh-local-grid common_product_display">
+		<!--@foreach($local_list as $item)-->
+		<div class="pmh-card <!--@if($item->is_paid)-->pmh-card-paid<!--@end--> card_wrap">
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductDetail', 'product_srl', $item->product_srl)}" class="pmh-card-link">
+				<div class="pmh-card-image image_wrap">
+					<!--@if($item->product_image)-->
+					<img src="{$item->product_image}" alt="{$item->title}" />
+					<!--@else-->
+					<div class="pmh-card-noimg"></div>
+					<!--@end-->
+
+					<!--@if($item->is_paid)-->
+					<span class="pmh-badge-paid"><i class="bi bi-lock-fill"></i> <!--@if($item->point_cost_display)-->{$item->point_cost_display}<!--@else-->0<!--@end-->P</span>
+					<!--@end-->
+
+					<!--@if($logged_info)-->
+					<button type="button" class="wishlist-btn <!--@if($wishlist_map[$item->product_srl])-->active<!--@end-->" data-product-srl="{$item->product_srl}" onclick="event.preventDefault(); event.stopPropagation(); toggleWishlist(this);">
+						<i class="<!--@if($wishlist_map[$item->product_srl])-->ri-heart-fill<!--@else-->ri-heart-line<!--@end-->"></i>
+					</button>
+					<!--@end-->
+
+					<!--@if($item->status == 'closed')-->
+					<span class="pmh-badge-status closed">마감</span>
+					<!--@end-->
+				</div>
+
+				<div class="pmh-card-body body_wrap">
+					<div class="pmh-card-meta row">
+						<div class="title">
+							<!--@if($item->company_name)-->
+							<span class="pmh-company">{$item->company_name}</span>
+							<!--@end-->
+							<span class="pmh-card-title">[{$item->title}]</span>
+						</div>
+						<div class="pmh-card-tags tag">
+							<!--@if($item->region_title)-->
+							<span class="pmh-tag region">{$item->region_title}</span>
+							<!--@end-->
+							<!--@if($item->dday_text)-->
+							<span class="pmh-tag dday">{$item->dday_text}</span>
+							<!--@end-->
+						</div>
+					</div>
+
+					<!--@if($item->content_summary)-->
+					<p class="pmh-card-desc desc">{$item->content_summary}</p>
+					<!--@end-->
+				</div>
+			</a>
+		</div>
+		<!--@end-->
+	</div>
+	<!--@else-->
+	<div class="pmh-empty-section">
+		<p>검색 결과가 없습니다.</p>
+	</div>
+	<!--@end-->
+</div>
+
+<script>
+function toggleWishlist(btn){
+	var product_srl = btn.getAttribute('data-product-srl');
+	if(!product_srl) return;
+
+	jQuery.exec_json('poomahhi.procPoomahhiToggleWishlist', {product_srl: product_srl}, function(ret){
+		if(ret.error != 0){
+			alert(ret.message);
+			return;
+		}
+		if(ret.action === 'added'){
+			btn.innerHTML = '<i class="ri-heart-fill"></i>';
+			btn.classList.add('active');
+		} else {
+			btn.innerHTML = '<i class="ri-heart-line"></i>';
+			btn.classList.remove('active');
+		}
+	});
+}
+</script>

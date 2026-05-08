@@ -1,0 +1,38 @@
+<query id="getSettlementByBusiness" action="select">
+	<tables>
+		<table name="poomahhi_product" alias="p" />
+		<table name="poomahhi_application" alias="a" type="left join">
+			<conditions>
+				<condition operation="equal" column="p.product_srl" default="a.product_srl" />
+			</conditions>
+		</table>
+		<table name="poomahhi_review" alias="r" type="left join">
+			<conditions>
+				<condition operation="equal" column="a.application_srl" default="r.application_srl" />
+			</conditions>
+		</table>
+	</tables>
+	<columns>
+		<column name="p.member_srl" alias="business_member_srl" />
+		<column name="p.product_srl" />
+		<column name="p.title" alias="product_title" />
+		<column name="COUNT(DISTINCT a.application_srl)" alias="total_applications" />
+		<column name="COUNT(DISTINCT CASE WHEN a.status = 'selected' OR a.status = 'under_review' OR a.status = 'revision_requested' OR a.status = 'completed' THEN a.application_srl END)" alias="selected_count" />
+		<column name="COUNT(DISTINCT CASE WHEN a.status = 'completed' THEN a.application_srl END)" alias="completed_count" />
+		<column name="AVG(r.score)" alias="avg_score" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="p.member_srl" var="member_srl" pipe="AND" />
+		<condition operation="more" column="p.regdate" var="start_date" pipe="AND" />
+		<condition operation="less" column="p.regdate" var="end_date" pipe="AND" />
+	</conditions>
+	<groups>
+		<group column="p.product_srl" />
+	</groups>
+	<navigation>
+		<index var="sort_index" default="p.product_srl" order="desc" />
+		<list_count var="list_count" default="20" />
+		<page_count var="page_count" default="10" />
+		<page var="page" default="1" />
+	</navigation>
+</query>

@@ -1,0 +1,12 @@
+<query id="updateApplicationStatusLite" action="update">
+	<tables>
+		<table name="poomahhi_application" />
+	</tables>
+	<columns>
+		<column name="status" var="status" />
+		<column name="last_update" var="last_update" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="application_srl" var="application_srl" notnull="notnull" />
+	</conditions>
+</query>

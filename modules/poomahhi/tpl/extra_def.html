@@ -1,0 +1,178 @@
+<include target="_header.html" />
+
+<div class="poomahhi-admin-fullwidth" style="width:100%;">
+<!-- 템플릿 선택 / 경로 안내 -->
+<div style="margin-bottom:15px;">
+	<a href="{getUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminExtraTemplate')}">&laquo; 템플릿 목록으로</a>
+	<!--@if($template_srl)-->
+	<!--@foreach($template_list as $tpl)-->
+	<!--@if($tpl->template_srl == $template_srl)-->
+	<span style="margin-left:10px; font-size:16px; font-weight:bold;">{$tpl->title}</span>
+	<!--@if($tpl->description)-->
+	<span style="color:#999;"> - {$tpl->description}</span>
+	<!--@end-->
+	<!--@end-->
+	<!--@end-->
+	<!--@end-->
+</div>
+
+<!--@if(!$template_srl)-->
+<div class="alert alert-warning">
+	먼저 <a href="{getUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminExtraTemplate')}">확장변수 템플릿</a>을 선택하세요.
+</div>
+<!--@else-->
+
+<!-- 확장변수 추가/수정 폼 -->
+<div style="margin-bottom:20px; padding:15px; border:1px solid #ddd; background:#f9f9f9;">
+	<!--@if($XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/poomahhi/extra_def_save')-->
+	<div class="alert alert-danger" style="margin-bottom:15px;">
+		<p>{$XE_VALIDATOR_MESSAGE}</p>
+	</div>
+	<!--@end-->
+	<h4><!--@if($extra_def)-->확장변수 수정<!--@else-->확장변수 추가<!--@end--></h4>
+	<form action="./" method="post">
+		<input type="hidden" name="module" value="admin" />
+		<input type="hidden" name="act" value="procPoomahhiAdminSaveExtraDef" />
+		<input type="hidden" name="xe_validator_id" value="modules/poomahhi/extra_def_save" />
+		<input type="hidden" name="template_srl" value="{$template_srl}" />
+		<!--@if($extra_def)-->
+		<input type="hidden" name="extra_def_srl" value="{$extra_def->extra_def_srl}" />
+		<!--@end-->
+
+		<table class="table table-bordered" style="max-width:600px;">
+			<tbody>
+				<tr>
+					<th style="width:150px;">변수명 (영문)</th>
+					<td>
+						<input type="text" name="var_name" value="<!--@if($extra_def)-->{$extra_def->var_name}<!--@else--><!--@end-->" class="form-control" style="width:300px;" required="required" placeholder="예: color, size" />
+					</td>
+				</tr>
+				<tr>
+					<th>표시명 (한글)</th>
+					<td>
+						<input type="text" name="var_label" value="<!--@if($extra_def)-->{$extra_def->var_label}<!--@else--><!--@end-->" class="form-control" style="width:300px;" required="required" placeholder="예: 색상, 사이즈" />
+					</td>
+				</tr>
+				<tr>
+					<th>입력 타입</th>
+					<td>
+						<select name="var_type" class="form-control" style="width:200px;">
+							<option value="text" selected|cond="$extra_def->var_type == 'text'">텍스트</option>
+							<option value="textarea" selected|cond="$extra_def->var_type == 'textarea'">텍스트영역</option>
+							<option value="select" selected|cond="$extra_def->var_type == 'select'">선택(드롭다운)</option>
+							<option value="checkbox" selected|cond="$extra_def->var_type == 'checkbox'">체크박스</option>
+							<option value="radio" selected|cond="$extra_def->var_type == 'radio'">라디오버튼</option>
+							<option value="number" selected|cond="$extra_def->var_type == 'number'">숫자</option>
+							<option value="date" selected|cond="$extra_def->var_type == 'date'">날짜</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<th>옵션값</th>
+					<td>
+						<input type="text" name="var_options" value="<!--@if($extra_def)-->{$extra_def->var_options}<!--@else--><!--@end-->" class="form-control" style="width:400px;" placeholder="select/checkbox/radio 타입 시 쉼표 구분 (예: 옵션1,옵션2,옵션3)" />
+					</td>
+				</tr>
+				<tr>
+					<th>필수 여부</th>
+					<td>
+						<select name="is_required" class="form-control" style="width:100px;">
+							<option value="N" selected|cond="$extra_def->is_required != 'Y'">아니오</option>
+							<option value="Y" selected|cond="$extra_def->is_required == 'Y'">예</option>
+						</select>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<div class="btn-group">
+			<button type="submit" class="btn btn-primary"><!--@if($extra_def)-->수정<!--@else-->추가<!--@end--></button>
+			<!--@if($extra_def)-->
+			<a href="{getUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminExtraDef', 'template_srl', $template_srl)}" class="btn btn-default">취소</a>
+			<!--@end-->
+		</div>
+	</form>
+</div>
+
+<!-- 확장변수 정의 목록 (Drag & Drop 정렬) -->
+<!--@if($extra_def_list)-->
+<table class="table table-bordered table-striped" id="extraDefSortTable" style="width:100%; table-layout:auto;">
+	<thead>
+		<tr>
+			<th style="width:40px;"></th>
+			<th>변수명</th>
+			<th>표시명</th>
+			<th style="width:100px;">타입</th>
+			<th>옵션값</th>
+			<th style="width:60px;">필수</th>
+			<th style="width:150px;">관리</th>
+		</tr>
+	</thead>
+	<tbody id="extraDefSortBody">
+		<!--@foreach($extra_def_list as $key => $def)-->
+		<tr data-extra-def-srl="{$def->extra_def_srl}">
+			<td style="cursor:move; text-align:center; color:#999;">&#9776;</td>
+			<td>{$def->var_name}</td>
+			<td>{$def->var_label}</td>
+			<td>{$def->var_type}</td>
+			<td><!--@if($def->var_options)-->{$def->var_options}<!--@else-->-<!--@end--></td>
+			<td><!--@if($def->is_required == 'Y')-->Y<!--@else-->N<!--@end--></td>
+			<td>
+				<a href="{getUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminExtraDef', 'template_srl', $template_srl, 'extra_def_srl', $def->extra_def_srl)}" class="btn btn-sm btn-default">수정</a>
+				<a href="{getUrl('', 'module', 'admin', 'act', 'procPoomahhiAdminDeleteExtraDef', 'template_srl', $template_srl, 'extra_def_srl', $def->extra_def_srl)}" onclick="return confirm('삭제하시겠습니까?');" class="btn btn-sm btn-danger">삭제</a>
+			</td>
+		</tr>
+		<!--@end-->
+	</tbody>
+</table>
+
+<script>
+(function(){
+	var tbody = document.getElementById('extraDefSortBody');
+	if(!tbody) return;
+	var dragRow = null;
+	tbody.querySelectorAll('tr').forEach(function(row){
+		row.setAttribute('draggable', 'true');
+		row.addEventListener('dragstart', function(e){
+			dragRow = this; this.style.opacity = '0.4';
+			e.dataTransfer.effectAllowed = 'move';
+		});
+		row.addEventListener('dragend', function(){
+			this.style.opacity = '1';
+			tbody.querySelectorAll('tr').forEach(function(r){ r.classList.remove('drag-over'); });
+			dragRow = null;
+		});
+		row.addEventListener('dragover', function(e){
+			e.preventDefault(); e.dataTransfer.dropEffect = 'move';
+			if(this !== dragRow) this.classList.add('drag-over');
+		});
+		row.addEventListener('dragleave', function(){ this.classList.remove('drag-over'); });
+		row.addEventListener('drop', function(e){
+			e.preventDefault(); this.classList.remove('drag-over');
+			if(dragRow && dragRow !== this){
+				var rows = Array.from(tbody.querySelectorAll('tr'));
+				var fromIdx = rows.indexOf(dragRow), toIdx = rows.indexOf(this);
+				if(fromIdx < toIdx) tbody.insertBefore(dragRow, this.nextSibling);
+				else tbody.insertBefore(dragRow, this);
+				var srls = [];
+				tbody.querySelectorAll('tr').forEach(function(r){ srls.push(r.getAttribute('data-extra-def-srl')); });
+				jQuery.exec_json('poomahhi.procPoomahhiAdminSortExtraDefs', {extra_def_srls: srls.join(',')}, function(ret){
+					if(ret.error != 0) alert(ret.message);
+				});
+			}
+		});
+	});
+})();
+</script>
+<style>
+.poomahhi-admin-fullwidth { width: 100% !important; max-width: none !important; }
+#extraDefSortTable { width: 100% !important; }
+#extraDefSortBody tr.drag-over { border-top: 2px solid #337ab7; }
+#extraDefSortBody tr[draggable] td:first-child { cursor: move; }
+</style>
+<!--@else-->
+<p style="text-align:center; padding:30px 0; color:#999;">이 템플릿에 등록된 확장변수가 없습니다. 위에서 추가하세요.</p>
+<!--@end-->
+
+<!--@end-->
+</div>

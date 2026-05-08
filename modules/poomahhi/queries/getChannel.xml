@@ -1,0 +1,11 @@
+<query id="getChannel" action="select">
+	<tables>
+		<table name="poomahhi_shopping_channel" alias="c" />
+	</tables>
+	<columns>
+		<column name="c.*" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="c.channel_srl" var="channel_srl" pipe="AND" />
+	</conditions>
+</query>

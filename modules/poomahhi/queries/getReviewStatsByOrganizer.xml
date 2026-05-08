@@ -1,0 +1,21 @@
+<query id="getReviewStatsByOrganizer" action="select">
+	<tables>
+		<table name="poomahhi_review" alias="r" />
+		<table name="poomahhi_product" alias="p" type="inner">
+			<conditions>
+				<condition operation="equal" column="r.product_srl" default="p.product_srl" />
+			</conditions>
+		</table>
+	</tables>
+	<columns>
+		<column name="p.product_srl" />
+		<column name="p.title" alias="product_title" />
+		<column name="count(r.review_srl)" alias="review_count" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="p.member_srl" var="member_srl" notnull="notnull" pipe="AND" />
+	</conditions>
+	<groups>
+		<group column="p.product_srl" />
+	</groups>
+</query>

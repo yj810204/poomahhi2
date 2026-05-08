@@ -1,0 +1,8 @@
+<query id="deleteRegion" action="delete">
+	<tables>
+		<table name="poomahhi_region" />
+	</tables>
+	<conditions>
+		<condition operation="equal" column="region_srl" var="region_srl" pipe="AND" />
+	</conditions>
+</query>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget version="0.2">
+	<title>지역 품앗이</title>
+	<description>품앗이 모듈 지역별 품앗이 상품 표시</description>
+	<version>1.0.0</version>
+	<date>2026-02-24</date>
+	<author>
+		<name>WP</name>
+	</author>
+	<extra_vars>
+		<var name="list_count" type="text" default="6">
+			<title>목록 수</title>
+			<description>지역당 표시할 상품 수 (기본 6)</description>
+		</var>
+		<var id="module_srl_list">
+			<type>module_srl_list</type>
+			<title>품앗이 모듈</title>
+			<description>품앗이 모듈 선택 (지역/상품 데이터 및 링크에 사용)</description>
+		</var>
+	</extra_vars>
+</widget>

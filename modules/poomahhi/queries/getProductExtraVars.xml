@@ -1,0 +1,11 @@
+<query id="getProductExtraVars" action="select">
+	<tables>
+		<table name="poomahhi_product_extra" alias="pe" />
+	</tables>
+	<columns>
+		<column name="pe.*" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="pe.product_srl" var="product_srl" notnull="notnull" />
+	</conditions>
+</query>

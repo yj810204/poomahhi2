@@ -1,0 +1,12 @@
+<query id="updateMemberReview" action="update">
+	<tables>
+		<table name="poomahhi_member_review" />
+	</tables>
+	<columns>
+		<column name="content" var="content" />
+		<column name="last_update" var="last_update" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="review_srl" var="review_srl" notnull="notnull" />
+	</conditions>
+</query>

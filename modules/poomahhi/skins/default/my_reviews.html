@@ -1,0 +1,252 @@
+<load target="css/business.scss" />
+<load target="../../../member/css/member.scss" />
+
+<!--@if($use_business_layout)-->
+<div class="pmh-business-layout">
+<include target="_business_sidebar.html" />
+<!--@else-->
+<include target="../../../member/skins/poomahhi/common_header.html" />
+<!--@end-->
+
+<div class="member-contents">
+	<h1>내가 받은 리뷰</h1>
+	<div class="poomahhi-my-reviews">
+
+		<!-- 상단 3열: 프로필/별점분포/이행통계 (이미지1 참고) -->
+		<div class="pmh-mr-header">
+			<!-- 좌측: 프로필 + 레벨 + 랭킹 -->
+			<div class="pmh-mr-profile mypage_wrap">
+				<div class="pmh-mr-avatar-wrap">
+					<!--@if($logged_info->profile_image)-->
+					<img src="{$logged_info->profile_image->src}" alt="" class="pmh-mr-avatar" />
+					<!--@else-->
+					<img src="img/noimage.png" alt="" class="pmh-mr-avatar" />
+					<!--@end-->
+					<div class="pmh-mr-nickname">{$logged_info->nick_name}</div>
+				</div>
+				<div class="pmh-mr-info-wrap">
+					<div class="pmh-mr-level-badge"><span class="pmh-mr-level-num">{$member_level}</span><span class="pmh-mr-level-text">Level</span></div>
+					<div class="pmh-mr-count">
+						<div class="pmh-mr-ranking">
+							<span><i class="ri-medal-line"></i>품앗이 랭킹</span>
+							<span><b><!--@if($ranking->position)-->{$ranking->position}<!--@else-->-<!--@end--></b>위</span>
+						</div>
+						<div class="pmh-mr-percentile">
+							<span><i class="ri-line-chart-fill"></i>상위 백분율</span>
+							<span><b><!--@if($ranking->percentile)-->{$ranking->percentile}<!--@else-->-<!--@end--></b>%</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="graph-wrap mypage_wrap">
+				<!-- 중앙: 별점 평균 + 5단계 분포 -->
+				<div class="pmh-mr-score">
+					<div class="pmh-mr-stars">
+						<!--@for($s = 1; $s <= 5; $s++)--><!--@if($s <= round($review_stats->avg_score))--><i class="bi bi-star-fill"></i><!--@else--><i class="bi bi-star"></i><!--@end--><!--@end-->
+						<span class="pmh-mr-avg"><b>{$review_stats->avg_score}</b>/5</span>
+					</div>
+					<div class="pmh-mr-score-bars">
+						<div class="pmh-mr-bar-row">
+							<span class="pmh-mr-bar-label">아주 좋아요</span>
+							<div class="pmh-mr-bar-wrap"><div class="pmh-mr-bar" style="width:<!--@if($score_distribution->score_5_percent)-->{$score_distribution->score_5_percent}<!--@else-->0<!--@end-->%;"></div></div>
+							<span class="pmh-mr-bar-pct"><!--@if($score_distribution->score_5_percent)-->{$score_distribution->score_5_percent}<!--@else-->0<!--@end-->%</span>
+						</div>
+						<div class="pmh-mr-bar-row">
+							<span class="pmh-mr-bar-label">맘에들어요</span>
+							<div class="pmh-mr-bar-wrap"><div class="pmh-mr-bar" style="width:<!--@if($score_distribution->score_4_percent)-->{$score_distribution->score_4_percent}<!--@else-->0<!--@end-->%;"></div></div>
+							<span class="pmh-mr-bar-pct"><!--@if($score_distribution->score_4_percent)-->{$score_distribution->score_4_percent}<!--@else-->0<!--@end-->%</span>
+						</div>
+						<div class="pmh-mr-bar-row">
+							<span class="pmh-mr-bar-label">보통이에요</span>
+							<div class="pmh-mr-bar-wrap"><div class="pmh-mr-bar" style="width:<!--@if($score_distribution->score_3_percent)-->{$score_distribution->score_3_percent}<!--@else-->0<!--@end-->%;"></div></div>
+							<span class="pmh-mr-bar-pct"><!--@if($score_distribution->score_3_percent)-->{$score_distribution->score_3_percent}<!--@else-->0<!--@end-->%</span>
+						</div>
+						<div class="pmh-mr-bar-row">
+							<span class="pmh-mr-bar-label">그냥 그래요</span>
+							<div class="pmh-mr-bar-wrap"><div class="pmh-mr-bar" style="width:<!--@if($score_distribution->score_2_percent)-->{$score_distribution->score_2_percent}<!--@else-->0<!--@end-->%;"></div></div>
+							<span class="pmh-mr-bar-pct"><!--@if($score_distribution->score_2_percent)-->{$score_distribution->score_2_percent}<!--@else-->0<!--@end-->%</span>
+						</div>
+						<div class="pmh-mr-bar-row">
+							<span class="pmh-mr-bar-label">별로예요</span>
+							<div class="pmh-mr-bar-wrap"><div class="pmh-mr-bar" style="width:<!--@if($score_distribution->score_1_percent)-->{$score_distribution->score_1_percent}<!--@else-->0<!--@end-->%;"></div></div>
+							<span class="pmh-mr-bar-pct"><!--@if($score_distribution->score_1_percent)-->{$score_distribution->score_1_percent}<!--@else-->0<!--@end-->%</span>
+						</div>
+					</div>
+				</div>
+
+				<!-- 우측: 이행/미이행 -->
+				<div class="pmh-mr-fulfill">
+					<div class="pmh-mr-fulfill-item">
+						<div class="count-wrap">
+							<div class="pmh-mr-fulfill-label">품앗이 이행 횟수</div>
+							<div class="pmh-mr-fulfill-val"><span class="bh_color_main"><!--@if($fulfillment_stats->fulfilled_count)-->{$fulfillment_stats->fulfilled_count}<!--@else-->0<!--@end--></span>/<!--@if($fulfillment_stats->total_count)-->{$fulfillment_stats->total_count}<!--@else-->0<!--@end-->회</div>
+						</div>
+						<div class="pmh-mr-fulfill-bar-wrap"><div class="pmh-mr-fulfill-bar pmh-mr-bar-ok" style="width:<!--@if($fulfillment_stats->fulfilled_percent)-->{$fulfillment_stats->fulfilled_percent}<!--@else-->0<!--@end-->%;"></div></div>
+					</div>
+					<div class="pmh-mr-fulfill-item">
+						<div class="count-wrap">
+							<div class="pmh-mr-fulfill-label">품앗이 미이행 횟수</div>
+							<div class="pmh-mr-fulfill-val"><span><!--@if($fulfillment_stats->unfulfilled_count)-->{$fulfillment_stats->unfulfilled_count}<!--@else-->0<!--@end--></span>/<!--@if($fulfillment_stats->total_count)-->{$fulfillment_stats->total_count}<!--@else-->0<!--@end-->회</div>
+						</div>
+						<div class="pmh-mr-fulfill-bar-wrap"><div class="pmh-mr-fulfill-bar pmh-mr-bar-ng" style="width:<!--@if($fulfillment_stats->unfulfilled_percent)-->{$fulfillment_stats->unfulfilled_percent}<!--@else-->0<!--@end-->%;"></div></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 리뷰 목록 (카드형) -->
+		<div class="pmh-mr-list mypage_wrap">
+			<div class="pmh-mr-list-title">총 <b><!--@if($total_count)-->{$total_count}<!--@else-->0<!--@end--></b>건</div>
+
+			<!--@if($review_list)-->
+			<!--@foreach($review_list as $review)-->
+			<div class="pmh-mr-card">
+				<div class="pmh-mr-card-head">
+					<div class="pmh-mr-card-author">
+						<!--@if($review->reviewer_profile_image)-->
+						<img src="{$review->reviewer_profile_image}" alt="" class="pmh-mr-card-avatar" />
+						<!--@else-->
+						<img src="img/noimage.png" alt="" class="pmh-mr-card-avatar" />
+						<!--@end-->
+						<span class="pmh-mr-card-name-time">{$review->reviewer_nickname} • {zdate($review->regdate, 'Y-m-d H:i')}</span>
+					</div>
+					<i class="bi bi-three-dots-vertical pmh-mr-card-menu"></i>
+				</div>
+				<div class="pmh-mr-card-content"><!--@if($review->content)-->{$review->content}<!--@else-->-<!--@end--></div>
+
+				<!-- 품앗이 소개 카드 -->
+				<div class="pmh-mr-product">
+					<!--@if($review->product_image)-->
+					<img src="{$review->product_image}" alt="" class="pmh-mr-product-img" />
+					<!--@else-->
+					<div class="pmh-mr-product-noimg"><i class="bi bi-image"></i></div>
+					<!--@end-->
+					<div class="pmh-mr-product-info">
+						<div class="pmh-mr-product-badges tag">
+							<!--@if($review->product_type == 'local' && $review->region_title)-->
+							<span class="pmh-mr-badge area 
+								<!--@if($review->region_title == '수도권')-->seoul<!--@end-->
+								<!--@if($review->region_title == '충청권')-->chungcheong<!--@end-->
+								<!--@if($review->region_title == '호남권')-->honam<!--@end-->
+								<!--@if($review->region_title == '영남권')-->yeongnam<!--@end-->
+								">
+							{$review->region_title}</span>
+							<!--@end-->
+							<!--@if($review->dday)--><span class="pmh-mr-badge pmh-mr-dday">{$review->dday}</span><!--@end-->
+						</div>
+						<!--@if($review->company_name)--><div class="pmh-mr-product-company">{$review->company_name}<!--@if($review->product_title)-->&nbsp;[{$review->product_title}]<!--@end--></div><!--@elseif($review->product_title)--><div class="pmh-mr-product-company">{$review->product_title}</div><!--@end-->
+						<!--@if($review->product_description)--><div class="pmh-mr-product-desc">{$review->product_description}</div><!--@end-->
+					</div>
+				</div>
+
+				<!-- 회원평가(개설자 답변) 표시 - 작성된 경우에만 표시 -->
+				<!--@if($review->member_review)-->
+				<div class="pmh-mr-reply-form pmh-mr-thread">
+					<div class="pmh-mr-member-review-box">
+						<div class="pmh-mr-member-review-head">
+							<div class="pmh-mr-member-review-author">
+								<!--@if($review->member_review->reviewer_profile_image)-->
+								<img src="{$review->member_review->reviewer_profile_image}" alt="" class="pmh-mr-card-avatar" />
+								<!--@else-->
+								<div class="pmh-mr-card-avatar-placeholder"><i class="bi bi-person"></i></div>
+								<!--@end-->
+								<span class="pmh-mr-card-name">{$review->member_review->reviewer_nickname}</span>
+								<span class="pmh-mr-card-time"><!--@if($review->member_review->regdate)-->{zdate($review->member_review->regdate, 'Y-m-d H:i')}<!--@end--></span>
+							</div>
+							<i class="bi bi-three-dots-vertical pmh-mr-card-menu"></i>
+						</div>
+						<div class="pmh-mr-member-review-content"><!--@if($review->member_review->content)-->{$review->member_review->content}<!--@else-->-<!--@end--></div>
+					</div>
+				</div>
+				<!--@elseif($review->is_product_owner)-->
+				<div class="pmh-mr-reply-form">
+					<!--@if($XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == $review->member_review_validator_id)-->
+					<div class="pmh-mr-reply-message {$XE_VALIDATOR_MESSAGE_TYPE}">
+						<p>{$XE_VALIDATOR_MESSAGE}</p>
+					</div>
+					<!--@end-->
+					<form action="./" method="post">
+						<input type="hidden" name="act" value="procPoomahhiInsertMemberReview" />
+						<input type="hidden" name="mid" value="{$mid}" />
+						<input type="hidden" name="application_srl" value="{$review->application_srl}" />
+						<input type="hidden" name="success_return_url" value="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiMyReviews', 'page', $page)}" />
+						<input type="hidden" name="xe_validator_id" value="{$review->member_review_validator_id}" />
+						<input type="hidden" name="score" value="5" />
+						<textarea name="content" rows="2" placeholder="답변을 입력해 주세요."></textarea>
+						<button type="submit" class="pmh-mr-reply-btn">답변 등록</button>
+					</form>
+				</div>
+				<!--@end-->
+			</div>
+			<!--@end-->
+
+			<!--@if($page_navigation)-->
+			<div class="pmh-pagination pmh-mr-pagination ds-n">
+				<!--@if($page_navigation->cur_page > 1)-->
+				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiMyReviews', 'page', $page_navigation->cur_page - 1)}" class="pmh-page-nav">&lsaquo; 이전</a>
+				<!--@end-->
+				<!--@for($i = $page_navigation->first_page; $i <= $page_navigation->last_page; $i++)-->
+				<!--@if($i == $page_navigation->cur_page)--><span class="pmh-page is-current">{$i}</span><!--@else--><a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiMyReviews', 'page', $i)}" class="pmh-page">{$i}</a><!--@end-->
+				<!--@end-->
+				<!--@if($page_navigation->cur_page < $page_navigation->total_page)-->
+				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiMyReviews', 'page', $page_navigation->cur_page + 1)}" class="pmh-page-nav">다음 &rsaquo;</a>
+				<!--@end-->
+			</div>
+			<!--@end-->
+			<div class="pagination">
+				<form action="{Context::getRequestUri()}" method="get" no-error-return-url="true">
+					<input type="hidden" name="mid" value="{$mid}" />
+					<input type="hidden" name="act" value="{$act}" />
+					<select name="search_target" title="{$lang->search_target}">
+						<option value="title" selected="selected"|cond="isset($search_target) && $search_target == 'title'">{$lang->title}</option>
+						<option value="title_content" selected="selected"|cond="isset($search_target) && $search_target == 'title_content'">{$lang->title_content}</option>
+						<option value="content" selected="selected"|cond="isset($search_target) && $search_target == 'content'">{$lang->content}</option>
+					</select>
+					<input type="text" name="search_keyword" value="{escape($search_keyword ?? '', false)}" placeholder="검색단어 입력">
+					<button type="submit">{$lang->cmd_search}</button>
+				</form>
+				<ul>
+					<li><a href="{getUrl('page','','module_srl','')}" class="direction"><i class="ri-arrow-left-s-line"></i></a></li> 
+					<!--@while($page_no = $page_navigation->getNextPage())-->
+					<li class="active"|cond="$page == $page_no"><a href="{getUrl('page',$page_no,'module_srl','')}">{$page_no}</a></li>
+					<!--@end-->
+					<li><a href="{getUrl('page',$page_navigation->last_page,'module_srl','')}" class="direction"><i class="ri-arrow-right-s-line"></i></a></li>
+				</ul>
+				<div style="clear:both"></div>
+			</div>
+
+			<!--@else-->
+			<p class="pmh-mr-empty">등록한 참여인증이 없습니다.</p>
+			<!--@end-->
+		</div>
+	</div>
+</div>
+<!--@if($use_business_layout)-->
+</div>
+</div>
+<!--@end-->
+
+<style>
+
+.pmh-mr-replies { margin-bottom: 12px; padding: 12px; background: #f9f9f9; border-radius: 8px; font-size: 13px; }
+.pmh-mr-reply { margin-bottom: 6px; }
+.pmh-mr-reply:last-child { margin-bottom: 0; }
+.pmh-mr-reply-author { font-weight: 600; margin-right: 6px; }
+.pmh-mr-reply-message { padding: 8px 12px; border-radius: 6px; margin-bottom: 10px; font-size: 13px; }
+.pmh-mr-reply-message.error { background: #fbe9e7; color: #e53935; }
+.pmh-mr-reply-message.info { background: #e3f2fd; color: #1976d2; }
+.pmh-mr-member-review-box { padding: 12px 16px; background: #f5f5f5; border-radius: 8px; margin-bottom: 0; }
+.pmh-mr-member-review-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.pmh-mr-member-review-author { display: flex; align-items: center; gap: 10px; }
+.pmh-mr-member-review-content { font-size: 14px; line-height: 1.5; color: #333; white-space: pre-wrap; word-break: break-word; }
+.pmh-mr-member-review-empty .pmh-mr-member-review-text { width: 100%; max-width: 400px; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; resize: vertical; background: #fff; }
+.pmh-mr-reply-form textarea { width: 100%; max-width: 400px; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; resize: vertical; }
+.pmh-mr-reply-btn { padding: 8px 16px; background: #9c27b0; color: #fff; border: none; border-radius: 6px; font-size: 13px; cursor: pointer; margin-left: 8px; vertical-align: top; }
+.pmh-mr-reply-btn:hover { background: #7b1fa2; }
+.pmh-mr-pagination { margin-top: 20px; text-align: center; font-size: 14px; }
+.pmh-mr-pagination a { margin: 0 4px; color: #1976d2; text-decoration: none; }
+.pmh-mr-pagination a:hover { text-decoration: underline; }
+.pmh-mr-empty { text-align: center; padding: 40px 0; color: #999; font-size: 14px; }
+</style>
+<include target="../../../member/skins/poomahhi/common_footer.html" />

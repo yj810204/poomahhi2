@@ -1,0 +1,12 @@
+<query id="updateChannel" action="update">
+	<tables>
+		<table name="poomahhi_shopping_channel" alias="c" />
+	</tables>
+	<columns>
+		<column name="title" var="title" />
+		<column name="list_order" var="list_order" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="c.channel_srl" var="channel_srl" pipe="AND" />
+	</conditions>
+</query>

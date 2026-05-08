@@ -1,0 +1,14 @@
+<query id="insertPointLog" action="insert">
+	<tables>
+		<table name="poomahhi_point_log" />
+	</tables>
+	<columns>
+		<column name="log_srl" var="log_srl" />
+		<column name="member_srl" var="member_srl" />
+		<column name="point" var="point" />
+		<column name="type" var="type" />
+		<column name="description" var="description" />
+		<column name="related_srl" var="related_srl" />
+		<column name="regdate" var="regdate" />
+	</columns>
+</query>

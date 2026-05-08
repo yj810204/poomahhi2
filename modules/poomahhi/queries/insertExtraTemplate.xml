@@ -1,0 +1,12 @@
+<query id="insertExtraTemplate" action="insert">
+	<tables>
+		<table name="poomahhi_extra_template" />
+	</tables>
+	<columns>
+		<column name="template_srl" var="template_srl" />
+		<column name="module_srl" var="module_srl" />
+		<column name="title" var="title" />
+		<column name="description" var="description" />
+		<column name="list_order" var="list_order" />
+	</columns>
+</query>

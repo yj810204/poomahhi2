@@ -1,0 +1,8 @@
+<query id="deleteProductExtras" action="delete">
+	<tables>
+		<table name="poomahhi_product_extra" />
+	</tables>
+	<conditions>
+		<condition operation="equal" column="product_srl" var="product_srl" notnull="notnull" />
+	</conditions>
+</query>

@@ -1,0 +1,12 @@
+<query id="updateExtraTemplate" action="update">
+	<tables>
+		<table name="poomahhi_extra_template" />
+	</tables>
+	<columns>
+		<column name="title" var="title" />
+		<column name="description" var="description" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="template_srl" var="template_srl" notnull="notnull" />
+	</conditions>
+</query>

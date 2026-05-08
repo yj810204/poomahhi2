@@ -1,0 +1,109 @@
+<include target="_header.html" />
+
+<div class="poomahhi-admin-fullwidth" style="width:100%;">
+<!-- 확장변수 템플릿 추가/수정 폼 -->
+<div style="margin-bottom:20px; padding:15px; border:1px solid #ddd; background:#f9f9f9;">
+	<!--@if($XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/poomahhi/extra_template_save')-->
+	<div class="alert alert-danger" style="margin-bottom:15px;">
+		<p>{$XE_VALIDATOR_MESSAGE}</p>
+	</div>
+	<!--@end-->
+	<h4><!--@if($template)-->템플릿 수정<!--@else-->템플릿 추가<!--@end--></h4>
+	<form action="./" method="post">
+		<input type="hidden" name="module" value="admin" />
+		<input type="hidden" name="act" value="procPoomahhiAdminSaveExtraTemplate" />
+		<input type="hidden" name="xe_validator_id" value="modules/poomahhi/extra_template_save" />
+		<!--@if($template)-->
+		<input type="hidden" name="template_srl" value="{$template->template_srl}" />
+		<!--@end-->
+
+		<div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+			<input type="text" name="title" value="<!--@if($template)-->{$template->title}<!--@else--><!--@end-->" class="form-control" style="width:250px;" required="required" placeholder="템플릿명 (예: 음식 체험)" />
+			<input type="text" name="description" value="<!--@if($template)-->{$template->description}<!--@else--><!--@end-->" class="form-control" style="width:350px;" placeholder="설명 (선택)" />
+			<button type="submit" class="btn btn-primary"><!--@if($template)-->수정<!--@else-->추가<!--@end--></button>
+			<!--@if($template)-->
+			<a href="{getUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminExtraTemplate')}" class="btn btn-default">취소</a>
+			<!--@end-->
+		</div>
+	</form>
+</div>
+
+<!-- 템플릿 목록 (Drag & Drop 정렬) -->
+<!--@if($template_list)-->
+<table class="table table-bordered table-striped" id="templateSortTable" style="width:100%; table-layout:auto;">
+	<thead>
+		<tr>
+			<th style="width:40px;"></th>
+			<th>템플릿명</th>
+			<th>설명</th>
+			<th style="width:100px;">확장변수</th>
+			<th style="width:200px;">관리</th>
+		</tr>
+	</thead>
+	<tbody id="templateSortBody">
+		<!--@foreach($template_list as $tpl)-->
+		<tr data-template-srl="{$tpl->template_srl}">
+			<td style="cursor:move; text-align:center; color:#999;">&#9776;</td>
+			<td><strong>{$tpl->title}</strong></td>
+			<td><!--@if($tpl->description)-->{$tpl->description}<!--@else-->-<!--@end--></td>
+			<td style="text-align:center;">
+				<a href="{getUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminExtraDef', 'template_srl', $tpl->template_srl)}">{$tpl->extra_def_count}개 관리</a>
+			</td>
+			<td>
+				<a href="{getUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminExtraTemplate', 'template_srl', $tpl->template_srl)}" class="btn btn-sm btn-default">수정</a>
+				<a href="{getUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminExtraDef', 'template_srl', $tpl->template_srl)}" class="btn btn-sm btn-info">변수관리</a>
+				<a href="{getUrl('', 'module', 'admin', 'act', 'procPoomahhiAdminDeleteExtraTemplate', 'template_srl', $tpl->template_srl)}" onclick="return confirm('템플릿과 소속 확장변수가 모두 삭제됩니다. 진행하시겠습니까?');" class="btn btn-sm btn-danger">삭제</a>
+			</td>
+		</tr>
+		<!--@end-->
+	</tbody>
+</table>
+
+<script>
+(function(){
+	var tbody = document.getElementById('templateSortBody');
+	if(!tbody) return;
+	var dragRow = null;
+	tbody.querySelectorAll('tr').forEach(function(row){
+		row.setAttribute('draggable', 'true');
+		row.addEventListener('dragstart', function(e){
+			dragRow = this; this.style.opacity = '0.4';
+			e.dataTransfer.effectAllowed = 'move';
+		});
+		row.addEventListener('dragend', function(){
+			this.style.opacity = '1';
+			tbody.querySelectorAll('tr').forEach(function(r){ r.classList.remove('drag-over'); });
+			dragRow = null;
+		});
+		row.addEventListener('dragover', function(e){
+			e.preventDefault(); e.dataTransfer.dropEffect = 'move';
+			if(this !== dragRow) this.classList.add('drag-over');
+		});
+		row.addEventListener('dragleave', function(){ this.classList.remove('drag-over'); });
+		row.addEventListener('drop', function(e){
+			e.preventDefault(); this.classList.remove('drag-over');
+			if(dragRow && dragRow !== this){
+				var rows = Array.from(tbody.querySelectorAll('tr'));
+				var fromIdx = rows.indexOf(dragRow), toIdx = rows.indexOf(this);
+				if(fromIdx < toIdx) tbody.insertBefore(dragRow, this.nextSibling);
+				else tbody.insertBefore(dragRow, this);
+				var srls = [];
+				tbody.querySelectorAll('tr').forEach(function(r){ srls.push(r.getAttribute('data-template-srl')); });
+				jQuery.exec_json('poomahhi.procPoomahhiAdminSortExtraTemplates', {template_srls: srls.join(',')}, function(ret){
+					if(ret.error != 0) alert(ret.message);
+				});
+			}
+		});
+	});
+})();
+</script>
+<style>
+.poomahhi-admin-fullwidth { width: 100% !important; max-width: none !important; }
+#templateSortTable { width: 100% !important; }
+#templateSortBody tr.drag-over { border-top: 2px solid #337ab7; }
+#templateSortBody tr[draggable] td:first-child { cursor: move; }
+</style>
+<!--@else-->
+<p style="text-align:center; padding:30px 0; color:#999;">등록된 확장변수 템플릿이 없습니다. 위에서 템플릿을 추가하세요.</p>
+<!--@end-->
+</div>

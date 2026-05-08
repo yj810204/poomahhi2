@@ -1,0 +1,11 @@
+<query id="getMemberPoint" action="select">
+	<tables>
+		<table name="poomahhi_member_point" />
+	</tables>
+	<columns>
+		<column name="*" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="member_srl" var="member_srl" notnull="notnull" />
+	</conditions>
+</query>

@@ -1,0 +1,120 @@
+<load target="widget.scss" />
+<div class="rp-widget">
+	<div class="common_title">
+		<a href="/poomahhi">
+			<h3>BEST 지역 품앗이</h3>
+			<i class="ri-arrow-right-s-line"></i>
+		</a>
+	</div>
+
+	<div class="rp-container" data-poomahhi-mid="{$poomahhi_mid}" data-list-count="{$widget_args->list_count}">
+		<!--@if($region_list)-->
+		<div class="rp-sidebar">
+			<!--@foreach($region_list as $rg)-->
+			<a href="#" class="rp-region-item <!--@if($region_srl == $rg->region_srl)-->active<!--@end-->" data-region-srl="{$rg->region_srl}">
+				<h3>{$rg->title}</h3>
+				<!--@if($rg->title == '수도권')--><b class="bh_color_gray_600">서울 · 경기 · 인천</b><!--@end-->
+				<!--@if($rg->title == '충청권')--><b class="bh_color_gray_600">충남 · 충북 · 세종 · 대전</b><!--@end-->
+				<!--@if($rg->title == '호남권')--><b class="bh_color_gray_600">전북 · 전남 · 광주 · 강원</b><!--@end-->
+				<!--@if($rg->title == '영남권')--><b class="bh_color_gray_600">경북 · 경남 · 대구 · 부산 · 울산</b><!--@end-->
+			</a>
+			<!--@end-->
+		</div>
+		<!--@end-->
+
+		<div class="rp-main">
+			<!--@if($product_list)-->
+			<div class="rp-grid">
+				<!--@foreach($product_list as $item)-->
+				<div class="rp-card <!--@if($item->is_paid)-->rp-card-paid<!--@end-->">
+					<a href="{getUrl('', 'mid', $poomahhi_mid, 'act', 'dispPoomahhiProductDetail', 'product_srl', $item->product_srl)}" class="rp-card-link">
+						<div class="rp-card-image">
+							<!--@if($item->product_image)-->
+							<img src="{$item->product_image}" alt="{$item->title}" />
+							<!--@else-->
+							<div class="rp-card-noimg"></div>
+							<!--@end-->
+							<!--@if($item->is_paid)-->
+							<span class="rp-badge-paid"><i class="ri-lock-line fw-n"></i> <!--@if($item->point_cost_display)-->{$item->point_cost_display}<!--@else-->0<!--@end-->P</span>
+							<!--@end-->
+							<!--@if($logged_info)-->
+							<button type="button" class="rp-wishlist-btn <!--@if($wishlist_map[$item->product_srl])-->active<!--@end-->" data-product-srl="{$item->product_srl}" onclick="event.preventDefault(); event.stopPropagation(); rpToggleWishlist(this); return false;">
+								<i class="<!--@if($wishlist_map[$item->product_srl])-->ri-heart-line<!--@else-->ri-heart-fill<!--@end-->"></i>
+							</button>
+							<!--@end-->
+						</div>
+						<div class="rp-card-body">
+							<div class="rp-row">
+								<div class="rp-card-meta">
+									<!--@if($item->company_name)--><span class="rp-company">{$item->company_name}</span><!--@end-->
+									<span class="rp-card-title">[{$item->title}]</span>
+								</div>
+								<!--@if($item->region_title || $item->dday_text)-->
+								<div class="rp-card-tags tag">
+									<!--@if($item->region_title)-->
+										<span class="rp-tag area 
+										<!--@if($item->region_title == '수도권')-->seoul<!--@end-->
+										<!--@if($item->region_title == '충청권')-->chungcheong<!--@end-->
+										<!--@if($item->region_title == '호남권')-->honam<!--@end-->
+										<!--@if($item->region_title == '영남권')-->yeongnam<!--@end-->
+										">
+										{$item->region_title}</span>
+									<!--@end-->
+									<!--@if($item->dday_text)--><span class="rp-tag dday">{$item->dday_text}</span><!--@end-->
+								</div>
+								<!--@end-->
+							</div>
+							<!--@if($item->content_summary)-->
+							<p class="rp-card-desc">{$item->content_summary}</p>
+							<!--@end-->
+						</div>
+					</a>
+				</div>
+				<!--@end-->
+			</div>
+			<!--@else-->
+			<p class="rp-empty">해당 지역에 등록된 품앗이가 없습니다.</p>
+			<!--@end-->
+		</div>
+	</div>
+</div>
+
+<script>
+(function(){
+	var $container = jQuery('.rp-container');
+	if(!$container.length) return;
+	var mid = $container.attr('data-poomahhi-mid') || '';
+	var listCount = $container.attr('data-list-count') || '6';
+
+	jQuery(document).on('click', '.rp-region-item', function(e){
+		e.preventDefault();
+		var el = e.currentTarget;
+		var regionSrl = el.getAttribute('data-region-srl');
+		if(!regionSrl) return;
+		jQuery('.rp-region-item').removeClass('active');
+		jQuery(el).addClass('active');
+		jQuery('.rp-main').css('opacity', '0.6');
+		jQuery.exec_json('poomahhi.procPoomahhiGetRegionWidgetContent', { region_srl: regionSrl, list_count: listCount, widget_mid: mid }, function(ret){
+			jQuery('.rp-main').css('opacity', '1');
+			if(ret.error != 0){ alert(ret.message); return; }
+			if(ret.html != null) jQuery('.rp-main').html(ret.html);
+		});
+	});
+})();
+
+function rpToggleWishlist(btn){
+	var product_srl = btn.getAttribute('data-product-srl');
+	if(!product_srl) return;
+	jQuery.exec_json('poomahhi.procPoomahhiToggleWishlist', {product_srl: product_srl}, function(ret){
+		if(ret.error != 0){ alert(ret.message); return; }
+		if(ret.action === 'added'){
+			btn.querySelector('i').className = 'ri-heart-fill';
+			btn.classList.add('active');
+		} else {
+			btn.querySelector('i').className = 'ri-heart-line';
+			btn.classList.remove('active');
+		}
+	});
+}
+</script>
+
