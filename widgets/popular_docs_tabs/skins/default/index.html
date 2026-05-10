@@ -1,0 +1,75 @@
+<load target="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+<load target="widget.scss" />
+<div class="pdt-widget" data-list-count="{$widget_args->list_count}" data-widget="popular_docs_tabs" data-widget-skin="<!--@if(isset($widget_args->skin) && $widget_args->skin)-->{$widget_args->skin}<!--@else-->default<!--@end-->" data-board-1-module-srl="<!--@if(isset($tabs[0]))-->{$tabs[0]->module_srl}<!--@else-->0<!--@end-->" data-board-2-module-srl="<!--@if(isset($tabs[1]))-->{$tabs[1]->module_srl}<!--@else-->0<!--@end-->" data-board-3-module-srl="<!--@if(isset($tabs[2]))-->{$tabs[2]->module_srl}<!--@else-->0<!--@end-->">
+	<div class="pdt-tabs">
+		<!--@foreach($tabs as $tab_item)-->
+		<a href="#" class="pdt-tab <!--@if($current_tab == $tab_item->tab_index)-->active<!--@end-->" data-tab="{$tab_item->tab_index}">{$tab_item->board_title}</a>
+		<!--@end-->
+		<div class="more_btn lg:ds-n ds-b">
+			<div class="open">펼치기<i class="ri-arrow-down-s-line"></i></div>
+			<div class="close">접기<i class="ri-arrow-up-s-line"></i></div>
+		</div>
+	</div>
+
+	<div class="pdt-content">
+		<!--@if($tabs)-->
+		<!--@if($active_list)-->
+		<div class="pdt-list">
+			<!--@foreach($active_list as $rank => $doc)-->
+			<div class="pdt-item">
+				<span class="pdt-rank <!--@if($rank + 1 < 4)-->ranking<!--@end-->">{$rank + 1}</span>
+				<div class="pdt-title-wrap">
+					<a href="{getUrl('', 'mid', $doc->board_mid, 'document_srl', $doc->document_srl)}" class="pdt-title">{$doc->title}</a>
+					<span class="pdt-votes">{$doc->voted_count}</span>
+				</div>
+			</div>
+			<!--@end-->
+		</div>
+		<!--@else-->
+		<p class="pdt-empty">등록된 게시물이 없습니다.</p>
+		<!--@end-->
+		<!--@else-->
+		<p class="pdt-empty">위젯 설정에서 게시판을 선택해 주세요.</p>
+		<!--@end-->
+	</div>
+</div>
+
+<script>
+(function(){
+	var $w = jQuery('.pdt-widget');
+	if(!$w.length) return;
+	var listCount = $w.attr('data-list-count') || '10';
+	var widgetName = $w.attr('data-widget') || 'popular_docs_tabs';
+	var widgetSkin = $w.attr('data-widget-skin') || 'default';
+	var b1 = $w.attr('data-board-1-module-srl') || '0';
+	var b2 = $w.attr('data-board-2-module-srl') || '0';
+	var b3 = $w.attr('data-board-3-module-srl') || '0';
+	jQuery(document).on('click', '.pdt-tab', function(e){
+		e.preventDefault();
+		var tab = jQuery(this).data('tab');
+		if(!tab) return;
+		jQuery('.pdt-tab').removeClass('active');
+		jQuery(this).addClass('active');
+		jQuery('.pdt-content').css('opacity', '0.5');
+		jQuery.exec_json('poomahhi.procPoomahhiGetPopularDocsTabContent', {
+			tab: tab,
+			list_count: listCount,
+			pdt_widget: widgetName,
+			pdt_skin: widgetSkin,
+			board_1_module_srl: b1,
+			board_2_module_srl: b2,
+			board_3_module_srl: b3
+		}, function(ret){
+			jQuery('.pdt-content').css('opacity', '1');
+			if(ret.error != 0){ alert(ret.message); return; }
+			if(ret.html != null) jQuery('.pdt-content').html(ret.html);
+		});
+	});
+})();
+</script>
+
+<script>
+	$(".more_btn").on('click', function(){
+		$(this).closest('.pdt-widget').toggleClass('on');
+	});
+</script>

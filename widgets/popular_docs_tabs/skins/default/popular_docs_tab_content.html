@@ -1,0 +1,15 @@
+<!--@if($active_list)-->
+<div class="pdt-list">
+	<!--@foreach($active_list as $rank => $doc)-->
+	<div class="pdt-item">
+		<span class="pdt-rank <!--@if($rank + 1 < 4)-->ranking<!--@end-->">{$rank + 1}</span>
+		<div class="pdt-title-wrap">
+			<a href="{getUrl('', 'mid', $doc->board_mid, 'document_srl', $doc->document_srl)}" class="pdt-title">{$doc->title}</a>
+			<span class="pdt-votes">{$doc->voted_count}</span>
+		</div>
+	</div>
+	<!--@end-->
+</div>
+<!--@else-->
+<p class="pdt-empty">등록된 게시물이 없습니다.</p>
+<!--@end-->

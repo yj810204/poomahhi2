@@ -1,0 +1,31 @@
+<query id="getPopularDocuments" action="select">
+	<tables>
+		<table name="documents" alias="d" />
+		<table name="modules" alias="m" type="left join">
+			<conditions>
+				<condition operation="equal" column="d.module_srl" default="m.module_srl" />
+			</conditions>
+		</table>
+	</tables>
+	<columns>
+		<column name="d.document_srl" />
+		<column name="d.module_srl" />
+		<column name="d.title" />
+		<column name="d.nick_name" />
+		<column name="d.voted_count" />
+		<column name="d.regdate" />
+		<column name="m.mid" alias="board_mid" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="d.status" var="status" default="PUBLIC" pipe="AND" />
+		<condition operation="more" column="d.regdate" var="start_date_for_query" notnull="notnull" pipe="AND" />
+		<condition operation="less" column="d.regdate" var="end_date_for_query" notnull="notnull" pipe="AND" />
+		<condition operation="in" column="d.module_srl" var="module_srl_list" pipe="AND" />
+	</conditions>
+	<navigation>
+		<index var="sort_index" default="voted_count" order="desc" />
+		<list_count var="list_count" default="10" />
+		<page_count var="page_count" default="1" />
+		<page var="page" default="1" />
+	</navigation>
+</query>

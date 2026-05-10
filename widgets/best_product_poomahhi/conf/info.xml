@@ -12,6 +12,14 @@
 			<title>목록 수</title>
 			<description>출력할 상품 수 (기본 9)</description>
 		</var>
+		<var name="thumbnail_aspect" type="text" default="1_1">
+			<title>썸네일 비율</title>
+			<description>이미지 영역 비율: 1_1(1:1), 4_3(4:3), 3_4(3:4), 16_9(16:9), auto(원본 비율)</description>
+		</var>
+		<var name="thumbnail_max_height" type="text" default="">
+			<title>썸네일 최대 높이(px)</title>
+			<description>비어 두면 제한 없음. 숫자만 입력(예: 240). 이미지 박스 세로 상한.</description>
+		</var>
 		<var id="module_srl_list">
 			<type>module_srl_list</type>
 			<title>품앗이 모듈</title>

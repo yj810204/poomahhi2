@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget version="0.2">
+	<title>인기 순위</title>
+	<description>지금인기/주간인기/월간인기 게시물 순위 위젯</description>
+	<version>1.0.0</version>
+	<date>2026-02-23</date>
+	<author>
+		<name>WP</name>
+	</author>
+	<extra_vars>
+		<var name="list_count" type="text" default="10">
+			<title>목록 수</title>
+			<description>출력할 게시물 수 (기본 10)</description>
+		</var>
+		<var id="module_srl_list">
+			<type>module_srl_list</type>
+			<title>대상 게시판</title>
+			<description>순위에 포함할 게시판 선택 (미선택 시 전체 게시판)</description>
+		</var>
+	</extra_vars>
+</widget>

@@ -5,30 +5,40 @@
 		<a href="{getUrl('', 'mid', $poomahhi_mid, 'act', 'dispPoomahhiProductDetail', 'product_srl', $item->product_srl)}" class="rp-card-link">
 			<div class="rp-card-image">
 				<!--@if($item->product_image)-->
-				<img src="{$item->product_image}" alt="{$item->title}" />
+				<img src="{$item->product_image}" alt="{$item->title}" loading="lazy" decoding="async" fetchpriority="low" />
 				<!--@else-->
-				<div class="rp-card-noimg"><i class="bi bi-image"></i></div>
+				<div class="rp-card-noimg"></div>
 				<!--@end-->
 				<!--@if($item->is_paid)-->
-				<span class="rp-badge-paid"><i class="bi bi-lock-fill"></i> <!--@if($item->point_cost_display)-->{$item->point_cost_display}<!--@else-->0<!--@end-->P</span>
+				<span class="rp-badge-paid"><i class="ri-lock-line fw-n"></i> <!--@if($item->point_cost_display)-->{$item->point_cost_display}<!--@else-->0<!--@end-->P</span>
 				<!--@end-->
 				<!--@if($logged_info)-->
 				<button type="button" class="rp-wishlist-btn <!--@if($wishlist_map[$item->product_srl])-->active<!--@end-->" data-product-srl="{$item->product_srl}" onclick="event.preventDefault(); event.stopPropagation(); rpToggleWishlist(this); return false;">
-					<i class="bi <!--@if($wishlist_map[$item->product_srl])-->bi-heart-fill<!--@else-->bi-heart<!--@end-->"></i>
+					<i class="<!--@if($wishlist_map[$item->product_srl])-->ri-heart-line<!--@else-->ri-heart-fill<!--@end-->"></i>
 				</button>
 				<!--@end-->
 			</div>
 			<div class="rp-card-body">
-				<div class="rp-card-meta">
-					<!--@if($item->company_name)--><span class="rp-company">{$item->company_name}</span><!--@end-->
-					<span class="rp-card-title">[{$item->title}]</span>
+				<div class="rp-row">
+					<div class="rp-card-meta">
+						<!--@if($item->company_name)--><span class="rp-company">{$item->company_name}</span><!--@end-->
+						<span class="rp-card-title">[{$item->title}]</span>
+					</div>
+					<!--@if($item->region_title || $item->dday_text)-->
+					<div class="rp-card-tags tag">
+						<!--@if($item->region_title)-->
+							<span class="rp-tag area 
+							<!--@if($item->region_title == '수도권')-->seoul<!--@end-->
+							<!--@if($item->region_title == '충청권')-->chungcheong<!--@end-->
+							<!--@if($item->region_title == '호남권')-->honam<!--@end-->
+							<!--@if($item->region_title == '영남권')-->yeongnam<!--@end-->
+							">
+							{$item->region_title}</span>
+						<!--@end-->
+						<!--@if($item->dday_text)--><span class="rp-tag dday">{$item->dday_text}</span><!--@end-->
+					</div>
+					<!--@end-->
 				</div>
-				<!--@if($item->region_title || $item->dday_text)-->
-				<div class="rp-card-tags">
-					<!--@if($item->region_title)--><span class="rp-tag region">{$item->region_title}</span><!--@end-->
-					<!--@if($item->dday_text)--><span class="rp-tag dday">{$item->dday_text}</span><!--@end-->
-				</div>
-				<!--@end-->
 				<!--@if($item->content_summary)-->
 				<p class="rp-card-desc">{$item->content_summary}</p>
 				<!--@end-->

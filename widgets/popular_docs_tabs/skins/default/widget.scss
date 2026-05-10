@@ -1,0 +1,156 @@
+.pdt-widget {
+    background-color: var(--bh_color_gray_50);
+    border-radius: 20px;
+    padding: 15px;
+    .pdt-tabs {
+        display: flex;
+        background-color: var(--bh_color_white);
+        padding: 2px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        a {
+            display: block;
+            width: 33.33%;
+            text-align: center;
+            padding: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--bh_color_gray_600);
+            border-radius: 10px;
+            &.active {
+                color: var(--bh_color_white);
+                font-weight: bold;
+                background-color: var(--bh_color_main);
+            }
+        }
+    }
+    .pdt-content {
+        .pdt-list {
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px;
+            .pdt-item {
+                background-color: var(--bh_color_white);
+                padding: 15px;
+                border-radius: 500px;
+                display: flex;
+                gap: 10px;
+                .pdt-rank {
+                    width: 24px;
+                    height: 24px;
+                    border-radius: 50%;
+                    font-size: 16px;
+                    font-weight: bold;
+                    color: var(--bh_color_gray_500);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    &.ranking {
+                        color: #f94f4f;
+                        background-color: rgba(249, 79, 79, 0.1);
+                    }
+                }
+                .pdt-title-wrap {
+                    display: flex;
+                    align-items: center;
+                    gap: 5px;
+                    a {
+                        font-size: 16px;
+                        font-weight: 500;
+                        white-space: nowrap;
+                        text-overflow: ellipsis;
+                        overflow: hidden;
+                    }
+                    span {
+                        flex-shrink: 0;
+                        font-size: 14px;
+                        font-weight: bold;
+                        color: var(--bh_color_main);
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media(max-width:992px) {
+    .pdt-widget {
+        background-color: transparent;
+        border-radius: 0;
+        padding: 0;
+        .pdt-tabs {
+            position: relative;
+            padding: 0;
+            border-radius: 0;
+            margin-bottom: 10px;
+            gap: 15px;
+            a {
+                width: auto;
+                padding: 0;
+                font-size: 13px;
+                color: var(--bh_color_gray_400);
+                border-radius: 0;
+                &.active {
+                    color: var(--bh_color_gray_900);
+                    background-color: transparent;
+                }
+            }
+            .more_btn {
+                position: absolute;
+                top: 0;
+                right: 0;
+                font-size: 11px;
+                font-weight: 500;
+                color: var(--bh_color_gray_600);
+                i {
+                    font-size: 12px;
+                    padding-left: 2px;
+                }
+                .close {
+                    display: none;
+                }
+            }
+        }
+        
+        .pdt-content .pdt-list {
+            height: 40px;
+            background-color: var(--bh_color_gray_50);
+            padding: 5px;
+            border-radius: 15px;
+            overflow: hidden;
+            .pdt-item {
+                padding: 5px;
+                gap: 5px;
+                .pdt-rank {
+                    width: 20px;
+                    height: 20px;
+                    font-size: 11px;
+                    line-height: 1;
+                }
+                .pdt-title-wrap {
+                    a {
+                        font-size: 12px;
+                    }
+                    span {
+                        font-size: 11px;
+                        font-weight: 500;
+                    }
+                }
+            }
+        }
+
+        &.on {
+            .pdt-tabs .more_btn {
+                .close {
+                    display: block;
+                }
+                .open {
+                    display: none;
+                }
+            }
+            .pdt-content .pdt-list {
+                height: auto;
+            }
+        }
+    }
+}

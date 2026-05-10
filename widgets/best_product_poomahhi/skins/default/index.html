@@ -1,7 +1,7 @@
 <load target="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 <load target="widget.scss" />
 
-<div class="bpp-widget">
+<div class="bpp-widget<!--@if($widget_args->thumbnail_aspect_is_auto)--> poom-thumb-aspect-auto<!--@end-->" style="--poom-thumb-aspect: {$widget_args->thumbnail_aspect_css};<!--@if($widget_args->thumbnail_max_height_px)-->--poom-thumb-max-h: {$widget_args->thumbnail_max_height_px}px;<!--@end-->">
 	<div class="common_title">
 		<a href="{getUrl('', 'mid', $poomahhi_mid, 'act', 'dispPoomahhiProductList')}">
 			<h3>BEST 상품 품앗이</h3>

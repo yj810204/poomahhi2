@@ -50,6 +50,8 @@ class best_product_poomahhi extends WidgetHandler
 		$list_count = isset($args->list_count) ? (int) $args->list_count : 9;
 		if ($list_count < 1) $list_count = 9;
 
+		self::_applyPoomahhiThumbnailWidgetArgs($args);
+
 		$list = array();
 		$wishlist_map = array();
 		$logged_info = Context::get('logged_info');
@@ -120,5 +122,40 @@ class best_product_poomahhi extends WidgetHandler
 
 		$oTemplate = new Rhymix\Framework\Template($skin_path, 'index');
 		return $oTemplate->compile();
+	}
+
+	/**
+	 * 위젯 썸네일 표시 옵션(thumbnail_aspect, thumbnail_max_height) 검증 및 템플릿용 필드 설정
+	 */
+	private static function _applyPoomahhiThumbnailWidgetArgs($args)
+	{
+		$raw = isset($args->thumbnail_aspect) ? strtolower(trim((string) $args->thumbnail_aspect)) : '';
+		$allowed = array(
+			'1_1' => array('css' => '1 / 1', 'auto' => false),
+			'4_3' => array('css' => '4 / 3', 'auto' => false),
+			'3_4' => array('css' => '3 / 4', 'auto' => false),
+			'16_9' => array('css' => '16 / 9', 'auto' => false),
+			'auto' => array('css' => 'auto', 'auto' => true),
+		);
+		if ($raw === '' || !isset($allowed[$raw]))
+		{
+			$raw = '1_1';
+		}
+		$sel = $allowed[$raw];
+		$args->thumbnail_aspect = $raw;
+		$args->thumbnail_aspect_css = $sel['css'];
+		$args->thumbnail_aspect_is_auto = $sel['auto'];
+
+		$args->thumbnail_max_height_px = 0;
+		$mh = isset($args->thumbnail_max_height) ? trim((string) $args->thumbnail_max_height) : '';
+		if ($mh !== '' && ctype_digit($mh))
+		{
+			$n = (int) $mh;
+			if ($n > 0)
+			{
+				if ($n > 2000) $n = 2000;
+				$args->thumbnail_max_height_px = $n;
+			}
+		}
 	}
 }

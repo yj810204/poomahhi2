@@ -50,14 +50,16 @@
                 width: calc((100% - 50px) / 2);
                 .rp-card-image {
                     position: relative;
-                    aspect-ratio: 1;
+                    aspect-ratio: var(--poom-thumb-aspect, 1 / 1);
+                    max-height: var(--poom-thumb-max-h, none);
                     background-color: var(--bh_color_gray_50);
                     border-radius: 10px;
                     overflow: hidden;
                     img { 
                         width: 100%; 
                         height: 100%; 
-                        object-fit: cover; 
+                        object-fit: cover;
+                        display: block;
                     }
                     .rp-wishlist-btn {
                         position: absolute;
@@ -97,7 +99,7 @@
                         justify-content: center; 
                     }
                 }
-                &.card-paid {
+                &.rp-card-paid {
                     .rp-card-image {
                         &::after { 
                             content: ''; 
@@ -140,6 +142,15 @@
                 }
             }
         }
+    }
+}
+
+.rp-container.poom-thumb-aspect-auto .rp-card-image {
+    aspect-ratio: auto;
+    min-height: 100px;
+    img {
+        height: auto;
+        object-fit: contain;
     }
 }
 

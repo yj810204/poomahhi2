@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget version="0.2">
+	<title>인기 순위 (탭)</title>
+	<description>3개 게시판을 탭으로 선택해 추천수(voted_count) 기준 인기 순위 표시</description>
+	<version>1.0.0</version>
+	<date>2026-02-24</date>
+	<author>
+		<name>WP</name>
+	</author>
+	<extra_vars>
+		<var name="list_count" type="text" default="10">
+			<title>탭당 목록 수</title>
+			<description>각 탭당 출력할 게시물 수, 추천 많은 순 (기본 10)</description>
+		</var>
+		<var id="board_1_module_srl_list">
+			<type>module_srl_list</type>
+			<title>1번 탭 게시판</title>
+			<description>첫 번째 탭에 표시할 게시판</description>
+		</var>
+		<var id="board_2_module_srl_list">
+			<type>module_srl_list</type>
+			<title>2번 탭 게시판</title>
+			<description>두 번째 탭에 표시할 게시판</description>
+		</var>
+		<var id="board_3_module_srl_list">
+			<type>module_srl_list</type>
+			<title>3번 탭 게시판</title>
+			<description>세 번째 탭에 표시할 게시판</description>
+		</var>
+	</extra_vars>
+</widget>

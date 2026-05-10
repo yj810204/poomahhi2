@@ -1,0 +1,76 @@
+<div class="pmh-list-display">
+    <div class="left-wrap">
+        <img class="zbxe_widget_output" widget="best_product_poomahhi" skin="default" widget_sequence="460" widget_cache="0m" list_count="9" module_srl_list="113" thumbnail_aspect="16_9" />
+    </div>
+    <div class="right-wrap">
+        <img class="zbxe_widget_output" widget="popular_docs_tabs" skin="default" widget_sequence="461" widget_cache="0m" list_count="10" board_1_module_srl_list="358" board_2_module_srl_list="360" board_3_module_srl_list="462" />
+
+        <!--pc-->
+        <div class="mt-30 lg:ds-b ds-n">
+            <div class="ad_banner">
+                <img src="/assets/images/main/banner_icon1.png" alt="icon">
+                <div class="mt-15 fw-b">
+                    <div class="fs-20">
+                        리뷰와 보상을 연결하는
+                    </div>
+                    <div class="fs-32">
+                        가장 확실한 통로, <span class="bh_color_main">품앗히</span>.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--mobile slider-->
+        <div class="lg:ds-n ds-b">
+            <div class="swiper m_bannerSwiper">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide" style="background-image: url(/assets/images/main/banner2.jpg);">
+                        <div class="banner-content">
+                            <div class="banner-img">
+                                <img src="/assets/images/main/banner_icon2.png" alt="icon">
+                            </div>
+                            <div class="banner-text">
+                                <h3>리뷰와 보상을 연결하는</h3>
+                                <h2>가장 확실한 통로, <span class="bh_color_main">품앗히</span>.</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide" style="background-image: url(/assets/images/main/banner2.jpg);">
+                        <div class="banner-content">
+                            <div class="banner-img">
+                                <img src="/assets/images/main/banner_icon2.png" alt="icon">
+                            </div>
+                            <div class="banner-text">
+                                <h3>리뷰와 보상을 연결하는</h3>
+                                <h2>가장 확실한 통로, <span class="bh_color_main">품앗히</span>.</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-pagination custom-fraction"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+    const mainMobileBanner = new Swiper('.m_bannerSwiper', {
+        loop: true,
+        autoplay: {
+            delay: 3000,
+            disableOnInteraction: false,
+        },
+        speed: 1000,
+        pagination: {
+            el: '.custom-fraction',
+            type: 'fraction',
+            renderFraction: function (currentClass, totalClass) {
+                return '<span class="' + currentClass + '"></span>' +
+                    ' · ' +
+                    '<span class="' + totalClass + '"></span>';
+            }
+        },
+    });
+</script>

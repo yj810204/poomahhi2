@@ -2,3 +2,27 @@
 
 .bpp-badge-paid { position: absolute; top: 8px; left: 8px; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; background: rgba(100,100,100,0.9); color: #fff; z-index: 2; display: flex; align-items: center; gap: 4px; }
 
+/* 레이아웃 page.scss 의 .common_product_display .image_wrap { aspect-ratio:1 } 보다 특이도를 높여 덮어씀 */
+.bpp-widget .common_product_display .card_wrap .image_wrap,
+.index .bpp-widget .common_product_display .card_wrap .image_wrap {
+	position: relative;
+	aspect-ratio: var(--poom-thumb-aspect, 1 / 1);
+	max-height: var(--poom-thumb-max-h, none);
+	overflow: hidden;
+	img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+	}
+}
+
+.bpp-widget.poom-thumb-aspect-auto .common_product_display .card_wrap .image_wrap,
+.index .bpp-widget.poom-thumb-aspect-auto .common_product_display .card_wrap .image_wrap {
+	aspect-ratio: auto;
+	min-height: 100px;
+	img {
+		height: auto;
+		object-fit: contain;
+	}
+}

@@ -1245,11 +1245,19 @@ class poomahhiController extends poomahhi
 		if ($module_srl > 0 && $region_srl > 0)
 		{
 			$oModel = getModel('poomahhi');
-			$region_list = $oModel->getRegionList($module_srl);
-			if ($region_list)
+			$region_title_client = trim(strip_tags((string) Context::get('region_title')));
+			if ($region_title_client !== '' && mb_strlen($region_title_client) > 120)
 			{
-				foreach ($region_list as $rg)
-					$region_map[$rg->region_srl] = $rg->title;
+				$region_title_client = mb_substr($region_title_client, 0, 120);
+			}
+			if ($region_title_client === '')
+			{
+				$region_list = $oModel->getRegionList($module_srl);
+				if ($region_list)
+				{
+					foreach ($region_list as $rg)
+						$region_map[$rg->region_srl] = $rg->title;
+				}
 			}
 			$product_args = new stdClass();
 			$product_args->module_srl = $module_srl;
@@ -1265,11 +1273,12 @@ class poomahhiController extends poomahhi
 
 			if ($product_list && $logged_info)
 			{
+				$product_srls = array();
 				foreach ($product_list as $product)
 				{
-					$wish_item = $oModel->getWishlistItem($logged_info->member_srl, $product->product_srl);
-					if ($wish_item) $wishlist_map[$product->product_srl] = true;
+					$product_srls[] = (int) $product->product_srl;
 				}
+				$wishlist_map = $oModel->getWishlistMapForMemberProducts($logged_info->member_srl, $product_srls);
 			}
 			foreach ($product_list as &$product)
 			{
@@ -1289,7 +1298,9 @@ class poomahhiController extends poomahhi
 					$product->content_summary = $product->short_description;
 				elseif (!empty($product->content))
 					$product->content_summary = mb_strimwidth(strip_tags($product->content), 0, 80, '...');
-				if ($product->region_srl && isset($region_map[$product->region_srl]))
+				if ($region_title_client !== '')
+					$product->region_title = $region_title_client;
+				elseif ($product->region_srl && isset($region_map[$product->region_srl]))
 					$product->region_title = $region_map[$product->region_srl];
 				$product->is_paid = (($product->content_access_type ?: 'public') === 'paid' && (int)($product->point_cost ?: 0) > 0);
 				$product->point_cost_display = (int)($product->point_cost ?: 0);

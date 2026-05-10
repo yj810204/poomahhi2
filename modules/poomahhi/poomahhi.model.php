@@ -696,6 +696,37 @@ class poomahhiModel extends poomahhi
 	}
 
 	/**
+	 * @brief 회원 기준, 여러 상품에 대한 찜 여부를 한 번에 조회 (위젯 탭 AJAX 등 N+1 방지)
+	 * @return array<int,bool> product_srl => true
+	 */
+	function getWishlistMapForMemberProducts($member_srl, $product_srls)
+	{
+		$member_srl = (int) $member_srl;
+		if ($member_srl < 1 || !is_array($product_srls) || !$product_srls)
+		{
+			return array();
+		}
+		$ids = array_values(array_unique(array_filter(array_map('intval', $product_srls))));
+		if (!$ids)
+		{
+			return array();
+		}
+		$args = new stdClass();
+		$args->member_srl = $member_srl;
+		$args->product_srl_list = $ids;
+		$output = executeQueryArray('poomahhi.getWishlistItemsForMemberProducts', $args);
+		$map = array();
+		if ($output->toBool() && !empty($output->data))
+		{
+			foreach ($output->data as $row)
+			{
+				$map[(int) $row->product_srl] = true;
+			}
+		}
+		return $map;
+	}
+
+	/**
 	 * @brief 카테고리 목록 (Rhymix 내장 document 카테고리 시스템 사용)
 	 */
 	function getCategoryList($module_srl = null)

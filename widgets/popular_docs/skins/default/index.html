@@ -1,0 +1,36 @@
+<load target="widget.scss" />
+<div class="popular-docs-widget">
+	<div class="popular-docs-tabs">
+		<a href="{getUrl('', 'mid', $widget_page_mid, 'period', 'today')}" class="popular-docs-tab <!--@if($period == 'today')-->active<!--@end-->">지금인기</a>
+		<a href="{getUrl('', 'mid', $widget_page_mid, 'period', 'week')}" class="popular-docs-tab <!--@if($period == 'week')-->active<!--@end-->">주간인기</a>
+		<a href="{getUrl('', 'mid', $widget_page_mid, 'period', 'month')}" class="popular-docs-tab <!--@if($period == 'month')-->active<!--@end-->">월간인기</a>
+	</div>
+
+	<!--@if($list)-->
+	<div class="popular-docs-grid">
+		<!--@foreach($list as $rank => $doc)-->
+		<!--@if($doc->document_srl)-->
+		<div class="popular-docs-item">
+			<!--@if($rank + 1 < 4)-->
+			<span class="popular-docs-rank popular-docs-rank-first">{$rank + 1}</span>
+			<!--@else-->
+			<span class="popular-docs-rank">{$rank + 1}</span>
+			<!--@end-->
+			<div class="title">
+				<a href="{getUrl('', 'mid', $doc->board_mid, 'document_srl', $doc->document_srl)}" class="popular-docs-title">{$doc->title}</a>
+				<span class="up_down_icon">
+					<i class="ri-arrow-up-s-fill up"></i>
+					<i class="ri-arrow-down-s-fill down"></i>
+				</span>
+				<span class="popular-docs-votes">{$doc->voted_count}</span>
+			</div>
+			<span class="popular-docs-writer">{$doc->nick_name}</span>
+			<span class="popular-docs-date">{zdate($doc->regdate, 'y.m.d')}</span>
+		</div>
+		<!--@end-->
+		<!--@end-->
+	</div>
+	<!--@else-->
+	<p class="popular-docs-empty">해당 기간에 등록된 게시물이 없습니다.</p>
+	<!--@end-->
+</div>
