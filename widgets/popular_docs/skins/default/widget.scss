@@ -51,13 +51,24 @@
                     font-weight: 500;
                 }
                 .up_down_icon {
+                    display: inline-flex;
+                    align-items: center;
+                    flex-shrink: 0;
                     font-size: 16px;
+                    line-height: 1;
+                    min-width: 1em;
                     .up {
                         color: #f94f4f;
                     }
                     .down {
                         color: #78e0fa;
                     }
+                }
+                .up_down_icon--same {
+                    font-weight: 700;
+                    color: var(--bh_color_gray_500);
+                    min-width: 1em;
+                    text-align: center;
                 }
                 .popular-docs-votes {
                     font-size: 14px;
@@ -67,7 +78,7 @@
                 }
             }
             .popular-docs-writer {
-                width: 75px;
+                // width: 75px;
                 font-size: 14px;
                 font-weight: 500;
                 color: var(--bh_color_gray_600);

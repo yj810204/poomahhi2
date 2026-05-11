@@ -18,10 +18,13 @@
 			<!--@end-->
 			<div class="title">
 				<a href="{getUrl('', 'mid', $doc->board_mid, 'document_srl', $doc->document_srl)}" class="popular-docs-title">{$doc->title}</a>
-				<span class="up_down_icon">
-					<i class="ri-arrow-up-s-fill up"></i>
-					<i class="ri-arrow-down-s-fill down"></i>
-				</span>
+				<!--@if(isset($rank_arrow_map[$doc->document_srl]) && $rank_arrow_map[$doc->document_srl] == 1)-->
+				<span class="up_down_icon up_down_icon--up"><i class="ri-arrow-up-s-fill up"></i></span>
+				<!--@elseif(isset($rank_arrow_map[$doc->document_srl]) && $rank_arrow_map[$doc->document_srl] == 2)-->
+				<span class="up_down_icon up_down_icon--down"><i class="ri-arrow-down-s-fill down"></i></span>
+				<!--@elseif(isset($rank_arrow_map[$doc->document_srl]) && $rank_arrow_map[$doc->document_srl] == 3)-->
+				<span class="up_down_icon up_down_icon--same" aria-hidden="true">-</span>
+				<!--@end-->
 				<span class="popular-docs-votes">{$doc->voted_count}</span>
 			</div>
 			<span class="popular-docs-writer">{$doc->nick_name}</span>
