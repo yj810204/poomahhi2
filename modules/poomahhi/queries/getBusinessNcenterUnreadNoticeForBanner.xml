@@ -1,0 +1,22 @@
+<query id="getBusinessNcenterUnreadNoticeForBanner" action="select">
+	<tables>
+		<table name="ncenterlite_notify" />
+	</tables>
+	<index_hint for="ALL">
+		<index table="ncenterlite_notify" name="idx_member_srl_and_readed" type="USE" />
+	</index_hint>
+	<columns>
+		<column name="*" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="member_srl" var="member_srl" filter="number" notnull="notnull" pipe="AND" />
+		<condition operation="equal" column="readed" var="readed" pipe="AND" />
+		<condition operation="equal" column="target_type" var="filter_target_type" pipe="AND" />
+	</conditions>
+	<navigation>
+		<index var="list_order" default="regdate" order="desc" />
+		<list_count var="list_count" default="25" />
+		<page_count var="page_count" default="5" />
+		<page var="page" default="1" />
+	</navigation>
+</query>

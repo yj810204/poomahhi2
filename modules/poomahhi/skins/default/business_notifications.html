@@ -33,38 +33,34 @@
 		</form>
 
 		<!--@if($notification_list)-->
-		<div class="pmh-bn-table-wrap">
-			<table class="pmh-bn-table">
-				<thead>
-					<tr>
-						<th class="pmh-bn-col-cat">항목</th>
-						<th class="pmh-bn-col-body">내용</th>
-						<th class="pmh-bn-col-status">상태</th>
-						<th class="pmh-bn-col-date">날짜</th>
-					</tr>
-				</thead>
-				<tbody>
-					<!--@foreach($notification_list as $notify_row)-->
-					<tr>
-						<td><span class="pmh-bn-badge-cat">{$notify_row->notify_category_label}</span></td>
-						<td class="pmh-bn-cell-body">
-							<a href="{$notify_row->url}" class="pmh-bn-body-link">
-								<i class="bi {$notify_row->notify_icon_class} pmh-bn-body-ico" aria-hidden="true"></i>
-								<span class="pmh-bn-body-text">{$notify_row->text}</span>
-							</a>
-						</td>
-						<td>
-							<!--@if($notify_row->readed == 'N')-->
-							<span class="pmh-bn-status unread">안읽음</span>
-							<!--@else-->
-							<span class="pmh-bn-status read">읽음</span>
-							<!--@end-->
-						</td>
-						<td class="pmh-bn-cell-date">{$notify_row->ago}</td>
-					</tr>
+		<div class="pmh-bn-list-wrap">
+			<div class="pmh-bn-list-head" aria-hidden="true">
+				<span class="pmh-bn-list-head__cat">항목</span>
+				<span class="pmh-bn-list-head__ico"></span>
+				<span class="pmh-bn-list-head__main">내용</span>
+				<span class="pmh-bn-list-head__meta">상태</span>
+			</div>
+			<!--@foreach($notification_list as $notify_row)-->
+			<div class="pmh-bn-row">
+				<a href="{$notify_row->url}" class="pmh-bn-row__link">
+					<span class="pmh-bn-row__cat"><!--@if($notify_row->notify_category_label)-->{$notify_row->notify_category_label}<!--@else-->—<!--@end--></span>
+					<!--@if($notify_row->is_poomahhi_synthetic == 'deadline')-->
+					<span class="pmh-bn-row__emoji" aria-hidden="true">📢</span>
+					<!--@else-->
+					<i class="bi {$notify_row->notify_icon_class} pmh-bn-row__ico" aria-hidden="true"></i>
 					<!--@end-->
-				</tbody>
-			</table>
+					<span class="pmh-bn-row__text"><!--@if($notify_row->pmh_list_text)-->{$notify_row->pmh_list_text}<!--@else-->{$notify_row->notify_display_title}<!--@end--></span>
+					<span class="pmh-bn-row__meta">
+						<!--@if($notify_row->readed == 'SYN')-->
+						<span class="pmh-bn-meta">{$notify_row->ago}</span>
+						<!--@else-->
+						<!--@if($notify_row->readed == 'N')--><span class="pmh-bn-meta unread">안읽음</span><!--@else--><span class="pmh-bn-meta read">읽음</span><!--@end-->
+						<span class="pmh-bn-meta sep">{$notify_row->ago}</span>
+						<!--@end-->
+					</span>
+				</a>
+			</div>
+			<!--@end-->
 		</div>
 		<!--@else-->
 		<p class="empty">표시할 알림이 없습니다.</p>

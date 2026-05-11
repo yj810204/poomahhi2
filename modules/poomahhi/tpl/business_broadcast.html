@@ -1,0 +1,36 @@
+<include target="_header.html" />
+
+<div class="poomahhi-admin-fullwidth" style="width:100%;">
+	<h2 style="margin-bottom:15px;">비즈니스 회원 전체 알림</h2>
+	<p style="color:#666; margin-bottom:20px;">
+		회원 확장변수 <strong>member_type</strong>이 <strong>business</strong>이고, 차단되지 않았으며 가입이 승인된 회원 전원에게 알림 센터(ncenterlite) 공지 형태의 웹 알림을 보냅니다.
+		모듈 설정의 비즈니스회원 그룹은 가입 시 자동 배정용이며, 이 발송의 수신 기준과는 별개입니다.
+		수신자의 비즈니스 센터 &gt; 알림 &gt; <strong>공지</strong> 탭에서 확인할 수 있습니다.
+	</p>
+
+	<form action="./" method="post">
+		<input type="hidden" name="module" value="admin" />
+		<input type="hidden" name="act" value="procPoomahhiAdminSendBusinessBroadcast" />
+
+		<table class="table table-bordered" style="width:100%; max-width:800px;">
+			<tbody>
+				<tr>
+					<th scope="row" style="width:140px; vertical-align:top;">알림 내용</th>
+					<td>
+						<textarea name="broadcast_message" class="form-control" rows="6" style="width:100%;" required="required" placeholder="수신자에게 표시될 알림 본문을 입력하세요."></textarea>
+						<p style="color:#999; margin-top:8px;">치환: <code>{date}</code> <code>{admin_nick}</code> <code>{admin_user_id}</code> (발송 시각·관리자). ncenter 표시 시 [시스템 공지] 접두가 붙을 수 있습니다.</p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row" style="vertical-align:top;">링크 URL (선택)</th>
+					<td>
+						<input type="url" name="broadcast_url" class="form-control" style="width:100%;" placeholder="비우면 비즈니스 알림(공지 탭)으로 연결됩니다." />
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<p style="color:#c00; margin:15px 0;">회원 수가 많으면 발송에 시간이 걸릴 수 있습니다. 한 번 발송하면 되돌릴 수 없습니다.</p>
+		<button type="submit" class="btn btn-primary" style="padding:8px 24px;" onclick="return confirm('member_type이 business인 회원 전원에게 알림을 보내시겠습니까?');">발송</button>
+	</form>
+</div>

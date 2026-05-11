@@ -191,6 +191,10 @@ class poomahhiView extends poomahhi
 		$oMemberModel = getModel('member');
 		foreach($list as $k => $v)
 		{
+			if(!is_object($v))
+			{
+				continue;
+			}
 			$v->text = $oNcenterliteModel->getNotificationText($v);
 			$v->ago = $oNcenterliteModel->getAgo($v->regdate);
 			$v->url = getUrl('', 'act', 'procNcenterliteRedirect', 'notify', $v->notify);
@@ -216,8 +220,108 @@ class poomahhiView extends poomahhi
 				$v->profileImage = null;
 			}
 			$v->notify_category_label = $this->_getNotifyCategoryLabelForBusiness($v);
-			$v->notify_icon_class = $this->_getNotifyIconClassForBusiness($v);
+			$v->notify_kind = $this->_classifyBusinessNotifyKind($v);
+			$v->notify_display_prefix = $this->_getBusinessNotifyDisplayPrefix($v->notify_kind);
+			$plain = trim(preg_replace('/\s+/u', ' ', html_entity_decode(strip_tags((string)$v->text), ENT_QUOTES, 'UTF-8')));
+			$v->notify_display_title = ($v->notify_display_prefix !== '') ? ($v->notify_display_prefix . ' ' . $plain) : $plain;
+			$v->pmh_list_text = trim(preg_replace('/^\[[^\]]+\]\s+/u', '', (string)$v->notify_display_title));
+			if($v->pmh_list_text === '')
+			{
+				$v->pmh_list_text = $plain;
+			}
+			$v->notify_icon_class = $this->_getNotifyIconClassForNotifyKind($v->notify_kind);
 			$list[$k] = $v;
+		}
+	}
+
+	/**
+	 * 비즈니스 알림 목록용 내부 유형 (아이콘·표시 제목 접두어)
+	 */
+	function _classifyBusinessNotifyKind($v)
+	{
+		$target_type = isset($v->target_type) ? (string)$v->target_type : '';
+		$type = isset($v->type) ? (string)$v->type : '';
+		$url = isset($v->target_url) ? (string)$v->target_url : '';
+		$body = isset($v->target_body) ? (string)$v->target_body : '';
+		$text = isset($v->text) ? strip_tags((string)$v->text) : '';
+		$hay = $body . ' ' . $text;
+
+		if($target_type === 'B' && $type === 'X')
+		{
+			return 'poomahhi_broadcast';
+		}
+		if($target_type === 'B')
+		{
+			return 'system_notice_board';
+		}
+		if($target_type === 'E')
+		{
+			return 'ncenter_message';
+		}
+
+		if($type === 'X' && $url !== '' && stripos($url, 'poomahhi') !== false)
+		{
+			if(preg_match('/마감|D-\d+|D-Day/u', $hay))
+			{
+				return 'poomahhi_deadline';
+			}
+			if(stripos($hay, '참여 인증') !== false || stripos($hay, '인증 제출') !== false
+				|| stripos($url, 'dispPoomahhiApplicationManageDetail') !== false)
+			{
+				return 'poomahhi_review';
+			}
+			if(stripos($hay, '품앗이 신청') !== false || stripos($hay, '신청이 왔습니다') !== false
+				|| (stripos($url, 'dispPoomahhiApplicationManage') !== false && stripos($url, 'application_srl') === false))
+			{
+				return 'poomahhi_apply';
+			}
+			return 'poomahhi_generic';
+		}
+
+		return 'misc';
+	}
+
+	function _getBusinessNotifyDisplayPrefix($kind)
+	{
+		switch($kind)
+		{
+			case 'poomahhi_apply':
+			case 'poomahhi_review':
+			case 'poomahhi_deadline':
+			case 'poomahhi_generic':
+				return '[품앗이]';
+			case 'poomahhi_broadcast':
+			case 'system_notice_board':
+				return '[시스템 공지]';
+			case 'misc':
+				return '[기타알림]';
+			case 'ncenter_message':
+				return '';
+			default:
+				return '';
+		}
+	}
+
+	function _getNotifyIconClassForNotifyKind($kind)
+	{
+		switch($kind)
+		{
+			case 'poomahhi_apply':
+			case 'poomahhi_generic':
+				return 'bi-person-fill';
+			case 'poomahhi_review':
+				return 'bi-patch-check-fill';
+			case 'poomahhi_deadline':
+				return 'bi-calendar-event';
+			case 'system_notice_board':
+				return 'bi-gear';
+			case 'poomahhi_broadcast':
+				return 'bi-megaphone-fill';
+			case 'ncenter_message':
+				return 'bi-envelope-fill';
+			case 'misc':
+			default:
+				return 'bi-bell-fill';
 		}
 	}
 
@@ -233,31 +337,11 @@ class poomahhiView extends poomahhi
 		}
 		if(isset($v->type) && $v->type === 'X')
 		{
-			return '알림';
+			return '기타알림';
 		}
-		return '알림';
+		return '기타알림';
 	}
 
-	function _getNotifyIconClassForBusiness($v)
-	{
-		if(isset($v->target_type) && $v->target_type === 'B')
-		{
-			return 'bi-megaphone-fill';
-		}
-		if(isset($v->target_type) && $v->target_type === 'E')
-		{
-			return 'bi-envelope-fill';
-		}
-		if(isset($v->type) && $v->type === 'X')
-		{
-			return 'bi-person-fill';
-		}
-		return 'bi-bell-fill';
-	}
-
-	/**
-	 * 신청자 관리 목록 한 행에 아바타 URL·성별·생년월일 표시값을 넣는다.
-	 */
 	function _fillApplicationManageListRow($app)
 	{
 		$app->avatar_src = '';
@@ -384,6 +468,321 @@ class poomahhiView extends poomahhi
 		}
 		$local = $code - 0xAC00;
 		return (($local % 28) !== 0) ? '으로' : '로';
+	}
+
+	/**
+	 * DB/폼에서 오는 Ymd 또는 YmdHis 값을 Unix 시각으로 변환
+	 */
+	function _poomahhiYmdHisToTimestamp($ymdhis)
+	{
+		if(!$ymdhis)
+		{
+			return 0;
+		}
+		if(is_object($ymdhis) && method_exists($ymdhis, 'getTimestamp'))
+		{
+			return (int)$ymdhis->getTimestamp();
+		}
+		$s = preg_replace('/\D/', '', (string)$ymdhis);
+		if(strlen($s) === 8)
+		{
+			$s .= '000000';
+		}
+		if(strlen($s) < 14)
+		{
+			$s = str_pad($s, 14, '0');
+		}
+		$dt = DateTime::createFromFormat('YmdHis', substr($s, 0, 14));
+		return $dt ? (int)$dt->getTimestamp() : 0;
+	}
+
+	/**
+	 * 비즈니스 홈 상단 알림(신청/리뷰·검수대기/마감임박/ncenter 미읽음 공지·기타 미읽음)
+	 *
+	 * @return array{array,bool,int|null}
+	 */
+	function _buildBusinessDashboardBanners($member_srl, $product_list, $recent_applications, $oModel)
+	{
+		$banners = array();
+		$mid = $this->mid;
+		$config = $this->config;
+		$cutoff = strtotime('-24 hours');
+		$dismiss_map = $this->_getBusinessBannerDismissCookieMap();
+
+		$has_new_application_banner = false;
+		$new_banner_product_srl = null;
+		if($recent_applications)
+		{
+			foreach($recent_applications as $ra)
+			{
+				$rd = $this->_poomahhiYmdHisToTimestamp($ra->regdate);
+				if($rd && $rd >= $cutoff)
+				{
+					if($this->_hasBusinessBannerDismissInCookie($dismiss_map, 'application', $ra->product_srl))
+					{
+						continue;
+					}
+					$has_new_application_banner = true;
+					$new_banner_product_srl = $ra->product_srl;
+					$banners[] = (object)array(
+						'type' => 'application',
+						'go_url' => getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationManage', 'product_srl', $ra->product_srl),
+						'product_srl' => $ra->product_srl,
+						'application_srl' => 0,
+						'ncenter_notify' => '',
+					);
+					break;
+				}
+			}
+		}
+
+		$args_rev = new stdClass();
+		$args_rev->member_srl = $member_srl;
+		$args_rev->list_count = 40;
+		$args_rev->page = 1;
+		$rev_out = $oModel->getRecentReviewsByOrganizer($args_rev);
+		$revs = $rev_out->data ?: array();
+		if(!is_array($revs))
+		{
+			$revs = array($revs);
+		}
+		$oMemberModel = getModel('member');
+		foreach($revs as $rv)
+		{
+			if(empty($rv->application_srl))
+			{
+				continue;
+			}
+			$app = $oModel->getApplication($rv->application_srl);
+			if(!$app || $app->status !== 'under_review')
+			{
+				continue;
+			}
+			$ru = max(
+				$this->_poomahhiYmdHisToTimestamp($rv->regdate),
+				$this->_poomahhiYmdHisToTimestamp(isset($rv->last_update) ? $rv->last_update : 0)
+			);
+			if(!$ru || $ru < $cutoff)
+			{
+				continue;
+			}
+			if($this->_hasBusinessBannerDismissInCookie($dismiss_map, 'review', $rv->application_srl))
+			{
+				continue;
+			}
+			$mem = $oMemberModel->getMemberInfoByMemberSrl($app->member_srl);
+			$nick = ($mem && !empty($mem->nick_name)) ? $mem->nick_name : '회원';
+			$banners[] = (object)array(
+				'type' => 'review',
+				'go_url' => getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationManageDetail', 'application_srl', $app->application_srl),
+				'applicant_nick' => $nick,
+				'application_srl' => $app->application_srl,
+				'product_srl' => $app->product_srl,
+				'ncenter_notify' => '',
+			);
+			break;
+		}
+
+		$deadline_max = isset($config->business_home_deadline_days) ? (int)$config->business_home_deadline_days : 7;
+		if($deadline_max < 1)
+		{
+			$deadline_max = 7;
+		}
+		if($deadline_max > 90)
+		{
+			$deadline_max = 90;
+		}
+		$todayYmd = date('Ymd');
+		$best_deadline = null;
+		foreach($product_list as $p)
+		{
+			if($p->status !== 'active')
+			{
+				continue;
+			}
+			if($this->_hasBusinessBannerDismissInCookie($dismiss_map, 'deadline', $p->product_srl))
+			{
+				continue;
+			}
+			$src = $p->apply_end_date ?: $p->deadline_date;
+			if(!$src)
+			{
+				continue;
+			}
+			$ymdhis = (strlen((string)$src) === 8) ? $src . '235959' : $src;
+			$deadline_day = substr((string)$ymdhis, 0, 8);
+			if(strlen($deadline_day) !== 8)
+			{
+				continue;
+			}
+			$deadline_ts = strtotime(
+				substr($deadline_day, 0, 4) . '-' . substr($deadline_day, 4, 2) . '-' . substr($deadline_day, 6, 2)
+			);
+			$today_ts = strtotime(
+				substr($todayYmd, 0, 4) . '-' . substr($todayYmd, 4, 2) . '-' . substr($todayYmd, 6, 2)
+			);
+			if($deadline_ts < $today_ts)
+			{
+				continue;
+			}
+			$days = (int)(($deadline_ts - $today_ts) / 86400);
+			if($days < 0 || $days > $deadline_max)
+			{
+				continue;
+			}
+			if($best_deadline === null || $days < $best_deadline->days)
+			{
+				$ptitle = trim((string)$p->title);
+				if($ptitle === '')
+				{
+					$ptitle = '#' . $p->product_srl;
+				}
+				$best_deadline = (object)array(
+					'days' => $days,
+					'title' => $ptitle,
+					'product_srl' => $p->product_srl,
+				);
+			}
+		}
+		if($best_deadline)
+		{
+			$deadline_line = $oModel->formatPoomahhiDeadlineBannerLine($config, $best_deadline->title, $best_deadline->days);
+			if($deadline_line === null)
+			{
+				$deadline_line = '';
+			}
+			$banners[] = (object)array(
+				'type' => 'deadline',
+				'go_url' => getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductDetail', 'product_srl', $best_deadline->product_srl),
+				'days_remaining' => $best_deadline->days,
+				'product_title' => $best_deadline->title,
+				'product_srl' => $best_deadline->product_srl,
+				'deadline_line' => $deadline_line,
+				'application_srl' => 0,
+				'ncenter_notify' => '',
+			);
+		}
+
+		$oNcenterliteModel = getModel('ncenterlite');
+		if($oNcenterliteModel && method_exists($oNcenterliteModel, 'getNotificationText'))
+		{
+			$notice_out = $oModel->getBusinessNcenterUnreadNoticeForBanner($member_srl);
+			if($notice_out && $notice_out->toBool() && !empty($notice_out->data))
+			{
+				$notice_rows = $notice_out->data;
+				if(!is_array($notice_rows))
+				{
+					$notice_rows = array($notice_rows);
+				}
+				foreach($notice_rows as $nraw)
+				{
+					if(!is_object($nraw))
+					{
+						continue;
+					}
+					$tmp_notice = array($nraw);
+					$this->_enrichNcenterliteNotifyRows($tmp_notice, $oNcenterliteModel);
+					$nrow = $tmp_notice[0];
+					if(!is_object($nrow))
+					{
+						continue;
+					}
+					$plain_notice = trim(preg_replace('/\s+/u', ' ', html_entity_decode(strip_tags((string)$nrow->text), ENT_QUOTES, 'UTF-8')));
+					if($plain_notice === '')
+					{
+						$fb = '';
+						if(isset($nrow->target_body) && (string)$nrow->target_body !== '')
+						{
+							$fb = (string)$nrow->target_body;
+						}
+						elseif(isset($nrow->target_summary) && (string)$nrow->target_summary !== '')
+						{
+							$fb = (string)$nrow->target_summary;
+						}
+						$plain_notice = trim(preg_replace('/\s+/u', ' ', html_entity_decode(strip_tags($fb), ENT_QUOTES, 'UTF-8')));
+					}
+					if($plain_notice === '')
+					{
+						continue;
+					}
+					$disp = isset($nrow->notify_display_title) ? trim(preg_replace('/\s+/u', ' ', html_entity_decode(strip_tags((string)$nrow->notify_display_title), ENT_QUOTES, 'UTF-8'))) : '';
+					if($disp === '' || $disp === trim((string)($nrow->notify_display_prefix ?? '')))
+					{
+						$prefix = isset($nrow->notify_display_prefix) ? (string)$nrow->notify_display_prefix : $this->_getBusinessNotifyDisplayPrefix(isset($nrow->notify_kind) ? $nrow->notify_kind : '');
+						$disp = ($prefix !== '') ? trim($prefix . ' ' . $plain_notice) : $plain_notice;
+					}
+					$banners[] = (object)array(
+						'type' => 'notice_ncenter',
+						'go_url' => !empty($nrow->url) ? $nrow->url : getUrl('', 'mid', $mid, 'act', 'dispPoomahhiBusinessNotifications', 'notify_tab', 'notice'),
+						'notify_text' => $disp,
+						'ncenter_notify' => isset($nraw->notify) ? (string)$nraw->notify : '',
+						'product_srl' => 0,
+						'application_srl' => 0,
+					);
+					break;
+				}
+			}
+
+			$nc_out = $oModel->getBusinessNcenterUnreadListForBanner($member_srl, 50);
+			if($nc_out && $nc_out->toBool() && !empty($nc_out->data))
+			{
+				$nc_rows = $nc_out->data;
+				if(!is_array($nc_rows))
+				{
+					$nc_rows = array($nc_rows);
+				}
+				$this->_enrichNcenterliteNotifyRows($nc_rows, $oNcenterliteModel);
+				foreach($nc_rows as $nr)
+				{
+					$kind = isset($nr->notify_kind) ? $nr->notify_kind : '';
+					if($kind !== 'misc' && $kind !== 'ncenter_message')
+					{
+						continue;
+					}
+					$raw_text = isset($nr->text) ? (string)$nr->text : '';
+					$plain = trim(html_entity_decode(strip_tags($raw_text), ENT_QUOTES, 'UTF-8'));
+					if($plain === '')
+					{
+						$plain = '새 알림이 있습니다.';
+					}
+					$disp_misc = isset($nr->notify_display_title) ? (string)$nr->notify_display_title : $plain;
+					$banners[] = (object)array(
+						'type' => 'ncenterlite_misc',
+						'go_url' => !empty($nr->url) ? $nr->url : getUrl('', 'mid', $mid, 'act', 'dispPoomahhiBusinessNotifications'),
+						'notify_text' => $disp_misc,
+						'ncenter_notify' => isset($nr->notify) ? (string)$nr->notify : '',
+						'product_srl' => 0,
+						'application_srl' => 0,
+					);
+					break;
+				}
+			}
+		}
+
+		return array($banners, $has_new_application_banner, $new_banner_product_srl);
+	}
+
+	/**
+	 * 비즈니스 홈 배너(신청·리뷰·마감) 숨김 쿠키 맵
+	 */
+	function _getBusinessBannerDismissCookieMap()
+	{
+		if(empty($_COOKIE['pmh_bbdismiss']) || !is_string($_COOKIE['pmh_bbdismiss']))
+		{
+			return array();
+		}
+		$decoded = json_decode($_COOKIE['pmh_bbdismiss'], true);
+		return is_array($decoded) ? $decoded : array();
+	}
+
+	function _hasBusinessBannerDismissInCookie($map, $type, $srl)
+	{
+		if(!$map || (int)$srl < 1)
+		{
+			return false;
+		}
+		$key = $type . ':' . (int)$srl;
+		return !empty($map[$key]);
 	}
 
 	/**
@@ -2065,6 +2464,7 @@ class poomahhiView extends poomahhi
 		}
 
 		$oNcenterliteModel = getModel('ncenterlite');
+		$oModel = getModel('poomahhi');
 		if(!$oNcenterliteModel || !method_exists($oNcenterliteModel, 'getNotificationText'))
 		{
 			Context::set('ncenterlite_unavailable', true);
@@ -2162,6 +2562,66 @@ class poomahhiView extends poomahhi
 			$list = array($list);
 		}
 		$this->_enrichNcenterliteNotifyRows($list, $oNcenterliteModel);
+
+		if($tab === 'poomahhi' && $list)
+		{
+			$list = array_values(array_filter($list, function($row) {
+				if(!is_object($row))
+				{
+					return false;
+				}
+				if(isset($row->is_poomahhi_synthetic) && (string)$row->is_poomahhi_synthetic === 'deadline')
+				{
+					return true;
+				}
+				$tt = isset($row->target_type) ? (string)$row->target_type : '';
+				return $tt !== 'B';
+			}));
+		}
+
+		if(!$use_search && ($tab === 'all' || $tab === 'poomahhi') && $page === 1)
+		{
+			$synth = $oModel->getDeadlineSyntheticRowsForBusinessNotifications($logged_info->member_srl, $this->mid);
+			if($synth && count($synth) > 0)
+			{
+				$synth = array_slice($synth, 0, 15);
+				foreach($list as $idx => $row)
+				{
+					if(!is_object($row))
+					{
+						continue;
+					}
+					$rd = isset($row->regdate) ? preg_replace('/[^0-9]/', '', (string)$row->regdate) : '';
+					$rd = substr($rd . '00000000000000', 0, 14);
+					$ts = DateTime::createFromFormat('YmdHis', $rd);
+					if(!$ts && strlen($rd) >= 8)
+					{
+						$ts = DateTime::createFromFormat('Ymd', substr($rd, 0, 8));
+					}
+					if($ts)
+					{
+						$row->_pmh_merged_sort = (int)$ts->getTimestamp();
+					}
+					elseif(!empty($row->regdate))
+					{
+						$fb = @strtotime((string)$row->regdate);
+						$row->_pmh_merged_sort = $fb ? (int)$fb : 0;
+					}
+					else
+					{
+						$row->_pmh_merged_sort = 0;
+					}
+					$list[$idx] = $row;
+				}
+				$list = array_merge($synth, $list);
+				usort($list, function($a, $b) {
+					$sa = is_object($a) && isset($a->_pmh_merged_sort) ? (int)$a->_pmh_merged_sort : 0;
+					$sb = is_object($b) && isset($b->_pmh_merged_sort) ? (int)$b->_pmh_merged_sort : 0;
+					return $sb <=> $sa;
+				});
+				$list = array_slice(array_values($list), 0, $list_count);
+			}
+		}
 
 		Context::set('notification_list', $list);
 		Context::set('page_navigation', $output->page_navigation);
@@ -2301,30 +2761,12 @@ class poomahhiView extends poomahhi
 			+ (int)$application_stats->under_review + (int)$application_stats->revision_requested
 			+ (int)$application_stats->completed + (int)$application_stats->rejected_cancelled;
 
-		$has_new_application_banner = false;
-		$new_banner_product_srl = null;
-		$cutoff = strtotime('-24 hours');
-		if($recent_applications)
-		{
-			foreach($recent_applications as $ra)
-			{
-				$reg = $ra->regdate;
-				if(is_object($reg) && method_exists($reg, 'getTimestamp'))
-				{
-					$rd = $reg->getTimestamp();
-				}
-				else
-				{
-					$rd = strtotime((string)$reg);
-				}
-				if($rd && $rd >= $cutoff)
-				{
-					$has_new_application_banner = true;
-					$new_banner_product_srl = $ra->product_srl;
-					break;
-				}
-			}
-		}
+		list($business_dashboard_banners, $has_new_application_banner, $new_banner_product_srl) = $this->_buildBusinessDashboardBanners(
+			$member_srl,
+			$product_list,
+			$recent_applications,
+			$oModel
+		);
 
 		$dash_apply_rate_items = array();
 		$dash_cert_rate_items = array();
@@ -2374,6 +2816,7 @@ class poomahhiView extends poomahhi
 		Context::set('dash_total_selected', (int)$application_stats->selected);
 		Context::set('dash_inspection_pending', (int)$application_stats->under_review);
 		Context::set('dash_revision_pending', (int)$application_stats->revision_requested);
+		Context::set('business_dashboard_banners', $business_dashboard_banners);
 		Context::set('has_new_application_banner', $has_new_application_banner);
 		Context::set('new_banner_product_srl', $new_banner_product_srl);
 		Context::set('dash_apply_rate_items', $dash_apply_rate_items);

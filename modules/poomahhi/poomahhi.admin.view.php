@@ -53,6 +53,18 @@ class poomahhiAdminView extends poomahhi
 	}
 
 	/**
+	 * @brief 비즈니스 회원 전체 알림(ncenterlite) 발송
+	 */
+	function dispPoomahhiAdminBusinessBroadcast()
+	{
+		$oModel = getModel('poomahhi');
+		$config = $oModel->getModuleConfig();
+		Context::set('config', $config);
+
+		$this->setTemplateFile('business_broadcast');
+	}
+
+	/**
 	 * @brief 카테고리 관리
 	 */
 	function dispPoomahhiAdminCategoryList()

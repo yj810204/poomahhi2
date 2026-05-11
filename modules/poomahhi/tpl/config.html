@@ -137,6 +137,54 @@
 		</table>
 	</section>
 
+	<!-- 알림 문구 템플릿 (ncenter 발송·비즈니스 홈 마감 배너) -->
+	<section style="margin-bottom:30px;">
+		<h3 style="border-bottom:2px solid #333; padding-bottom:8px; margin-bottom:15px;">알림 문구 템플릿</h3>
+		<p style="color:#666; margin-bottom:15px;">비워 두면 기존 기본 문장이 사용됩니다. 아래 치환 변수를 중괄호 그대로 넣으면 발송·표시 시 바뀝니다.</p>
+		<table class="table table-bordered" style="width:100%;">
+			<tbody>
+				<tr>
+					<th scope="row" style="width:200px; vertical-align:top;">신청 알림 (개설자)</th>
+					<td>
+						<textarea name="noti_tpl_new_application" class="form-control" style="width:100%; min-height:72px;" maxlength="500" placeholder="예: 👤 {product_title}의 새로운 품앗이 신청이 왔습니다."><!--@if($config->noti_tpl_new_application)-->{$config->noti_tpl_new_application}<!--@end--></textarea>
+						<p style="color:#999; margin-top:6px;"><code>{product_title}</code> <code>{applicant_nick}</code> <code>{applicant_user_id}</code></p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row" style="vertical-align:top;">참여 인증 제출 알림 (개설자)</th>
+					<td>
+						<textarea name="noti_tpl_review_submitted" class="form-control" style="width:100%; min-height:72px;" maxlength="500" placeholder="예: ✍️ {applicant_user_id}님의 참여 인증 제출이 완료되었습니다."><!--@if($config->noti_tpl_review_submitted)-->{$config->noti_tpl_review_submitted}<!--@end--></textarea>
+						<p style="color:#999; margin-top:6px;"><code>{product_title}</code> <code>{applicant_nick}</code> <code>{applicant_user_id}</code></p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row" style="vertical-align:top;">마감 배너·알림 목록 (마감 임박 한 줄)</th>
+					<td>
+						<textarea name="noti_tpl_deadline_banner" class="form-control" style="width:100%; min-height:72px;" maxlength="500" placeholder="예: 📢 {product_title} 품앗이 마감이 {days_remaining}일 남았습니다."><!--@if($config->noti_tpl_deadline_banner)-->{$config->noti_tpl_deadline_banner}<!--@end--></textarea>
+						<p style="color:#999; margin-top:6px;"><code>{product_title}</code> <code>{days_remaining}</code> (일 수)</p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</section>
+
+	<!-- 비즈니스 홈 알림 -->
+	<section style="margin-bottom:30px;">
+		<h3 style="border-bottom:2px solid #333; padding-bottom:8px; margin-bottom:15px;">비즈니스 홈 알림</h3>
+		<table class="table table-bordered" style="width:100%;">
+			<tbody>
+				<tr>
+					<th scope="row" style="width:180px;">마감 알림 (일)</th>
+					<td>
+						<input type="number" name="business_home_deadline_days" value="<!--@if($config->business_home_deadline_days)-->{$config->business_home_deadline_days}<!--@else-->7<!--@end-->" class="form-control" style="width:120px;" min="1" max="90" />
+						<p style="color:#999; margin-top:5px;">진행 중 품앗이의 신청 마감일(신청 종료일)이 오늘부터 이 일 수 이내일 때 비즈니스 홈에 마감 알림을 표시합니다. 여러 건이면 가장 임박한 품앗이 하나만 표시합니다.</p>
+						<p style="color:#666; margin-top:10px;">비즈니스 홈 <strong>시스템 공지</strong> 배너는 알림 센터 미읽음 공지를 표시합니다. 전체 공지 발송은 관리자 메뉴 <a href="{getUrl('','module','admin','act','dispPoomahhiAdminBusinessBroadcast')}">비즈니스 알림 발송</a>을 이용하세요.</p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</section>
+
 	<!-- 개인정보 수집이용 동의 설정 -->
 	<section style="margin-bottom:30px;">
 		<h3 style="border-bottom:2px solid #333; padding-bottom:8px; margin-bottom:15px;">개인정보 수집이용 동의 내용</h3>

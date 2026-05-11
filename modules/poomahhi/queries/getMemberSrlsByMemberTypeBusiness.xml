@@ -1,0 +1,19 @@
+<query id="getMemberSrlsByMemberTypeBusiness" action="select">
+	<tables>
+		<table name="member" alias="m" />
+	</tables>
+	<columns>
+		<column name="m.member_srl" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="m.denied" var="member_denied" notnull="notnull" pipe="AND" />
+		<condition operation="equal" column="m.status" var="member_status" notnull="notnull" pipe="AND" />
+		<condition operation="like" column="m.extra_vars" var="member_type_business_pattern" notnull="notnull" pipe="AND" />
+	</conditions>
+	<navigation>
+		<index var="list_order" default="m.member_srl" order="asc" />
+		<list_count var="list_count" default="50000" />
+		<page_count var="page_count" default="5" />
+		<page var="page" default="1" />
+	</navigation>
+</query>

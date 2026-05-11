@@ -77,6 +77,119 @@ class poomahhiController extends poomahhi
 	}
 
 	/**
+	 * 비즈니스 홈 배너 닫기: ncenter 알림은 읽음 처리, 그 외(신청·리뷰·마감)는 쿠키로 숨김 기록
+	 */
+	function procPoomahhiDismissBusinessDashboardBanner()
+	{
+		$logged_info = Context::get('logged_info');
+		if(!$logged_info || !$logged_info->member_srl)
+		{
+			return new BaseObject(-1, '로그인이 필요합니다.');
+		}
+		if(!$this->_isBusinessMember($logged_info))
+		{
+			return new BaseObject(-1, '권한이 없습니다.');
+		}
+
+		$notify = Context::get('notify');
+		$notify = is_string($notify) ? trim($notify) : '';
+		if($notify !== '')
+		{
+			$oNc = getController('ncenterlite');
+			if($oNc && method_exists($oNc, 'updateNotifyRead'))
+			{
+				$output = $oNc->updateNotifyRead($notify, $logged_info->member_srl);
+				if($output && !$output->toBool())
+				{
+					return $output;
+				}
+			}
+			return new BaseObject();
+		}
+
+		$banner_type = Context::get('banner_type');
+		$banner_type = is_string($banner_type) ? trim($banner_type) : '';
+		$product_srl = (int)Context::get('product_srl');
+		$application_srl = (int)Context::get('application_srl');
+
+		$oModel = getModel('poomahhi');
+		$key = null;
+
+		if($banner_type === 'application')
+		{
+			if($product_srl < 1)
+			{
+				return new BaseObject(-1, '요청이 올바르지 않습니다.');
+			}
+			$product = $oModel->getProduct($product_srl);
+			if(!$product || (int)$product->member_srl !== (int)$logged_info->member_srl)
+			{
+				return new BaseObject(-1, '요청이 올바르지 않습니다.');
+			}
+			$key = 'application:' . $product_srl;
+		}
+		elseif($banner_type === 'deadline')
+		{
+			if($product_srl < 1)
+			{
+				return new BaseObject(-1, '요청이 올바르지 않습니다.');
+			}
+			$product = $oModel->getProduct($product_srl);
+			if(!$product || (int)$product->member_srl !== (int)$logged_info->member_srl)
+			{
+				return new BaseObject(-1, '요청이 올바르지 않습니다.');
+			}
+			$key = 'deadline:' . $product_srl;
+		}
+		elseif($banner_type === 'review')
+		{
+			if($application_srl < 1)
+			{
+				return new BaseObject(-1, '요청이 올바르지 않습니다.');
+			}
+			$app = $oModel->getApplication($application_srl);
+			if(!$app)
+			{
+				return new BaseObject(-1, '요청이 올바르지 않습니다.');
+			}
+			$product = $oModel->getProduct($app->product_srl);
+			if(!$product || (int)$product->member_srl !== (int)$logged_info->member_srl)
+			{
+				return new BaseObject(-1, '요청이 올바르지 않습니다.');
+			}
+			$key = 'review:' . $application_srl;
+		}
+		else
+		{
+			return new BaseObject(-1, '요청이 올바르지 않습니다.');
+		}
+
+		$map = $this->_poomahhiReadBannerDismissCookie();
+		$map[$key] = 1;
+		$payload = json_encode($map, JSON_UNESCAPED_UNICODE);
+		if(strlen($payload) > 3900)
+		{
+			$map = array($key => 1);
+			$payload = json_encode($map, JSON_UNESCAPED_UNICODE);
+		}
+
+		$secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+		setcookie('pmh_bbdismiss', $payload, time() + 86400 * 60, '/', '', $secure, true);
+
+		return new BaseObject();
+	}
+
+	function _poomahhiReadBannerDismissCookie()
+	{
+		if(empty($_COOKIE['pmh_bbdismiss']) || !is_string($_COOKIE['pmh_bbdismiss']))
+		{
+			return array();
+		}
+		$decoded = json_decode($_COOKIE['pmh_bbdismiss'], true);
+		return is_array($decoded) ? $decoded : array();
+	}
+
+	/**
 	 * @brief 트리거: 회원 가입 후 member_type 및 그룹 자동 배정
 	 */
 	function triggerAfterMemberInsert(&$obj)
@@ -599,7 +712,19 @@ class poomahhiController extends poomahhi
 		if(!$output->toBool()) return $output;
 
 		$manage_url = getNotEncodedUrl('', 'mid', $this->mid, 'act', 'dispPoomahhiApplicationManage', 'product_srl', $product->product_srl);
-		$noti_msg = sprintf('[%s] 품앗이에 새로운 품앗이 신청이 왔습니다.', $product->title);
+		$tpl = isset($config->noti_tpl_new_application) ? trim((string)$config->noti_tpl_new_application) : '';
+		if($tpl !== '')
+		{
+			$noti_msg = $oModel->replacePoomahhiNotificationTemplate($tpl, array(
+				'product_title' => (string)$product->title,
+				'applicant_nick' => isset($logged_info->nick_name) ? (string)$logged_info->nick_name : '',
+				'applicant_user_id' => isset($logged_info->user_id) ? (string)$logged_info->user_id : '',
+			));
+		}
+		else
+		{
+			$noti_msg = sprintf('[%s] 품앗이에 새로운 품앗이 신청이 왔습니다.', $product->title);
+		}
 		$this->_sendNotification($logged_info->member_srl, $product->member_srl, $noti_msg, $manage_url, $insert_args->application_srl);
 
 		$this->setMessage('등록되었습니다.');
@@ -890,8 +1015,22 @@ class poomahhiController extends poomahhi
 		$oMemberModel = getModel('member');
 		$applicant_member = $oMemberModel->getMemberInfoByMemberSrl($logged_info->member_srl);
 		$applicant_nick = $applicant_member && $applicant_member->nick_name ? $applicant_member->nick_name : '회원';
+		$applicant_user_id = $applicant_member && !empty($applicant_member->user_id) ? (string)$applicant_member->user_id : '';
 		$manage_url = getNotEncodedUrl('', 'mid', $this->mid, 'act', 'dispPoomahhiApplicationManage', 'product_srl', $product->product_srl);
-		$noti_msg = sprintf('[%s] %s님의 참여 인증 제출이 완료되었습니다.', $product->title, $applicant_nick);
+		$cfg = $oModel->getModuleConfig();
+		$tpl = isset($cfg->noti_tpl_review_submitted) ? trim((string)$cfg->noti_tpl_review_submitted) : '';
+		if($tpl !== '')
+		{
+			$noti_msg = $oModel->replacePoomahhiNotificationTemplate($tpl, array(
+				'product_title' => (string)$product->title,
+				'applicant_nick' => (string)$applicant_nick,
+				'applicant_user_id' => $applicant_user_id,
+			));
+		}
+		else
+		{
+			$noti_msg = sprintf('[%s] %s님의 참여 인증 제출이 완료되었습니다.', $product->title, $applicant_nick);
+		}
 		$this->_sendNotification($logged_info->member_srl, $product->member_srl, $noti_msg, $manage_url, $application_srl);
 
 		$this->setMessage('등록되었습니다.');

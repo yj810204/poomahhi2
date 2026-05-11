@@ -24,6 +24,8 @@
 		<permission action="dispPoomahhiAdminProductList" target="manager" />
 		<permission action="dispPoomahhiAdminApplicationList" target="manager" />
 		<permission action="dispPoomahhiAdminSettlement" target="manager" />
+		<permission action="dispPoomahhiAdminBusinessBroadcast" target="manager" />
+		<permission action="procPoomahhiAdminSendBusinessBroadcast" target="manager" />
 		<permission action="procPoomahhiAdminSaveConfig" target="manager" />
 		<permission action="procPoomahhiAdminSaveChannel" target="manager" />
 		<permission action="procPoomahhiAdminDeleteChannel" target="manager" />
@@ -40,6 +42,7 @@
 		<permission action="procPoomahhiAdminSortRegions" target="manager" />
 		<permission action="procPoomahhiGetExtraDefsByTemplate" target="member" />
 		<permission action="procPoomahhiDeductPointForView" target="member" />
+		<permission action="procPoomahhiDismissBusinessDashboardBanner" target="member" />
 	</permissions>
 
 	<actions>
@@ -67,6 +70,7 @@
 		<action name="dispPoomahhiSignupSelect" type="view" />
 
 		<!-- Front Controller -->
+		<action name="procPoomahhiDismissBusinessDashboardBanner" type="controller" />
 		<action name="procPoomahhiInsertProduct" type="controller" />
 		<action name="procPoomahhiUpdateProduct" type="controller" />
 		<action name="procPoomahhiDeleteProduct" type="controller" />
@@ -95,11 +99,13 @@
 		<action name="dispPoomahhiAdminProductList" type="view" />
 		<action name="dispPoomahhiAdminApplicationList" type="view" />
 		<action name="dispPoomahhiAdminSettlement" type="view" />
+		<action name="dispPoomahhiAdminBusinessBroadcast" type="view" />
 
 		<action name="dispPoomahhiAdminRegionList" type="view" />
 
 		<!-- Admin Controller -->
 		<action name="procPoomahhiAdminSaveConfig" type="controller" />
+		<action name="procPoomahhiAdminSendBusinessBroadcast" type="controller" />
 		<action name="procPoomahhiAdminSaveChannel" type="controller" />
 		<action name="procPoomahhiAdminDeleteChannel" type="controller" />
 		<action name="procPoomahhiAdminSortChannels" type="controller" />

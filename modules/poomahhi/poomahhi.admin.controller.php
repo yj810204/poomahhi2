@@ -51,6 +51,15 @@ class poomahhiAdminController extends poomahhi
 		$config->own_document_product_mid = isset($args->own_document_product_mid) ? trim((string)$args->own_document_product_mid) : '';
 		$config->own_document_region_mid = isset($args->own_document_region_mid) ? trim((string)$args->own_document_region_mid) : '';
 		$config->privacy_content = $args->privacy_content ?: '';
+		$config->business_home_deadline_days = (int)$args->business_home_deadline_days ?: 7;
+		if($config->business_home_deadline_days < 1) $config->business_home_deadline_days = 7;
+		if($config->business_home_deadline_days > 90) $config->business_home_deadline_days = 90;
+		$config->noti_tpl_new_application = isset($args->noti_tpl_new_application) ? trim((string)$args->noti_tpl_new_application) : '';
+		$config->noti_tpl_review_submitted = isset($args->noti_tpl_review_submitted) ? trim((string)$args->noti_tpl_review_submitted) : '';
+		$config->noti_tpl_deadline_banner = isset($args->noti_tpl_deadline_banner) ? trim((string)$args->noti_tpl_deadline_banner) : '';
+		if(strlen($config->noti_tpl_new_application) > 500) $config->noti_tpl_new_application = function_exists('mb_substr') ? mb_substr($config->noti_tpl_new_application, 0, 500, 'UTF-8') : substr($config->noti_tpl_new_application, 0, 500);
+		if(strlen($config->noti_tpl_review_submitted) > 500) $config->noti_tpl_review_submitted = function_exists('mb_substr') ? mb_substr($config->noti_tpl_review_submitted, 0, 500, 'UTF-8') : substr($config->noti_tpl_review_submitted, 0, 500);
+		if(strlen($config->noti_tpl_deadline_banner) > 500) $config->noti_tpl_deadline_banner = function_exists('mb_substr') ? mb_substr($config->noti_tpl_deadline_banner, 0, 500, 'UTF-8') : substr($config->noti_tpl_deadline_banner, 0, 500);
 		$config->content_point_type = 'rhymix';
 
 		$output = $oModuleController->insertModuleConfig('poomahhi', $config);
@@ -349,5 +358,132 @@ class poomahhiAdminController extends poomahhi
 		$this->setMessage('삭제되었습니다.');
 		$returnUrl = getNotEncodedUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminExtraDef', 'template_srl', $template_srl);
 		$this->setRedirectUrl($returnUrl);
+	}
+
+	/**
+	 * @brief 회원 확장변수 member_type=business 인 승인 회원에게 ncenterlite 공지 알림 발송 (target_type B, type X)
+	 */
+	function procPoomahhiAdminSendBusinessBroadcast()
+	{
+		$logged_info = Context::get('logged_info');
+		if(!$logged_info)
+		{
+			return new BaseObject(-1, '로그인이 필요합니다.');
+		}
+
+		$message = trim((string)Context::get('broadcast_message'));
+		if($message === '')
+		{
+			return new BaseObject(-1, '알림 내용을 입력해 주세요.');
+		}
+
+		$oTplModel = getModel('poomahhi');
+		$message = $oTplModel->replacePoomahhiNotificationTemplate($message, array(
+			'date' => date('Y-m-d H:i'),
+			'admin_nick' => isset($logged_info->nick_name) ? (string)$logged_info->nick_name : '',
+			'admin_user_id' => isset($logged_info->user_id) ? (string)$logged_info->user_id : '',
+		));
+
+		$url = trim((string)Context::get('broadcast_url'));
+
+		$oNc = getController('ncenterlite');
+		if(!$oNc || !method_exists($oNc, '_insertNotify'))
+		{
+			return new BaseObject(-1, '알림 센터(ncenterlite) 모듈을 사용할 수 없습니다.');
+		}
+
+		$oModuleModel = getModel('module');
+		$biz_mid = 'poomahhi_business';
+		$mid_list = $oModuleModel->getMidList(null, array('mid', 'module'));
+		if($mid_list)
+		{
+			foreach($mid_list as $m)
+			{
+				if(isset($m->module) && $m->module === 'poomahhi' && isset($m->mid) && $m->mid === 'poomahhi_business')
+				{
+					$biz_mid = $m->mid;
+					break;
+				}
+			}
+		}
+		if($url === '')
+		{
+			$url = getNotEncodedUrl('', 'mid', $biz_mid, 'act', 'dispPoomahhiBusinessNotifications', 'notify_tab', 'notice');
+		}
+
+		// Rhymix: 회원 확장변수는 member.extra_vars 에 PHP serialize 로 저장됨 (member_extra_vars 테이블 아님)
+		$qargs = new stdClass();
+		$qargs->member_denied = 'N';
+		$qargs->member_status = 'APPROVED';
+		$qargs->member_type_business_pattern = '%s:11:"member_type";s:8:"business"%';
+		$qargs->list_count = 50000;
+		$qargs->page = 1;
+		$out = executeQueryArray('poomahhi.getMemberSrlsByMemberTypeBusiness', $qargs);
+		if(!$out->toBool())
+		{
+			return $out;
+		}
+		$rows = $out->data ?: array();
+		if(!is_array($rows))
+		{
+			$rows = array($rows);
+		}
+		if(!count($rows))
+		{
+			$this->setMessage('확장변수 member_type이 business이며 승인된 회원이 없습니다.');
+			$this->setRedirectUrl(getNotEncodedUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminBusinessBroadcast'));
+			return new BaseObject();
+		}
+
+		if(function_exists('set_time_limit'))
+		{
+			@set_time_limit(600);
+		}
+
+		$sent = 0;
+		$failed = 0;
+		foreach($rows as $row)
+		{
+			$member_srl = (int)$row->member_srl;
+			if($member_srl < 1)
+			{
+				continue;
+			}
+
+			$nargs = new stdClass();
+			$nargs->config_type = 'custom';
+			$nargs->module_srl = 0;
+			$nargs->member_srl = $member_srl;
+			$nargs->type = 'X';
+			$nargs->target_type = 'B';
+			$nargs->srl = 0;
+			$nargs->target_srl = 0;
+			$nargs->target_p_srl = 0;
+			$nargs->target_member_srl = (int)$logged_info->member_srl;
+			$nargs->target_url = $url;
+			$nargs->target_body = $message;
+			if(function_exists('mb_substr'))
+			{
+				$nargs->target_summary = mb_substr($message, 0, 200, 'UTF-8');
+			}
+			else
+			{
+				$nargs->target_summary = substr($message, 0, 200);
+			}
+
+			$nout = $oNc->_insertNotify($nargs);
+			if($nout->toBool())
+			{
+				$sent++;
+			}
+			else
+			{
+				$failed++;
+			}
+		}
+
+		$this->setMessage(sprintf('알림 발송 완료: 성공 %d건, 실패 %d건', $sent, $failed));
+		$this->setRedirectUrl(getNotEncodedUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminBusinessBroadcast'));
+		return new BaseObject();
 	}
 }

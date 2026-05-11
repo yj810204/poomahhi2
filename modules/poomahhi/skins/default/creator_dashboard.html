@@ -4,15 +4,45 @@
 	<h1>비즈니스 홈</h1>
 
 	<div class="business_inner">
-		<!--@if($has_new_application_banner)-->
-		<div class="new_section">
-			<span><strong>NEW</strong>👤 새로운 <b>품앗이 신청</b>이 왔습니다.</span>
-			<!--@if($new_banner_product_srl)-->
-			<div class="ds-f ai-c">
-				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationManage', 'product_srl', $new_banner_product_srl)}" class="go_btn">보러가기</a>
-				<!--@end-->
-				<i class="ri-close-line close_new"></i>
+		<!--@if($business_dashboard_banners && count($business_dashboard_banners))-->
+		<div class="pmh-business-dashboard-banners">
+			<!--@foreach($business_dashboard_banners as $pmh_banner)-->
+			<div class="pmh-business-banner pmh-business-banner--{$pmh_banner->type}"
+				data-banner-type="{$pmh_banner->type}"
+				data-product-srl="{$pmh_banner->product_srl}"
+				data-application-srl="{$pmh_banner->application_srl}"
+				data-ncenter-notify="{$pmh_banner->ncenter_notify}">
+				<span class="pmh-business-banner__main">
+					<strong class="pmh-business-banner__new">NEW</strong>
+					<!--@if($pmh_banner->type == 'application')-->
+					<span class="pmh-business-banner__icon pmh-business-banner__icon--application" aria-hidden="true">👤</span>
+					<span class="pmh-business-banner__text">새로운 <b>품앗이 신청</b>이 왔습니다.</span>
+					<!--@elseif($pmh_banner->type == 'review')-->
+					<span class="pmh-business-banner__icon pmh-business-banner__icon--review" aria-hidden="true">⛰️</span>
+					<span class="pmh-business-banner__text"><b>{$pmh_banner->applicant_nick}</b>님의 참여 인증 제출이 완료되었습니다.</span>
+					<!--@elseif($pmh_banner->type == 'deadline')-->
+					<span class="pmh-business-banner__icon pmh-business-banner__icon--deadline" aria-hidden="true">📢</span>
+					<!--@if($pmh_banner->deadline_line)-->
+					<span class="pmh-business-banner__text">{$pmh_banner->deadline_line}</span>
+					<!--@else-->
+					<span class="pmh-business-banner__text"><b>{$pmh_banner->product_title}</b> 품앗이 마감이 <b>{$pmh_banner->days_remaining}</b>일 남았습니다.</span>
+					<!--@end-->
+					<!--@elseif($pmh_banner->type == 'notice_ncenter')-->
+					<span class="pmh-business-banner__icon pmh-business-banner__icon--notice" aria-hidden="true">⚙️</span>
+					<span class="pmh-business-banner__text"><span class="pmh-business-banner__catlabel">시스템 공지</span> {$pmh_banner->notify_text}</span>
+					<!--@elseif($pmh_banner->type == 'ncenterlite_misc')-->
+					<span class="pmh-business-banner__icon pmh-business-banner__icon--ncenterlite-misc" aria-hidden="true">💬</span>
+					<span class="pmh-business-banner__text"><span class="pmh-business-banner__catlabel">기타알림</span> {$pmh_banner->notify_text}</span>
+					<!--@end-->
+				</span>
+				<div class="pmh-business-banner__actions">
+					<!--@if($pmh_banner->go_url)-->
+					<a href="{$pmh_banner->go_url}" class="pmh-business-banner__go">보러가기</a>
+					<!--@end-->
+					<button type="button" class="pmh-business-banner__close" aria-label="알림 닫기"><i class="ri-close-line"></i></button>
+				</div>
 			</div>
+			<!--@end-->
 		</div>
 		<!--@end-->
 
@@ -167,7 +197,28 @@
 </div>
 
 <script>
-	$(".new_section .close_new").on('click', function(){
-		$(".new_section").hide();
+(function($){
+	$(document).on('click', '.pmh-business-banner__close', function(e){
+		e.preventDefault();
+		var $b = $(this).closest('.pmh-business-banner');
+		var done = function(){ $b.slideUp(200); };
+		var notify = ($b.attr('data-ncenter-notify') || '').trim();
+		if(notify.length)
+		{
+			$.exec_json('poomahhi.procPoomahhiDismissBusinessDashboardBanner', { notify: notify }, done, done);
+			return;
+		}
+		var t = ($b.attr('data-banner-type') || '').trim();
+		var params = { banner_type: t };
+		if(t === 'review')
+		{
+			params.application_srl = parseInt($b.attr('data-application-srl'), 10) || 0;
+		}
+		else
+		{
+			params.product_srl = parseInt($b.attr('data-product-srl'), 10) || 0;
+		}
+		$.exec_json('poomahhi.procPoomahhiDismissBusinessDashboardBanner', params, done, done);
 	});
+})(jQuery);
 </script>

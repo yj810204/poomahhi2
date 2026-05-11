@@ -397,6 +397,49 @@ class poomahhiModel extends poomahhi
 	}
 
 	/**
+	 * @brief 비즈니스 홈 배너용: ncenterlite 미읽음 목록 (최신순)
+	 */
+	function getBusinessNcenterUnreadListForBanner($member_srl, $list_count = 50)
+	{
+		$oDB = \DB::getInstance();
+		if(!$oDB->isTableExists('ncenterlite_notify'))
+		{
+			$empty = new BaseObject();
+			$empty->data = array();
+			$empty->total_count = 0;
+			return $empty;
+		}
+
+		$args = new stdClass();
+		$args->member_srl = (int)$member_srl;
+		$args->readed = 'N';
+		$args->list_count = max(1, min(100, (int)$list_count));
+		$args->page = 1;
+		return executeQueryArray('poomahhi.getBusinessNcenterUnreadListForBanner', $args);
+	}
+
+	/**
+	 * @brief 비즈니스 홈 배너용: ncenterlite 미읽음 공지(target_type B) 최신 여러 건(배너 문구 후보)
+	 */
+	function getBusinessNcenterUnreadNoticeForBanner($member_srl)
+	{
+		$oDB = \DB::getInstance();
+		if(!$oDB->isTableExists('ncenterlite_notify'))
+		{
+			$empty = new BaseObject();
+			$empty->data = array();
+			return $empty;
+		}
+		$args = new stdClass();
+		$args->member_srl = (int)$member_srl;
+		$args->readed = 'N';
+		$args->filter_target_type = 'B';
+		$args->list_count = 25;
+		$args->page = 1;
+		return executeQueryArray('poomahhi.getBusinessNcenterUnreadNoticeForBanner', $args);
+	}
+
+	/**
 	 * @brief 개설자 상품의 under_review 신청 중 회원평가 미작성 건 수
 	 */
 	function getMemberReviewPendingCountByOrganizer($member_srl)
@@ -986,6 +1029,10 @@ class poomahhiModel extends poomahhi
 		if(!isset($config->review_deadline_days)) $config->review_deadline_days = 14;
 		if(!isset($config->default_list_count)) $config->default_list_count = 20;
 		if(!isset($config->privacy_content)) $config->privacy_content = '';
+		if(!isset($config->business_home_deadline_days)) $config->business_home_deadline_days = 7;
+		if(!isset($config->noti_tpl_new_application)) $config->noti_tpl_new_application = '';
+		if(!isset($config->noti_tpl_review_submitted)) $config->noti_tpl_review_submitted = '';
+		if(!isset($config->noti_tpl_deadline_banner)) $config->noti_tpl_deadline_banner = '';
 		if(!isset($config->own_document_product_mid)) $config->own_document_product_mid = 'money1';
 		if(!isset($config->own_document_region_mid)) $config->own_document_region_mid = 'money2';
 		$config->content_point_type = 'rhymix';
@@ -1083,5 +1130,132 @@ class poomahhiModel extends poomahhi
 		}
 		$output->data = $mapped;
 		return $output;
+	}
+
+	/**
+	 * @brief 알림 문구 템플릿 {키} 치환
+	 */
+	function replacePoomahhiNotificationTemplate($template, array $vars)
+	{
+		if($template === null || $template === '')
+		{
+			return '';
+		}
+		$out = (string)$template;
+		foreach($vars as $key => $val)
+		{
+			$k = is_string($key) ? $key : (string)$key;
+			$out = str_replace('{' . $k . '}', (string)$val, $out);
+		}
+		return $out;
+	}
+
+	/**
+	 * @brief 마감 배너/목록 한 줄 (템플릿 비어 있으면 null → 호출부 기본 문장)
+	 */
+	function formatPoomahhiDeadlineBannerLine($config, $product_title, $days_remaining)
+	{
+		$tpl = isset($config->noti_tpl_deadline_banner) ? trim((string)$config->noti_tpl_deadline_banner) : '';
+		if($tpl === '')
+		{
+			return null;
+		}
+		return $this->replacePoomahhiNotificationTemplate($tpl, array(
+			'product_title' => (string)$product_title,
+			'days_remaining' => (string)(int)$days_remaining,
+		));
+	}
+
+	/**
+	 * @brief 비즈니스 알림 목록에 합칠 마감 임박 합성 행들 (ncenter 아님)
+	 * @return array<int,object>
+	 */
+	function getDeadlineSyntheticRowsForBusinessNotifications($organizer_member_srl, $mid)
+	{
+		$config = $this->getModuleConfig();
+		$organizer_member_srl = (int)$organizer_member_srl;
+		if($organizer_member_srl < 1 || $mid === '' || $mid === null)
+		{
+			return array();
+		}
+		$deadline_max = isset($config->business_home_deadline_days) ? (int)$config->business_home_deadline_days : 7;
+		if($deadline_max < 1)
+		{
+			$deadline_max = 7;
+		}
+		if($deadline_max > 90)
+		{
+			$deadline_max = 90;
+		}
+
+		$args_product = new stdClass();
+		$args_product->member_srl = $organizer_member_srl;
+		$args_product->list_count = 80;
+		$args_product->page = 1;
+		$product_output = $this->getProductList($args_product);
+		$product_list = $product_output->data ?: array();
+		if(!is_array($product_list))
+		{
+			$product_list = array($product_list);
+		}
+		$todayYmd = date('Ymd');
+		$today_ts = strtotime(substr($todayYmd, 0, 4) . '-' . substr($todayYmd, 4, 2) . '-' . substr($todayYmd, 6, 2));
+		$rows = array();
+		foreach($product_list as $p)
+		{
+			if(!$p || $p->status !== 'active')
+			{
+				continue;
+			}
+			$src = $p->apply_end_date ?: $p->deadline_date;
+			if(!$src)
+			{
+				continue;
+			}
+			$ymdhis = (strlen((string)$src) === 8) ? $src . '235959' : $src;
+			$deadline_day = substr((string)$ymdhis, 0, 8);
+			if(strlen($deadline_day) !== 8)
+			{
+				continue;
+			}
+			$deadline_ts = strtotime(substr($deadline_day, 0, 4) . '-' . substr($deadline_day, 4, 2) . '-' . substr($deadline_day, 6, 2) . ' 23:59:59');
+			if($deadline_ts < $today_ts)
+			{
+				continue;
+			}
+			$days = (int)(($deadline_ts - $today_ts) / 86400);
+			if($days < 0 || $days > $deadline_max)
+			{
+				continue;
+			}
+			$ptitle = trim((string)$p->title);
+			if($ptitle === '')
+			{
+				$ptitle = '#' . $p->product_srl;
+			}
+			$line = $this->formatPoomahhiDeadlineBannerLine($config, $ptitle, $days);
+			if($line === null || $line === '')
+			{
+				$line = $ptitle . ' 품앗이 마감이 ' . $days . '일 남았습니다.';
+			}
+			$o = new stdClass();
+			$o->is_poomahhi_synthetic = 'deadline';
+			$o->notify = '';
+			$o->regdate = (string)$ymdhis;
+			$o->readed = 'SYN';
+			$o->text = $line;
+			$o->pmh_list_text = $line;
+			$o->notify_display_title = $line;
+			$o->notify_icon_class = 'bi-calendar-event';
+			$o->notify_category_label = '마감';
+			$o->url = getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductDetail', 'product_srl', $p->product_srl);
+			$o->ago = 'D-' . (int)$days;
+			$o->_pmh_merged_sort = (int)$deadline_ts;
+			$rows[] = $o;
+		}
+		usort($rows, function($a, $b) {
+			return (int)$b->_pmh_merged_sort <=> (int)$a->_pmh_merged_sort;
+		});
+		return $rows;
 	}
 }
