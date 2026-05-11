@@ -1764,7 +1764,20 @@ class poomahhiView extends poomahhi
 		$member_srl = $logged_info->member_srl;
 		$oModel = getModel('poomahhi');
 
-		$point_summary = $oModel->getMyPointSummary($member_srl);
+		$balance = $oModel->getRhymixPointBalance($member_srl);
+		$point_level = 0;
+		if(class_exists('PointModel'))
+		{
+			$oModuleModel = getModel('module');
+			$point_config = $oModuleModel->getModuleConfig('point');
+			$level_step = ($point_config && isset($point_config->level_step)) ? $point_config->level_step : array();
+			$point_level = PointModel::getLevel($balance, $level_step);
+		}
+		$point_summary = (object)array(
+			'point' => $balance,
+			'point_formatted' => number_format($balance, 0, '.', ','),
+			'level' => $point_level,
+		);
 
 		$year = (int)Context::get('year') ?: (int)date('Y');
 		$month = (int)Context::get('month') ?: (int)date('n');
@@ -1775,20 +1788,21 @@ class poomahhiView extends poomahhi
 		$args->member_srl = $member_srl;
 		$args->year = $year;
 		$args->month = $month;
-		$args->type = ($type_filter === 'earn' || $type_filter === 'deduct') ? $type_filter : '';
+		$args->type_filter = ($type_filter === 'earn' || $type_filter === 'deduct') ? $type_filter : 'all';
 		$args->page = $page;
 		$args->list_count = $this->config->default_list_count;
 
-		$log_output = $oModel->getPointLogList($args);
+		$log_output = $oModel->getRhymixPointhistoryLogPage($args);
 
 		Context::set('point_summary', $point_summary);
 		Context::set('point_log_list', $log_output->data ?: array());
 		Context::set('total_count', $log_output->total_count);
-		Context::set('page', $page);
+		Context::set('page', isset($log_output->page) ? $log_output->page : $page);
 		Context::set('page_navigation', $log_output->page_navigation);
 		Context::set('current_year', $year);
 		Context::set('current_month', $month);
 		Context::set('current_type', $type_filter);
+		Context::set('rhymix_point_history_available', $oModel->isRhymixPointhistoryAvailable());
 
 		$this->_setMemberMenuHeaderContext();
 		$this->setTemplateFile('my_points');

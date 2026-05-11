@@ -1,0 +1,24 @@
+<query id="getPointhistoryStatusMemberList" action="select">
+    <tables>
+        <table name="member" alias="member" />
+        <table name="pointhistory_member_status" alias="status" />
+    </tables>
+    <columns>
+        <column name="member.nick_name" />
+        <column name="status.*" />
+    </columns>
+    <conditions>
+        <condition operation="equal" column="member.member_srl" var="status.member_srl" notnull="notnull" />
+        <group pipe="and">
+            <condition operation="like" column="member.user_id" var="user_id" />
+            <condition operation="like" column="member.nick_name" var="nick_name" pipe="or" />
+            <condition operation="like" column="member.email_address" var="email_address" pipe="or" />
+        </group>
+    </conditions>
+    <navigation>
+        <index var="sort_index" default="status.day" order="desc" />
+        <list_count var="list_count" default="20" />
+        <page_count var="page_count" default="10" />
+        <page var="page" default="1" />
+    </navigation>
+</query>

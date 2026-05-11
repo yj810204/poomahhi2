@@ -1,0 +1,9 @@
+<query id="deletePointhistoryLog" action="delete">
+    <tables>
+        <table name="pointhistory_log" />
+    </tables>
+    <conditions>
+		<condition operation="equal" column="history_id" var="history_id" />
+        <condition operation="equal" column="member_srl" var="member_srl" pipe="and" />	
+    </conditions>
+</query>

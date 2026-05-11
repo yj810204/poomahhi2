@@ -1,0 +1,25 @@
+<load target="pointhistory_admin.js" />
+<div class="x_page-header">
+	<h1>
+		{$lang->pointhistory} <a href="#aboutModule" data-toggle class="x_icon-question-sign">{$lang->help}</a>
+	</h1>
+</div>
+<p class="x_alert x_alert-info" id="aboutModule" hidden>{$lang->about_pointhistory}</p>
+
+<ul class="x_nav x_nav-tabs" cond="$act != 'dispPointhistoryAdminUpgrade'">
+	<li class="x_active"|cond="$act == 'dispPointhistoryAdminConfig'">
+		<a href="{getUrl('', 'module', 'admin', 'act', 'dispPointhistoryAdminConfig')}">{$lang->preferences}</a>
+	</li>
+	<li class="x_active"|cond="$act == 'dispPointhistoryAdminList'">
+		<a href="{getUrl('', 'module', 'admin', 'act', 'dispPointhistoryAdminList')}">{$lang->member_point_history_list}</a>
+	</li>
+	<li class="x_active"|cond="$act == 'dispPointhistoryAdminStatus'" cond="$config->point_status == 'Y'">
+		<a href="{getUrl('', 'module', 'admin', 'act', 'dispPointhistoryAdminStatus')}">{$lang->total_point_status}</a>
+	</li>
+	<li class="x_active"|cond="$act == 'dispPointhistoryAdminStatusMember'" cond="$config->point_status == 'Y'">
+		<a href="{getUrl('', 'module', 'admin', 'act', 'dispPointhistoryAdminStatusMember')}">{$lang->member_point_status}</a>
+	</li>
+</ul>
+<div cond="$XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/pointhistory/tpl/1'" class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
+	<p>{$XE_VALIDATOR_MESSAGE}</p>
+</div>

@@ -1,0 +1,63 @@
+<include target="_header.html" />
+<load target="pointhistory_upgrade.js" />
+
+<section class="section" id="step1">
+	<h1>{$lang->pointhistory_upgrade}</h1>
+	
+	<div class="message">
+		<h2>{$lang->pointhistory_upgrade_title}</h2>
+		<p>{$lang->about_pointhistory_upgrade}</p>
+		<p>{$lang->about_pointhistory_upgrade_time}</p>
+	</div>
+	
+	<input type="hidden" name="max_count" value="{$max_count}" cond="$max_count" />
+	<div class="x_control-group">
+		<label class="x_control-label">{$lang->processing_speed}</label>
+		<div class="x_controls">
+			<label class="x_inline" for="speed1">
+				<input type="radio" name="processing_speed" id="speed1" value="100" checked|cond="!$max_count || $max_count == 100" disabled|cond="$max_count" /> {$lang->processing_speed1}
+			</label>
+			<label class="x_inline" for="speed2">
+				<input type="radio" name="processing_speed" id="speed2" value="500" checked|cond="$max_count == 500" disabled|cond="$max_count" /> {$lang->processing_speed2}
+			</label>
+			<label class="x_inline" for="speed3">
+				<input type="radio" name="processing_speed" id="speed3" value="5000" checked|cond="$max_count == 5000" disabled|cond="$max_count" /> {$lang->processing_speed3}
+			</label>
+			<label class="x_inline" for="speed4">
+				<input type="radio" name="processing_speed" id="speed4" value="10000" checked|cond="$max_count == 10000" disabled|cond="$max_count" /> {$lang->processing_speed4}
+			</label>
+			<p class="x_help-block" cond="!$max_count">{$lang->about_processing_speed}</p>
+			<p class="x_help-block" cond="$max_count">{$lang->msg_not_processing_speed}</p>
+		</div>
+	</div>
+	
+	<div class="x_alert x_alert-block">
+		<p>{$lang->about_warning_pointhistory_upgrade}</p>
+	</div>
+	
+	<button type="button" class="x_btn x_btn-primary" id="upgrade_start">{$lang->upgrade_start}</button>
+	<button type="button" class="x_btn" id="use_new">{$lang->upgrade_use_new}</button>
+</section>
+
+<section class="section" id="step2" hidden>
+	<h1>{$lang->pointhistory_upgrade}</h1>
+	
+	<div class="message">
+		<h2>{$lang->pointhistory_upgrading}</h2>
+		<p>{$lang->about_pointhistory_upgrading}</p>
+		<div class="x_modal-body">
+			<div class="x_progress x_progress-striped x_active">
+				<div class="x_bar" id="progressBar" style="width: 0%"></div>
+			</div>
+			<strong id="progressPercent">0%</strong>
+			(<span id="completeCount">0</span>/<span id="totalCount">0</span>)
+		</div>
+		<p>{$lang->msg_pointhistory_upgrading}</p>
+	</div>
+</section>
+
+<script>
+	var lang_confirm_upgrade_start = '{$lang->confirm_upgrade_start}';
+	var lang_confirm_upgrade_use_new = '{$lang->confirm_upgrade_use_new}';
+	var lang_failure_upgrade = '{$lang->failure_upgrade}';
+</script>

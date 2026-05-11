@@ -1,0 +1,8 @@
+<query id="deletePointhistoryMemberStatusLess" action="delete">
+    <tables>
+        <table name="pointhistory_member_status" />
+    </tables>
+    <conditions>
+        <condition operation="less" column="update" var="update_less" notnull="notnull" />
+    </conditions>
+</query>

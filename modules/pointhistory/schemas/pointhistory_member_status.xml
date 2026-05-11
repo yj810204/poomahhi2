@@ -1,0 +1,6 @@
+<table name="pointhistory_member_status">
+	<column name="day" type="number" size="11" notnull="notnull" index="idx_day" />
+    <column name="member_srl" type="number" size="11" notnull="notnull" index="idx_member_srl" />
+    <column name="point" type="number" size="20" default="0" notnull="notnull" index="idx_point" />
+	<column name="update" type="date" index="idx_update" />
+</table>

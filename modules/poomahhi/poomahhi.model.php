@@ -986,7 +986,100 @@ class poomahhiModel extends poomahhi
 		if(!isset($config->review_deadline_days)) $config->review_deadline_days = 14;
 		if(!isset($config->default_list_count)) $config->default_list_count = 20;
 		if(!isset($config->privacy_content)) $config->privacy_content = '';
-		if(!isset($config->content_point_type)) $config->content_point_type = 'poomahhi';
+		$config->content_point_type = 'rhymix';
 		return $config;
+	}
+
+	/**
+	 * @brief 라이믹스(포인트 모듈) 보유 포인트
+	 */
+	function getRhymixPointBalance($member_srl)
+	{
+		if(!class_exists('PointModel'))
+		{
+			return 0;
+		}
+		return (int)PointModel::getPoint($member_srl);
+	}
+
+	/**
+	 * @brief 포인트 히스토리(pointhistory) 테이블 사용 가능 여부
+	 */
+	function isRhymixPointhistoryAvailable()
+	{
+		$oDB = \DB::getInstance();
+		return $oDB->isTableExists('pointhistory_log');
+	}
+
+	/**
+	 * @brief 내 포인트 화면용: pointhistory_log 목록 (월·타입 필터, 페이지)
+	 * type_filter: all | earn | deduct → pointhistory type 2(적립) / 1(차감)
+	 *
+	 * @return BaseObject|object executeQueryArray와 유사 (data, total_count, page_navigation)
+	 */
+	function getRhymixPointhistoryLogPage($args)
+	{
+		$empty = new BaseObject();
+		$empty->data = array();
+		$empty->total_count = 0;
+		$empty->page_navigation = null;
+		$empty->page = isset($args->page) ? (int)$args->page : 1;
+
+		if(!$this->isRhymixPointhistoryAvailable())
+		{
+			return $empty;
+		}
+
+		$year = isset($args->year) ? (int)$args->year : (int)date('Y');
+		$month = isset($args->month) ? (int)$args->month : (int)date('n');
+		$start_date = sprintf('%04d%02d01000000', $year, $month);
+		$end_date = sprintf('%04d%02d%02d235959', $year, $month, date('t', mktime(0, 0, 0, $month, 1, $year)));
+
+		$query_args = new stdClass();
+		$query_args->member_srl = $args->member_srl;
+		$query_args->start_date = $start_date;
+		$query_args->end_date = $end_date;
+		$query_args->page = isset($args->page) ? (int)$args->page : 1;
+		$query_args->list_count = isset($args->list_count) ? (int)$args->list_count : 20;
+		$query_args->page_count = isset($args->page_count) ? (int)$args->page_count : 10;
+
+		$type_filter = isset($args->type_filter) ? $args->type_filter : 'all';
+		if($type_filter === 'earn')
+		{
+			$query_args->filter_type = 2;
+			$output = executeQueryArray('poomahhi.getPointhistoryLogListByMonthAndType', $query_args);
+		}
+		elseif($type_filter === 'deduct')
+		{
+			$query_args->filter_type = 1;
+			$output = executeQueryArray('poomahhi.getPointhistoryLogListByMonthAndType', $query_args);
+		}
+		else
+		{
+			$output = executeQueryArray('poomahhi.getPointhistoryLogListByMonth', $query_args);
+		}
+
+		if(!$output || !$output->toBool())
+		{
+			return $empty;
+		}
+
+		$list = $output->data ? (is_array($output->data) ? $output->data : array($output->data)) : array();
+		$mapped = array();
+		foreach($list as $row)
+		{
+			$delta = (int)$row->point;
+			$ph_type = (int)$row->type;
+			$item = new stdClass();
+			$item->type = ($ph_type === 2) ? 'earn' : 'deduct';
+			$item->point = abs($delta);
+			$item->point_formatted = number_format(abs($delta), 0, '.', ',');
+			$item->description = isset($row->message) ? $row->message : '';
+			$item->regdate = $row->regdate;
+			$item->message_type = isset($row->message_type) ? $row->message_type : '';
+			$mapped[] = $item;
+		}
+		$output->data = $mapped;
+		return $output;
 	}
 }

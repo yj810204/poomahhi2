@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<skin version="0.2">
+    <title xml:lang="ko">포인트 히스토리 기본스킨</title>
+	<description xml:lang="ko">포인트 히스토리 기본스킨입니다.</description>
+    <version>0.2</version>
+    <date>2016-08-10</date>
+	
+    <author email_address="conorycom@gmail.com" link="https://xe.conory.com">
+        <name xml:lang="ko">CONORY</name>
+    </author>
+</skin>
+

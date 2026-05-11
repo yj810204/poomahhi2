@@ -148,11 +148,9 @@
 				<tr>
 					<th scope="row" style="width:180px;">포인트 유형</th>
 					<td>
-						<select name="content_point_type" class="form-control" style="width:300px;">
-							<option value="poomahhi" selected|cond="!$config->content_point_type || $config->content_point_type == 'poomahhi'">품앗이 자체 포인트</option>
-							<option value="rhymix" selected|cond="$config->content_point_type == 'rhymix'">라이믹스 포인트</option>
-						</select>
-						<p style="color:#999; margin-top:5px;">유료 콘텐츠 열람 시 차감할 포인트 유형. 자체 포인트는 품앗이 모듈 포인트, 라이믹스 포인트는 포인트 모듈 포인트를 사용합니다.</p>
+						<input type="hidden" name="content_point_type" value="rhymix" />
+						<p style="margin:0;"><strong>라이믹스 포인트 (고정)</strong></p>
+						<p style="color:#999; margin-top:5px;">유료 콘텐츠 열람 시 사이트 포인트 모듈(라이믹스) 잔액에서 차감합니다. 글·댓글 등 적립도 동일한 포인트로 처리됩니다.</p>
 					</td>
 				</tr>
 			</tbody>

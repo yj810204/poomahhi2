@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module>
+	<grants />
+	<permissions />
+    <actions>
+        <action name="dispPointhistoryList" type="view" index="true" />
+		
+        <action name="dispPointhistoryAdminConfig" type="view" admin_index="true" menu_name="pointhistory" />
+        <action name="dispPointhistoryAdminList" type="view" menu_name="pointhistory" />
+		<action name="dispPointhistoryAdminStatus" type="view" menu_name="pointhistory" />
+		<action name="dispPointhistoryAdminStatusMember" type="view" menu_name="pointhistory" />
+		<action name="dispPointhistoryAdminUpgrade" type="view" menu_name="pointhistory" />
+		
+        <action name="procPointhistoryAdminConfig" type="controller" />
+        <action name="procPointhistoryAdminDeleteHistory" type="controller" />
+        <action name="procPointhistoryAdminDeleteStatus" type="controller" />
+        <action name="procPointhistoryAdminDeleteStatusMember" type="controller" />
+		<action name="procPointhistoryAdminUpgrade" type="controller" />
+    </actions>
+	<menus>
+		<menu name="pointhistory">
+			<title xml:lang="ko">포인트 히스토리</title>
+		</menu>
+	</menus>
+</module>

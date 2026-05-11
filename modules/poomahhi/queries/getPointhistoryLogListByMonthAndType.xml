@@ -1,0 +1,20 @@
+<query id="getPointhistoryLogListByMonthAndType" action="select">
+	<tables>
+		<table name="pointhistory_log" alias="h" />
+	</tables>
+	<columns>
+		<column name="h.*" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="h.member_srl" var="member_srl" notnull="notnull" pipe="AND" />
+		<condition operation="equal" column="h.type" var="filter_type" notnull="notnull" pipe="AND" />
+		<condition operation="more" column="h.regdate" var="start_date" pipe="AND" />
+		<condition operation="less" column="h.regdate" var="end_date" pipe="AND" />
+	</conditions>
+	<navigation>
+		<index var="sort_index" default="history_id" order="desc" />
+		<list_count var="list_count" default="20" />
+		<page_count var="page_count" default="10" />
+		<page var="page" default="1" />
+	</navigation>
+</query>

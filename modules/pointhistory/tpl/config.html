@@ -1,0 +1,157 @@
+<include target="_header.html" />
+<load target="../../module/tpl/js/module_list.js" />
+
+<form action="./" method="post" class="x_form-horizontal">
+	<input type="hidden" name="module" value="pointhistory" />
+	<input type="hidden" name="act" value="procPointhistoryAdminConfig" />
+	<input type="hidden" name="xe_validator_id" value="modules/pointhistory/tpl/1" />
+	
+	<section class="section">
+		<h1>{$lang->is_default}</h1>
+		<div class="x_control-group">
+			<label class="x_control-label" for="delete_record_auto">{$lang->delete_record_auto}</label>
+			<div class="x_controls">
+				<input type="number" min="0" name="delete_record_auto" id="delete_record_auto" value="{$config->delete_record_auto}" style="width:50px" /> {$lang->unit_day}
+				<a href="#delete_record_auto_help" class="x_icon-question-sign" data-toggle>{$lang->help}</a>
+				<p id="delete_record_auto_help" class="x_help-block" hidden>{$lang->about_history_delete_record_auto}</p>
+			</div>
+		</div>
+		<div class="x_control-group">
+			<div class="x_control-label">{$lang->delete_record_leave}</div>
+			<div class="x_controls">
+				<label class="x_inline" for="delete_record_leave_yes">
+					<input type="radio" name="delete_record_leave" id="delete_record_leave_yes" value="Y" checked="checked"|cond="$config->delete_record_leave == 'Y'" /> {$lang->cmd_yes}
+				</label>
+				<label class="x_inline" for="delete_record_leave_no">
+					<input type="radio" name="delete_record_leave" id="delete_record_leave_no" value="N" checked="checked"|cond="$config->delete_record_leave == 'N'" /> {$lang->cmd_no}
+				</label>
+				<a href="#delete_record_leave_help" class="x_icon-question-sign" data-toggle>{$lang->help}</a>
+				<p id="delete_record_leave_help" class="x_help-block" hidden>{$lang->about_history_delete_record_leave}</p>
+			</div>
+		</div>
+		<div class="x_control-group">
+			<div class="x_control-label">{$lang->add_member_menu}</div>
+			<div class="x_controls">
+				<label class="x_inline" for="add_member_menu_yes">
+					<input type="radio" name="add_member_menu" id="add_member_menu_yes" value="Y" checked="checked"|cond="$config->add_member_menu == 'Y'" /> {$lang->cmd_yes}
+				</label>
+				<label class="x_inline" for="add_member_menu_no">
+					<input type="radio" name="add_member_menu" id="add_member_menu_no" value="N" checked="checked"|cond="$config->add_member_menu == 'N'" /> {$lang->cmd_no}
+				</label>
+				<a href="#add_member_menu_help" class="x_icon-question-sign" data-toggle>{$lang->help}</a>
+				<p id="add_member_menu_help" class="x_help-block" hidden>{$lang->about_history_add_member_menu}</p>
+			</div>
+		</div>
+		<div class="x_control-group">
+			<label class="x_control-label" for="member_menu_name">{$lang->member_menu_name}</label>
+			<div class="x_controls">
+				<input type="text" name="member_menu_name" id="member_menu_name" value="<!--@if(strpos($config->member_menu_name, '$user_lang->') === false)-->{$config->member_menu_name}<!--@else-->{htmlspecialchars($config->member_menu_name)}<!--@end-->" class="lang_code" />
+				<a href="#member_menu_name_help" class="x_icon-question-sign" data-toggle>{$lang->help}</a>
+				<p id="member_menu_name_help" class="x_help-block" hidden>{$lang->about_member_menu_name}</p>
+			</div>
+		</div>
+		<div class="x_control-group">
+			<label class="x_control-label" for="point_unit_char">{$lang->point_unit_char}</label>
+			<div class="x_controls">
+				<input type="text" name="point_unit_char" id="point_unit_char" value="{$config->point_unit_char}" style="width:100px" />
+				<a href="#point_unit_char_help" class="x_icon-question-sign" data-toggle>{$lang->help}</a>
+				<p id="point_unit_char_help" class="x_help-block" hidden>{$lang->about_point_unit_char}</p>
+			</div>
+		</div>
+		<div class="x_control-group">
+			<label class="x_control-label" for="increase_name">{$lang->increase_name}</label>
+			<div class="x_controls">
+				<input type="text" name="increase_name" id="increase_name" value="<!--@if(strpos($config->increase_name, '$user_lang->') === false)-->{$config->increase_name}<!--@else-->{htmlspecialchars($config->increase_name)}<!--@end-->" class="lang_code" />
+				<a href="#increase_name_help" class="x_icon-question-sign" data-toggle>{$lang->help}</a>
+				<p id="increase_name_help" class="x_help-block" hidden>{$lang->about_history_increase_name}</p>
+			</div>
+		</div>
+		<div class="x_control-group">
+			<label class="x_control-label" for="decrease_name">{$lang->decrease_name}</label>
+			<div class="x_controls">
+				<input type="text" name="decrease_name" id="decrease_name" value="<!--@if(strpos($config->decrease_name, '$user_lang->') === false)-->{$config->decrease_name}<!--@else-->{htmlspecialchars($config->decrease_name)}<!--@end-->" class="lang_code" />
+				<a href="#decrease_name_help" class="x_icon-question-sign" data-toggle>{$lang->help}</a>
+				<p id="decrease_name_help" class="x_help-block" hidden>{$lang->about_history_decrease_name}</p>
+			</div>
+		</div>
+	</section>
+	<section class="section">
+		<h1>{$lang->cmd_set_design_info}</h1>
+		<div class="x_control-group">
+			<label class="x_control-label" for="layout">{$lang->layout}</label>
+			<div class="x_controls">
+				<select id="layout" name="layout_srl">
+					<option value="0">{$lang->notuse}</option>
+					<option loop="$layout_list => $key,$val" value="{$val->layout_srl}" selected="selected"|cond="$val->layout_srl == $config->layout_srl">{$val->title} ({$val->layout})</option>
+				</select>
+			</div>
+		</div>
+		<div class="x_control-group">
+			<label class="x_control-label" for="skin">{$lang->skin}</label>
+			<div class="x_controls">
+				<select id="skin" name="skin">
+					<option loop="$skin_list=>$key,$val" value="{$key}" selected="selected"|cond="$config->skin == $key">{$val->title} ({$key})</option>
+				</select>
+			</div>
+		</div>
+		<div class="x_control-group">
+			<label class="x_control-label" for="mlayout">{$lang->mobile_layout}</label>
+			<div class="x_controls">
+				<select id="mlayout" name="mlayout_srl">
+					<option value="0">{$lang->notuse}</option>
+					<option loop="$mlayout_list => $key,$val" value="{$val->layout_srl}" selected="selected"|cond="$val->layout_srl == $config->mlayout_srl">{$val->title} ({$val->layout})</option>
+				</select>
+			</div>
+		</div>
+		<div class="x_control-group">
+			<label class="x_control-label" for="mskin">{$lang->mobile_skin}</label>
+			<div class="x_controls">
+				<select id="mskin" name="mskin">
+					<option loop="$mskin_list=>$key,$val" value="{$key}" selected="selected"|cond="$config->mskin == $key">{$val->title} ({$key})</option>
+				</select>
+			</div>
+		</div>
+	</section>
+	<section class="section">
+		<h1>{$lang->point_status}</h1>
+		<p class="x_well x_well-small">
+			{$lang->about_point_status}
+		</p>
+		<div class="x_control-group">
+			<div class="x_control-label">{$lang->point_status_use}</div>
+			<div class="x_controls">
+				<label class="x_inline" for="point_status_yes">
+					<input type="radio" name="point_status" id="point_status_yes" value="Y" checked="checked"|cond="$config->point_status == 'Y'" /> {$lang->cmd_yes}
+				</label>
+				<label class="x_inline" for="point_status_no">
+					<input type="radio" name="point_status" id="point_status_no" value="N" checked="checked"|cond="$config->point_status == 'N'" /> {$lang->cmd_no}
+				</label>
+			</div>
+		</div>
+		<div class="x_control-group">
+			<div class="x_control-label">{$lang->point_status_except_admin}</div>
+			<div class="x_controls">
+				<label class="x_inline" for="status_except_admin_yes">
+					<input type="radio" name="status_except_admin" id="status_except_admin_yes" value="Y" checked="checked"|cond="$config->status_except_admin == 'Y'" /> {$lang->cmd_yes}
+				</label>
+				<label class="x_inline" for="status_except_admin_no">
+					<input type="radio" name="status_except_admin" id="status_except_admin_no" value="N" checked="checked"|cond="$config->status_except_admin == 'N'" /> {$lang->cmd_no}
+				</label>
+				<a href="#status_except_admin_help" class="x_icon-question-sign" data-toggle>{$lang->help}</a>
+				<p id="status_except_admin_help" class="x_help-block" hidden>{$lang->about_point_status_except_admin}</p>
+			</div>
+		</div>
+		<div class="x_control-group">
+			<label class="x_control-label" for="delete_record_auto">{$lang->delete_record_auto}</label>
+			<div class="x_controls">
+				<input type="number" min="0" name="delete_status_record_auto" id="delete_status_record_auto" value="{$config->delete_status_record_auto}" style="width:50px" /> {$lang->unit_day}
+				<a href="#delete_status_record_auto_help" class="x_icon-question-sign" data-toggle>{$lang->help}</a>
+				<p id="delete_status_record_auto_help" class="x_help-block" hidden>{$lang->about_point_status_delete_record_auto}</p>
+			</div>
+		</div>
+	</section>
+	
+	<div class="x_clearfix btnArea">
+		<span class="x_pull-right"><input class="x_btn x_btn-primary" type="submit" value="{$lang->cmd_save}" /></span>
+	</div>
+</form>

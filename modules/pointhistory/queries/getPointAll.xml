@@ -1,0 +1,13 @@
+<query id="getPointAll" action="select">
+    <tables>
+		<table name="member" alias="member" />
+        <table name="point" alias="point" />
+    </tables>
+    <columns>
+        <column name="sum(point.point)" alias="point_all" />
+    </columns>
+    <conditions>
+        <condition operation="equal" column="member.member_srl" var="point.member_srl" notnull="notnull" />
+		<condition operation="equal" column="member.is_admin" var="is_admin" pipe="and"/>
+    </conditions>
+</query>

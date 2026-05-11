@@ -1,0 +1,17 @@
+<query id="insertPointhistoryLog" action="insert">
+    <tables>
+        <table name="pointhistory_log" />
+    </tables>
+    <columns>
+        <column name="member_srl" var="member_srl" filter="number" notnull="notnull" />
+        <column name="point" var="point" notnull="notnull" />
+		<column name="type" var="type" filter="number" notnull="notnull" />
+        <column name="message_type" var="message_type" notnull="notnull" />
+		<column name="message" var="message" notnull="notnull" />
+		<column name="act" var="act" />
+        <column name="module_srl" var="module_srl" filter="number" default="0" />
+        <column name="reference_srl" var="reference_srl" filter="number" default="0" />
+		<column name="ipaddress" var="ipaddress" default="ipaddress()" />
+        <column name="regdate" var="regdate" default="curdate()" />	
+    </columns>
+</query>

@@ -1,0 +1,11 @@
+<query id="insertTodayMemberStatus" action="insert">
+    <tables>
+        <table name="pointhistory_member_status" />
+    </tables>
+    <columns>
+        <column name="day" var="day" notnull="notnull" />
+        <column name="member_srl" var="member_srl" notnull="notnull" />
+        <column name="point" default="0" />
+		<column name="update" var="update" default="curdate()" />
+    </columns>
+</query>

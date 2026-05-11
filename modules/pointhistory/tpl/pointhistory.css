@@ -1,0 +1,15 @@
+@charset "utf-8";
+
+.pointhistory {color: #000 !important;}
+.pointhistory tr.type1 td.white,
+.pointhistory tr.type2 td.white{background: #fff !important;}
+.pointhistory th{background: #fff;}
+
+.pointhistory td.type2{color: #FF0000;}
+.pointhistory tr.type2 td{background: #FFE7E7 !important;}
+
+.pointhistory td.type1{color: #0000FF;}
+.pointhistory tr.type1 td{background: #E7E7FF !important;}
+
+.pointhistory td.add{color: #FF0000;}
+.pointhistory td.minus{color: #0000FF;}

@@ -1,0 +1,9 @@
+<query id="deletePointhistoryMemberStatus" action="delete">
+    <tables>
+        <table name="pointhistory_member_status" />
+    </tables>
+    <conditions>
+		<condition operation="equal" column="day" var="day" />
+        <condition operation="equal" column="member_srl" var="member_srl" pipe="and" />	
+    </conditions>
+</query>

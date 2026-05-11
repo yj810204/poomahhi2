@@ -1110,31 +1110,34 @@ class poomahhiController extends poomahhi
 		$view_access = $oModel->getProductViewAccess($product_srl, $logged_info->member_srl);
 		if($view_access) return new BaseObject(-1, '이미 열람 권한이 있습니다.');
 
-		$config = $oModel->getModuleConfig();
-		$point_type = isset($config->content_point_type) ? $config->content_point_type : 'poomahhi';
-
-		if($point_type === 'rhymix')
+		// 유료 열람 포인트는 라이믹스 포인트 모듈만 사용 (품앗이 자체 포인트 분기는 비활성·레거시 보존)
+		if(!class_exists('PointModel'))
 		{
-			if(!class_exists('PointModel'))
-			{
-				return new BaseObject(-1, '라이믹스 포인트 모듈을 사용할 수 없습니다.');
-			}
-			$current_point = (int)PointModel::getPoint($logged_info->member_srl);
-			if($current_point < $point_cost)
-			{
-				return new BaseObject(-1, '포인트가 부족합니다. (보유: ' . $current_point . 'P, 필요: ' . $point_cost . 'P)');
-			}
-			$oPointController = getController('point');
-			if(!$oPointController)
-			{
-				return new BaseObject(-1, '라이믹스 포인트 모듈을 사용할 수 없습니다.');
-			}
-			$output = $oPointController->setPoint($logged_info->member_srl, $point_cost, 'minus');
-			if(!$output || !$output->toBool())
-			{
-				return new BaseObject(-1, '포인트 차감에 실패했습니다.');
-			}
+			return new BaseObject(-1, '라이믹스 포인트 모듈을 사용할 수 없습니다.');
 		}
+		$current_point = (int)PointModel::getPoint($logged_info->member_srl);
+		if($current_point < $point_cost)
+		{
+			return new BaseObject(-1, '포인트가 부족합니다. (보유: ' . $current_point . 'P, 필요: ' . $point_cost . 'P)');
+		}
+		$oPointController = getController('point');
+		if(!$oPointController)
+		{
+			return new BaseObject(-1, '라이믹스 포인트 모듈을 사용할 수 없습니다.');
+		}
+		$product_title = isset($product->title) ? trim((string)$product->title) : '';
+		$msg = $product_title !== ''
+			? sprintf('품앗이 유료 콘텐츠 열람: %s (상품 #%d)', cut_str($product_title, 80), $product_srl)
+			: sprintf('품앗이 유료 콘텐츠 열람 (상품 #%d)', $product_srl);
+		Context::set('__point_message__', $msg);
+		$output = $oPointController->setPoint($logged_info->member_srl, $point_cost, 'minus');
+		if(!$output || !$output->toBool())
+		{
+			return new BaseObject(-1, '포인트 차감에 실패했습니다.');
+		}
+
+		/*
+		[레거시·비활성] 품앗이 자체 포인트(poomahhi_member_point / poomahhi_point_log) 차감 분기 — 추후 확장용으로 보존
 		else
 		{
 			$summary = $oModel->getMyPointSummary($logged_info->member_srl);
@@ -1173,6 +1176,7 @@ class poomahhiController extends poomahhi
 			$log_args->regdate = date('YmdHis');
 			executeQuery('poomahhi.insertPointLog', $log_args);
 		}
+		*/
 
 		$access_args = new stdClass();
 		$access_args->access_srl = getNextSequence();

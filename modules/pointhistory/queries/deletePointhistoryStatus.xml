@@ -1,0 +1,8 @@
+<query id="deletePointhistoryStatus" action="delete">
+    <tables>
+        <table name="pointhistory_status" />
+    </tables>
+    <conditions>
+		<condition operation="equal" column="day" var="day" />
+    </conditions>
+</query>

@@ -49,7 +49,7 @@ class poomahhiAdminController extends poomahhi
 		$config->business_group_srl = $args->business_group_srl ?: '';
 		$config->signup_select_mid = isset($args->signup_select_mid) ? trim((string)$args->signup_select_mid) : '';
 		$config->privacy_content = $args->privacy_content ?: '';
-		$config->content_point_type = in_array($args->content_point_type, array('poomahhi', 'rhymix')) ? $args->content_point_type : 'poomahhi';
+		$config->content_point_type = 'rhymix';
 
 		$output = $oModuleController->insertModuleConfig('poomahhi', $config);
 		if(!$output->toBool()) return $output;

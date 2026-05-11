@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module version="0.2">
+    <title xml:lang="ko">포인트 히스토리</title>
+    <description xml:lang="ko">포인트 사용 기록을 수집하여 포인트 통계를 제공해주는 모듈입니다.</description>
+    <version>0.2.1</version>
+    <date>2016-08-25</date>
+    <category>member</category>
+	
+    <author email_address="conorycom@gmail.com" link="https://xe.conory.com">
+        <name xml:lang="ko">CONORY</name>
+    </author>
+</module>

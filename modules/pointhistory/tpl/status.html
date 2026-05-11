@@ -1,0 +1,71 @@
+<include target="_header.html" />
+<load target="pointhistory.css" />
+
+<form id="deleteForm" action="./" method="POST" style="margin:0">
+	<input type="hidden" name="module" value="pointhistory" />
+	<input type="hidden" name="act" value="procPointhistoryAdminDeleteStatus" />
+	<input type="hidden" name="xe_validator_id" value="modules/pointhistory/tpl/1" />
+</form>
+
+<table class="x_table x_table-striped x_table-hover pointhistory">
+	<caption>
+		<strong>Total: {number_format($total_count)}, Page: {number_format($page)}/{number_format($total_page)}, {$lang->total_point} : {number_format($total_point)}{$config->point_unit_char}</strong>
+	</caption>
+	<thead>
+		<tr>
+			<th scope="col" class="nowr">{$lang->date}</th>
+			<th scope="col" class="nowr">{$lang->day_fluctuation}</th>
+			<th scope="col" class="nowr">{$lang->last_fluctuation_time}</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr loop="$status_list => $no,$val">
+			<td class="nowr">{substr($val->day, 0, 4)}-{substr($val->day, 4, 2)}-{substr($val->day, 6, 2)}</td>
+			<td class="add" cond="$val->point > 0">+{number_format($val->point)}{$config->point_unit_char}</td>
+			<td class="minus" cond="$val->point < 0">{number_format($val->point)}{$config->point_unit_char}</td>
+			<td cond="!$val->point">0{$config->point_unit_char}</td>
+			<td class="nowr">{zdate($val->update, 'H:i:s')}</td>
+		</tr>
+		<tr cond="!$status_list">
+			<td>{$lang->msg_not_exist_data}</td>
+		</tr>
+	</tbody>
+</table>
+<div class="x_clearfix">
+	<form cond="$page_navigation" action="./" class="x_pagination x_pull-left" no-error-return-url="true" style="margin-top:0">
+		{@
+			$urlInfo = parse_url(getRequestUriByServerEnviroment());
+			parse_str($urlInfo['query'], $param);
+		}
+		<input loop="$param => $key, $val" cond="!in_array($key, array('mid', 'vid', 'act'))" type="hidden" name="{$key}" value="{$val}" />
+		<ul>
+			<li class="x_disabled"|cond="!$page || $page == 1"><a href="{getUrl('page', '')}">&laquo; {$lang->first_page}</a></li>
+			<block cond="$page_navigation->first_page != 1 && $page_navigation->first_page + $page_navigation->page_count > $page_navigation->last_page - 1 && $page_navigation->page_count != $page_navigation->total_page">
+			{@$isGoTo = true}
+			<li>
+				<a href="#goTo" data-toggle title="{$lang->cmd_go_to_page}">&hellip;</a>
+				<span cond="$isGoTo" id="goTo" class="x_input-append">
+					<input type="number" min="1" max="{$page_navigation->last_page}" required name="page" title="{$lang->cmd_go_to_page}" />
+					<button type="submit" class="x_add-on">Go</button>
+				</span>
+			</li>
+			</block>
+			<!--@while($page_no = $page_navigation->getNextPage())-->
+			{@$last_page = $page_no}
+			<li class="x_active"|cond="$page_no == $page"><a  href="{getUrl('page', $page_no)}">{$page_no}</a></li>
+			<!--@end-->
+			<block cond="$last_page != $page_navigation->last_page && $last_page + 1 != $page_navigation->last_page">
+			{@$isGoTo = true}
+			<li>
+				<a href="#goTo" data-toggle title="{$lang->cmd_go_to_page}">&hellip;</a>
+				<span cond="$isGoTo" id="goTo" class="x_input-append">
+					<input type="number" min="1" max="{$page_navigation->last_page}" required name="page" title="{$lang->cmd_go_to_page}" />
+					<button type="submit" class="x_add-on">Go</button>
+				</span>
+			</li>
+			</block>
+			<li class="x_disabled"|cond="$page == $page_navigation->last_page"><a href="{getUrl('page', $page_navigation->last_page)}" title="{$page_navigation->last_page}">{$lang->last_page} &raquo;</a></li>
+		</ul>
+	</form>
+	<a class="x_pull-right x_btn" href="#" onclick="if(confirm('{$lang->confirm_delete}')) return deleteDate();">{$lang->delete_all_record}</a>
+</div>
