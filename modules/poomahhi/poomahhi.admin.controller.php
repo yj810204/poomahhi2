@@ -48,6 +48,8 @@ class poomahhiAdminController extends poomahhi
 		$config->general_group_srl = $args->general_group_srl ?: '';
 		$config->business_group_srl = $args->business_group_srl ?: '';
 		$config->signup_select_mid = isset($args->signup_select_mid) ? trim((string)$args->signup_select_mid) : '';
+		$config->own_document_product_mid = isset($args->own_document_product_mid) ? trim((string)$args->own_document_product_mid) : '';
+		$config->own_document_region_mid = isset($args->own_document_region_mid) ? trim((string)$args->own_document_region_mid) : '';
 		$config->privacy_content = $args->privacy_content ?: '';
 		$config->content_point_type = 'rhymix';
 

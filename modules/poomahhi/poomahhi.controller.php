@@ -156,6 +156,126 @@ class poomahhiController extends poomahhi
 	}
 
 	/**
+	 * 회원 모듈「내가 쓴 글」화면에서만 document 목록 필터 적용 여부
+	 */
+	function _shouldFilterMemberOwnDocumentList()
+	{
+		if(!Context::get('is_logged'))
+		{
+			return false;
+		}
+		if(Context::get('act') !== 'dispMemberOwnDocument')
+		{
+			return false;
+		}
+		if(Context::get('module') === 'member')
+		{
+			return true;
+		}
+		$module_info = Context::get('current_module_info');
+		if($module_info && isset($module_info->module) && $module_info->module === 'member')
+		{
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * 트리거: document.getDocumentList (before) — 내가 쓴 글을 설정된 두 게시판으로만 제한
+	 */
+	function triggerDocumentGetDocumentListBefore($obj)
+	{
+		if(!$this->_shouldFilterMemberOwnDocumentList() || !is_object($obj))
+		{
+			return;
+		}
+		$oModel = getModel('poomahhi');
+		$config = $oModel->getModuleConfig();
+		$mid_product = isset($config->own_document_product_mid) ? trim((string)$config->own_document_product_mid) : '';
+		$mid_region = isset($config->own_document_region_mid) ? trim((string)$config->own_document_region_mid) : '';
+		if($mid_product === '' || $mid_region === '')
+		{
+			return;
+		}
+		$oModuleModel = getModel('module');
+		$info_product = $oModuleModel->getModuleInfoByMid($mid_product);
+		$info_region = $oModuleModel->getModuleInfoByMid($mid_region);
+		if(!$info_product || !$info_product->module_srl || !$info_region || !$info_region->module_srl)
+		{
+			return;
+		}
+		$srl_a = (int)$info_product->module_srl;
+		$srl_b = (int)$info_region->module_srl;
+		$obj->module_srl = ($srl_a === $srl_b) ? $srl_a : array($srl_a, $srl_b);
+		Context::set('poomahhi_own_doc_filter_applied', 'Y');
+	}
+
+	/**
+	 * 트리거: document.getDocumentList (after) — 내가 쓴 글 목록에 표시할「분류」문구 부착
+	 * - 게시판 분류(category)가 아니라 문서 확장변수 extra_vars1 값을 사용함.
+	 * - 회원 모듈은 목록 조회 시 load_extra_vars=false 이므로, 여기서 일괄 로드 후 값을 읽음.
+	 * - 스킨: {$oDocument->poomahhi_category} (템플릿 파서 이슈로 짧은 프로퍼티명 사용)
+	 */
+	function triggerDocumentGetDocumentListAfter($output)
+	{
+		if(!$this->_shouldFilterMemberOwnDocumentList())
+		{
+			return;
+		}
+		if(Context::get('poomahhi_own_doc_filter_applied') === 'Y')
+		{
+			Context::set('poomahhi_own_doc_filter_applied', null);
+		}
+		if(!$output || (method_exists($output, 'toBool') && !$output->toBool()) || !isset($output->data))
+		{
+			return;
+		}
+		$data = $output->data;
+		if(is_object($data))
+		{
+			$data = array($data);
+		}
+		if(!is_array($data) || !count($data))
+		{
+			return;
+		}
+
+		DocumentModel::setToAllDocumentExtraVars();
+
+		$extra_eid = 'extra_vars1';
+
+		foreach($data as $doc)
+		{
+			if(!is_object($doc) || !method_exists($doc, 'get'))
+			{
+				continue;
+			}
+			$doc_srl = isset($doc->document_srl) ? (int)$doc->document_srl : (int)$doc->get('document_srl');
+			if(!$doc_srl)
+			{
+				continue;
+			}
+
+			$raw = null;
+			if(method_exists($doc, 'getExtraEidValue'))
+			{
+				$raw = $doc->getExtraEidValue($extra_eid);
+			}
+			if($raw === null || $raw === '')
+			{
+				$raw = $doc->get($extra_eid);
+			}
+
+			if(is_array($raw))
+			{
+				$raw = implode(', ', $raw);
+			}
+			$display = trim(preg_replace('/\s+/u', ' ', strip_tags((string)$raw)));
+			$doc->poomahhi_category = ($display !== '') ? $display : '-';
+		}
+	}
+
+	/**
 	 * @brief 트리거: 회원가입 폼 출력 전 처리
 	 * - member_type이 있으면 Context에 설정 (유형 선택 페이지에서 넘어온 경우)
 	 * - member_type이 없으면 회원가입 유형 선택 페이지로 리다이렉트

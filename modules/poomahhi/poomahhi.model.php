@@ -986,6 +986,8 @@ class poomahhiModel extends poomahhi
 		if(!isset($config->review_deadline_days)) $config->review_deadline_days = 14;
 		if(!isset($config->default_list_count)) $config->default_list_count = 20;
 		if(!isset($config->privacy_content)) $config->privacy_content = '';
+		if(!isset($config->own_document_product_mid)) $config->own_document_product_mid = 'money1';
+		if(!isset($config->own_document_region_mid)) $config->own_document_region_mid = 'money2';
 		$config->content_point_type = 'rhymix';
 		return $config;
 	}

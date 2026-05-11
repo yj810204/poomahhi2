@@ -90,6 +90,19 @@
 						<p style="color:#999; margin-top:5px;">mid=member&amp;act=dispMemberSignUpForm 접속 시 이 mid의 유형 선택 페이지로 리다이렉트. 비우면 품앗이 mid 중 첫 번째 사용</p>
 					</td>
 				</tr>
+				<tr>
+					<th scope="row">내가 쓴 글 — 상품 내돈내산 mid</th>
+					<td>
+						<input type="text" name="own_document_product_mid" value="{$config->own_document_product_mid}" class="form-control" style="width:200px;" placeholder="money1" />
+						<p style="color:#999; margin-top:5px;">회원 &gt; 내가 쓴 글(dispMemberOwnDocument) 목록을 이 게시판과 아래 지역 게시판으로만 제한합니다. 둘 다 올바른 mid이고 모듈이 존재할 때만 적용됩니다. 비우거나 오타면 필터가 적용되지 않습니다.</p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">내가 쓴 글 — 지역 내돈내산 mid</th>
+					<td>
+						<input type="text" name="own_document_region_mid" value="{$config->own_document_region_mid}" class="form-control" style="width:200px;" placeholder="money2" />
+					</td>
+				</tr>
 			</tbody>
 		</table>
 	</section>

@@ -13,6 +13,8 @@ class poomahhi extends ModuleObject
 		array('member.procMemberInsert', 'poomahhi', 'controller', 'triggerAfterMemberInsert', 'after'),
 		array('member.dispMemberSignUpForm', 'poomahhi', 'controller', 'triggerBeforeDispMemberSignUpForm', 'before'),
 		array('member.doLogin', 'poomahhi', 'controller', 'triggerBeforeDoLogin', 'before'),
+		array('document.getDocumentList', 'poomahhi', 'controller', 'triggerDocumentGetDocumentListBefore', 'before'),
+		array('document.getDocumentList', 'poomahhi', 'controller', 'triggerDocumentGetDocumentListAfter', 'after'),
 	);
 
 	/**

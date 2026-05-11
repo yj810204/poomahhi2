@@ -1,0 +1,61 @@
+<include target="./common_header.html" />
+
+<div class="member-contents">
+	<h1><!--{$member_title = $lang->cmd_view_own_document }-->내가 쓴 글</h1>
+	<div class="mypage_wrap">
+		<div class="my_write_wrap">
+			<div class="table table-striped table-hover">
+				<div class="ds-n">
+					Total: {number_format($total_count)}, Page {number_format($page)}/{number_format($total_page)}
+				</div>
+				<ul class="table-header">
+					<li>{$lang->no}</li>
+					<li class="category">분류</li>
+					<li class="title">{$lang->title}</li>
+					<li>추천</li>
+					<li>댓글</li>
+					<li>작성일</li>
+				</ul>
+				<div class="table-td">
+					<ul loop="$document_list => $no,$oDocument">
+						<li class="number">{$no}</li>
+						<li class="category">{$oDocument->poomahhi_category}</li>
+						<li class="title">
+							<a href="{getUrl('','document_srl',$oDocument->document_srl)}" target="_blank">{$oDocument->getTitleText()}</a>
+							<!--@if($oDocument->getCommentCount())-->
+								[{$oDocument->getCommentCount()}]
+							<!--@end-->
+						</li>
+						<li>{$oDocument->get('voted_count')}</li>
+						<span class="lg:ds-n ds-b">• <i class="ri-thumb-up-line"></i></span>
+						<li>{$oDocument->get('comment_count')}</li>
+						<span class="lg:ds-n ds-b">• <i class="ri-chat-1-line"></i></span>
+						<li>{$oDocument->getRegdate("Y.m.d")}</li>
+					</ul>
+				</div>
+			</div>
+			<div class="pagination">
+				<form action="{Context::getRequestUri()}" method="get" no-error-return-url="true">
+					<input type="hidden" name="mid" value="{$mid}" />
+					<input type="hidden" name="act" value="{$act}" />
+					<select name="search_target" title="{$lang->search_target}">
+						<option value="title" selected="selected"|cond="isset($search_target) && $search_target == 'title'">{$lang->title}</option>
+						<option value="title_content" selected="selected"|cond="isset($search_target) && $search_target == 'title_content'">{$lang->title_content}</option>
+						<option value="content" selected="selected"|cond="isset($search_target) && $search_target == 'content'">{$lang->content}</option>
+					</select>
+					<input type="text" name="search_keyword" value="{escape($search_keyword ?? '', false)}" placeholder="검색단어 입력">
+					<button type="submit">{$lang->cmd_search}</button>
+				</form>
+				<ul>
+					<li><a href="{getUrl('page','','module_srl','')}" class="direction"><i class="ri-arrow-left-s-line"></i></a></li> 
+					<!--@while($page_no = $page_navigation->getNextPage())-->
+					<li class="active"|cond="$page == $page_no"><a href="{getUrl('page',$page_no,'module_srl','')}">{$page_no}</a></li>
+					<!--@end-->
+					<li><a href="{getUrl('page',$page_navigation->last_page,'module_srl','')}" class="direction"><i class="ri-arrow-right-s-line"></i></a></li>
+				</ul>
+				<div style="clear:both"></div>
+			</div>
+		</div>
+	</div>
+</div>
+<include target="./common_footer.html" />
