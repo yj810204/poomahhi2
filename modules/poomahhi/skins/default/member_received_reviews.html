@@ -1,0 +1,168 @@
+<load target="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+<load target="css/business.css" />
+<include target="../../../member/skins/poomahhi/common_header.html" />
+<div class="poomahhi-member-reviews poomahhi-member-received-reviews">
+	<h2><!--@if($target_member)-->{$target_member->nick_name}<!--@else-->—<!--@end-->{$lang->member_received_reviews_title_suffix}</h2>
+
+	<div class="pmh-mr-header pmh-mr-header--received">
+		<div class="pmh-mr-profile">
+			<div class="pmh-mr-avatar-wrap">
+				<!--@if($target_member && $target_member->profile_image && $target_member->profile_image->src)-->
+				<img src="{$target_member->profile_image->src}" alt="" class="pmh-mr-avatar" />
+				<!--@else-->
+				<div class="pmh-mr-avatar-placeholder"><i class="bi bi-person"></i></div>
+				<!--@end-->
+			</div>
+			<div class="pmh-mr-nickname"><!--@if($target_member)-->{$target_member->nick_name}<!--@else-->—<!--@end--></div>
+			<div class="pmh-mr-level-badge"><span class="pmh-mr-level-num">{$member_level}</span><span class="pmh-mr-level-text">레벨</span></div>
+			<div class="pmh-mr-ranking">평가 랭킹 <!--@if($ranking->position)-->{$ranking->position}<!--@else-->-<!--@end-->위</div>
+			<div class="pmh-mr-percentile">상위 백분율 <!--@if($ranking->percentile)-->{$ranking->percentile}<!--@else-->-<!--@end-->%</div>
+		</div>
+
+		<div class="pmh-mr-score">
+			<div class="pmh-mr-stars">
+				<!--@for($s = 1; $s <= 5; $s++)--><!--@if($s <= round($review_stats->avg_score))--><i class="bi bi-star-fill"></i><!--@else--><i class="bi bi-star"></i><!--@end--><!--@end-->
+				<span class="pmh-mr-avg">{$review_stats->avg_score}/5</span>
+			</div>
+			<div class="pmh-mr-score-bars">
+				<div class="pmh-mr-bar-row">
+					<span class="pmh-mr-bar-label">아주 좋아요</span>
+					<div class="pmh-mr-bar-wrap"><div class="pmh-mr-bar" style="width:<!--@if($score_distribution->score_5_percent)-->{$score_distribution->score_5_percent}<!--@else-->0<!--@end-->%;"></div></div>
+					<span class="pmh-mr-bar-pct"><!--@if($score_distribution->score_5_percent)-->{$score_distribution->score_5_percent}<!--@else-->0<!--@end-->%</span>
+				</div>
+				<div class="pmh-mr-bar-row">
+					<span class="pmh-mr-bar-label">맘에들어요</span>
+					<div class="pmh-mr-bar-wrap"><div class="pmh-mr-bar" style="width:<!--@if($score_distribution->score_4_percent)-->{$score_distribution->score_4_percent}<!--@else-->0<!--@end-->%;"></div></div>
+					<span class="pmh-mr-bar-pct"><!--@if($score_distribution->score_4_percent)-->{$score_distribution->score_4_percent}<!--@else-->0<!--@end-->%</span>
+				</div>
+				<div class="pmh-mr-bar-row">
+					<span class="pmh-mr-bar-label">보통이에요</span>
+					<div class="pmh-mr-bar-wrap"><div class="pmh-mr-bar" style="width:<!--@if($score_distribution->score_3_percent)-->{$score_distribution->score_3_percent}<!--@else-->0<!--@end-->%;"></div></div>
+					<span class="pmh-mr-bar-pct"><!--@if($score_distribution->score_3_percent)-->{$score_distribution->score_3_percent}<!--@else-->0<!--@end-->%</span>
+				</div>
+				<div class="pmh-mr-bar-row">
+					<span class="pmh-mr-bar-label">그냥 그래요</span>
+					<div class="pmh-mr-bar-wrap"><div class="pmh-mr-bar" style="width:<!--@if($score_distribution->score_2_percent)-->{$score_distribution->score_2_percent}<!--@else-->0<!--@end-->%;"></div></div>
+					<span class="pmh-mr-bar-pct"><!--@if($score_distribution->score_2_percent)-->{$score_distribution->score_2_percent}<!--@else-->0<!--@end-->%</span>
+				</div>
+				<div class="pmh-mr-bar-row">
+					<span class="pmh-mr-bar-label">별로예요</span>
+					<div class="pmh-mr-bar-wrap"><div class="pmh-mr-bar" style="width:<!--@if($score_distribution->score_1_percent)-->{$score_distribution->score_1_percent}<!--@else-->0<!--@end-->%;"></div></div>
+					<span class="pmh-mr-bar-pct"><!--@if($score_distribution->score_1_percent)-->{$score_distribution->score_1_percent}<!--@else-->0<!--@end-->%</span>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="pmh-mr-list">
+		<h3 class="pmh-mr-list-title">총 <!--@if($total_count)-->{$total_count}<!--@else-->0<!--@end-->건</h3>
+
+		<!--@if($review_list)-->
+		<!--@foreach($review_list as $review)-->
+		<div class="pmh-mr-card">
+			<div class="pmh-mr-card-head">
+				<div class="pmh-mr-card-author">
+					<!--@if($review->reviewer_profile_image)-->
+					<img src="{$review->reviewer_profile_image}" alt="" class="pmh-mr-card-avatar" />
+					<!--@else-->
+					<div class="pmh-mr-card-avatar-placeholder"><i class="bi bi-person"></i></div>
+					<!--@end-->
+					<span class="pmh-mr-card-name"><!--@if($review->reviewer_nickname)-->{$review->reviewer_nickname}<!--@else-->개설자<!--@end--></span>
+					<span class="pmh-mr-card-time"><!--@if($review->regdate)-->{zdate($review->regdate, 'Y-m-d H:i')}<!--@end--></span>
+				</div>
+			</div>
+			<div class="pmh-mr-received-score">
+				<!--@for($s = 1; $s <= 5; $s++)--><!--@if($s <= $review->score)--><i class="bi bi-star-fill"></i><!--@else--><i class="bi bi-star"></i><!--@end--><!--@end-->
+				<span class="pmh-mr-received-score-num">{$review->score}/5</span>
+			</div>
+			<div class="pmh-mr-card-content"><!--@if($review->content)-->{$review->content}<!--@else-->-<!--@end--></div>
+
+			<div class="pmh-mr-product">
+				<!--@if($review->product_image)-->
+				<img src="{$review->product_image}" alt="" class="pmh-mr-product-img" />
+				<!--@else-->
+				<div class="pmh-mr-product-noimg"><i class="bi bi-image"></i></div>
+				<!--@end-->
+				<div class="pmh-mr-product-info">
+					<div class="pmh-mr-product-badges">
+						<!--@if($review->product_type == 'local' && $review->region_title)--><span class="pmh-mr-badge">{$review->region_title}</span><!--@end-->
+						<!--@if($review->dday)--><span class="pmh-mr-badge pmh-mr-dday">{$review->dday}</span><!--@end-->
+					</div>
+					<!--@if($review->company_name)--><div class="pmh-mr-product-company">{$review->company_name}<!--@if($review->product_title)-->&nbsp;[{$review->product_title}]<!--@end--></div><!--@elseif($review->product_title)--><div class="pmh-mr-product-company">{$review->product_title}</div><!--@end-->
+					<!--@if($review->product_description)--><div class="pmh-mr-product-desc">{$review->product_description}</div><!--@end-->
+				</div>
+			</div>
+		</div>
+		<!--@end-->
+
+		<!--@if($page_navigation)-->
+		<div class="pmh-pagination pmh-mr-pagination">
+			<!--@if($page_navigation->cur_page > 1)-->
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiMemberReceivedReviews', 'target_member_srl', $target_member->member_srl, 'page', $page_navigation->cur_page - 1)}" class="pmh-page-nav">&lsaquo; 이전</a>
+			<!--@end-->
+			<!--@for($i = $page_navigation->first_page; $i <= $page_navigation->last_page; $i++)-->
+			<!--@if($i == $page_navigation->cur_page)--><span class="pmh-page is-current">{$i}</span><!--@else--><a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiMemberReceivedReviews', 'target_member_srl', $target_member->member_srl, 'page', $i)}" class="pmh-page">{$i}</a><!--@end-->
+			<!--@end-->
+			<!--@if($page_navigation->cur_page < $page_navigation->total_page)-->
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiMemberReceivedReviews', 'target_member_srl', $target_member->member_srl, 'page', $page_navigation->cur_page + 1)}" class="pmh-page-nav">다음 &rsaquo;</a>
+			<!--@end-->
+		</div>
+		<!--@end-->
+		<!--@else-->
+		<p class="pmh-mr-empty">{$lang->member_received_reviews_empty}</p>
+		<!--@end-->
+	</div>
+</div>
+
+<style>
+.poomahhi-member-received-reviews h2 { margin: 0 0 20px; font-size: 20px; }
+.pmh-mr-header--received { display: flex; gap: 20px; flex-wrap: wrap; }
+.pmh-mr-header--received .pmh-mr-profile { flex: 0 0 200px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.pmh-mr-header--received .pmh-mr-score { flex: 1; min-width: 240px; padding: 0 20px; border-left: 1px solid #eee; }
+.pmh-mr-avatar-wrap { width: 64px; height: 64px; border-radius: 50%; overflow: hidden; background: #e0e0e0; }
+.pmh-mr-avatar { width: 100%; height: 100%; object-fit: cover; }
+.pmh-mr-avatar-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 28px; color: #999; }
+.pmh-mr-nickname { font-size: 15px; font-weight: 600; }
+.pmh-mr-level-badge { width: 60px; height: 60px; border-radius: 50%; background: #555; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 700; line-height: 1.2; }
+.pmh-mr-level-num { font-size: 18px; }
+.pmh-mr-level-text { font-size: 10px; opacity: 0.9; }
+.pmh-mr-ranking, .pmh-mr-percentile { font-size: 13px; color: #666; }
+.pmh-mr-stars { display: flex; align-items: center; gap: 4px; margin-bottom: 12px; font-size: 20px; color: #9c27b0; }
+.pmh-mr-avg { margin-left: 8px; font-size: 14px; font-weight: 600; }
+.pmh-mr-bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.pmh-mr-bar-row:last-child { margin-bottom: 0; }
+.pmh-mr-bar-label { width: 80px; font-size: 12px; color: #555; }
+.pmh-mr-bar-wrap { flex: 1; height: 18px; background: #eee; border-radius: 4px; overflow: hidden; }
+.pmh-mr-bar { height: 100%; background: linear-gradient(90deg, #9c27b0, #e91e63); border-radius: 4px; }
+.pmh-mr-bar-pct { width: 40px; font-size: 12px; font-weight: 600; text-align: right; }
+.pmh-mr-list-title { margin: 24px 0 16px; font-size: 16px; font-weight: 600; }
+.pmh-mr-card { margin-bottom: 16px; padding: 20px; background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+.pmh-mr-card:last-of-type { margin-bottom: 0; }
+.pmh-mr-card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.pmh-mr-card-author { display: flex; align-items: center; gap: 10px; }
+.pmh-mr-card-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
+.pmh-mr-card-avatar-placeholder { width: 36px; height: 36px; border-radius: 50%; background: #e0e0e0; display: flex; align-items: center; justify-content: center; color: #999; font-size: 18px; }
+.pmh-mr-card-name { font-weight: 600; font-size: 14px; }
+.pmh-mr-card-time { font-size: 12px; color: #999; }
+.pmh-mr-received-score { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; font-size: 16px; color: #9c27b0; }
+.pmh-mr-received-score-num { font-size: 14px; font-weight: 600; color: #333; margin-left: 4px; }
+.pmh-mr-card-content { margin-bottom: 16px; font-size: 14px; line-height: 1.5; color: #333; white-space: pre-wrap; word-break: break-word; }
+.pmh-mr-product { display: flex; gap: 16px; padding: 12px; background: #fafafa; border-radius: 8px; }
+.pmh-mr-product-img { width: 80px; height: 80px; border-radius: 8px; object-fit: cover; flex-shrink: 0; }
+.pmh-mr-product-noimg { width: 80px; height: 80px; border-radius: 8px; background: #eee; display: flex; align-items: center; justify-content: center; color: #bbb; font-size: 24px; flex-shrink: 0; }
+.pmh-mr-product-info { flex: 1; min-width: 0; }
+.pmh-mr-product-badges { margin-bottom: 6px; }
+.pmh-mr-badge { display: inline-block; padding: 4px 8px; font-size: 11px; background: #e8e8e8; border-radius: 4px; margin-right: 6px; }
+.pmh-mr-badge.pmh-mr-dday { background: #fce4ec; color: #e91e63; }
+.pmh-mr-product-company { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.pmh-mr-product-desc { font-size: 12px; color: #666; line-height: 1.4; }
+.pmh-mr-pagination { margin-top: 20px; text-align: center; font-size: 14px; }
+.pmh-mr-pagination a { margin: 0 4px; color: #1976d2; text-decoration: none; }
+.pmh-mr-empty { text-align: center; padding: 40px 0; color: #999; font-size: 14px; }
+@media (max-width: 768px) {
+	.pmh-mr-header--received { flex-direction: column; }
+	.pmh-mr-header--received .pmh-mr-profile { flex: none; }
+	.pmh-mr-header--received .pmh-mr-score { border-left: none; border-top: 1px solid #eee; padding-top: 20px; }
+}
+</style>
+<include target="../../../member/skins/poomahhi/common_footer.html" />

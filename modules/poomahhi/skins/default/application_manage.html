@@ -182,6 +182,17 @@
 						<tr>
 							<!--@if($manage_tab == 'applied')-->
 							<td>
+								<!--@if($app_row->member_srl)-->
+								<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiMemberReceivedReviews', 'target_member_srl', $app_row->member_srl)}" class="pmh-am-avatar-link" title="{$lang->member_received_reviews_avatar_link_title}">
+									<div class="pmh-am-media-thumb">
+										<!--@if($app_row->avatar_src)-->
+										<img src="{$app_row->avatar_src}" alt="" class="pmh-am-avatar-img" />
+										<!--@else-->
+										<img src="/assets/images/icon/profile.png" alt="profile">
+										<!--@end-->
+									</div>
+								</a>
+								<!--@else-->
 								<div class="pmh-am-media-thumb">
 									<!--@if($app_row->avatar_src)-->
 									<img src="{$app_row->avatar_src}" alt="" class="pmh-am-avatar-img" />
@@ -189,24 +200,27 @@
 									<img src="/assets/images/icon/profile.png" alt="profile">
 									<!--@end-->
 								</div>
+								<!--@end-->
 							</td>
 							<td class="pmh-am-td-media">
-								<div class="pmh-am-info-line">
-									<span class="pmh-am-info-name"><!--@if($app_row->member_info && $app_row->member_info->nick_name)-->{$app_row->member_info->nick_name}<!--@elseif($app_row->applicant_name)-->{$app_row->applicant_name}<!--@else-->신청자<!--@end--></span>
-									<!--@if($app_row->gender_display)-->
-									<span class="pmh-am-dot">•</span><span class="pmh-am-info-meta">{$app_row->gender_display}</span>
-									<!--@end-->
-									<!--@if($app_row->birth_display)-->
-									<span class="pmh-am-dot">•</span><span class="pmh-am-info-meta">{$app_row->birth_display}</span>
-									<!--@end-->
-								</div>
-								<div class="pmh-am-info-comment-wrap">
-									<!--@if($app_row->applicant_comment)-->
-									<p class="pmh-am-info-comment">{$app_row->applicant_comment}</p>
-									<!--@else-->
-									<p class="pmh-am-info-comment pmh-am-info-comment--empty">신청자 한마디가 없습니다.</p>
-									<!--@end-->
-								</div>
+								<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationManageDetail', 'application_srl', $app_row->application_srl)}" class="pmh-am-applicant-link">
+									<div class="pmh-am-info-line">
+										<span class="pmh-am-info-name"><!--@if($app_row->member_info && $app_row->member_info->nick_name)-->{$app_row->member_info->nick_name}<!--@elseif($app_row->applicant_name)-->{$app_row->applicant_name}<!--@else-->신청자<!--@end--></span>
+										<!--@if($app_row->gender_display)-->
+										<span class="pmh-am-dot">•</span><span class="pmh-am-info-meta">{$app_row->gender_display}</span>
+										<!--@end-->
+										<!--@if($app_row->birth_display)-->
+										<span class="pmh-am-dot">•</span><span class="pmh-am-info-meta">{$app_row->birth_display}</span>
+										<!--@end-->
+									</div>
+									<div class="pmh-am-info-comment-wrap">
+										<!--@if($app_row->applicant_comment)-->
+										<p class="pmh-am-info-comment">{$app_row->applicant_comment}</p>
+										<!--@else-->
+										<p class="pmh-am-info-comment pmh-am-info-comment--empty">신청자 한마디가 없습니다.</p>
+										<!--@end-->
+									</div>
+								</a>
 							</td>
 							<td class="pmh-am-td-date"><!--@if($app_row->regdate)-->{zdate($app_row->regdate, 'y.m.d')}<!--@else-->-<!--@end--></td>
 							<td class="pmh-am-actions">
@@ -230,6 +244,17 @@
 							</td>
 							<!--@end-->
 							<td>
+								<!--@if($app_row->member_srl)-->
+								<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiMemberReceivedReviews', 'target_member_srl', $app_row->member_srl)}" class="pmh-am-avatar-link" title="{$lang->member_received_reviews_avatar_link_title}">
+									<div class="pmh-am-media-thumb">
+										<!--@if($app_row->avatar_src)-->
+										<img src="{$app_row->avatar_src}" alt="" class="pmh-am-avatar-img" />
+										<!--@else-->
+										<img src="/assets/images/common/profile.png" alt="profile">
+										<!--@end-->
+									</div>
+								</a>
+								<!--@else-->
 								<div class="pmh-am-media-thumb">
 									<!--@if($app_row->avatar_src)-->
 									<img src="{$app_row->avatar_src}" alt="" class="pmh-am-avatar-img" />
@@ -237,24 +262,27 @@
 									<img src="/assets/images/common/profile.png" alt="profile">
 									<!--@end-->
 								</div>
+								<!--@end-->
 							</td>
 							<td class="pmh-am-td-media">
-								<div class="pmh-am-info-line">
-									<span class="pmh-am-info-name"><!--@if($app_row->member_info && $app_row->member_info->nick_name)-->{$app_row->member_info->nick_name}<!--@elseif($app_row->applicant_name)-->{$app_row->applicant_name}<!--@else-->신청자<!--@end--></span>
-									<!--@if($app_row->gender_display)-->
-									<span class="pmh-am-dot">•</span><span class="pmh-am-info-meta">{$app_row->gender_display}</span>
-									<!--@end-->
-									<!--@if($app_row->birth_display)-->
-									<span class="pmh-am-dot">•</span><span class="pmh-am-info-meta">{$app_row->birth_display}</span>
-									<!--@end-->
-								</div>
-								<div class="pmh-am-info-comment-wrap">
-									<!--@if($app_row->applicant_comment)-->
-									<p class="pmh-am-info-comment">{$app_row->applicant_comment}</p>
-									<!--@else-->
-									<p class="pmh-am-info-comment pmh-am-info-comment--empty">신청자 한마디가 없습니다.</p>
-									<!--@end-->
-								</div>
+								<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationManageDetail', 'application_srl', $app_row->application_srl)}" class="pmh-am-applicant-link">
+									<div class="pmh-am-info-line">
+										<span class="pmh-am-info-name"><!--@if($app_row->member_info && $app_row->member_info->nick_name)-->{$app_row->member_info->nick_name}<!--@elseif($app_row->applicant_name)-->{$app_row->applicant_name}<!--@else-->신청자<!--@end--></span>
+										<!--@if($app_row->gender_display)-->
+										<span class="pmh-am-dot">•</span><span class="pmh-am-info-meta">{$app_row->gender_display}</span>
+										<!--@end-->
+										<!--@if($app_row->birth_display)-->
+										<span class="pmh-am-dot">•</span><span class="pmh-am-info-meta">{$app_row->birth_display}</span>
+										<!--@end-->
+									</div>
+									<div class="pmh-am-info-comment-wrap">
+										<!--@if($app_row->applicant_comment)-->
+										<p class="pmh-am-info-comment">{$app_row->applicant_comment}</p>
+										<!--@else-->
+										<p class="pmh-am-info-comment pmh-am-info-comment--empty">신청자 한마디가 없습니다.</p>
+										<!--@end-->
+									</div>
+								</a>
 							</td>
 							<!--@if($manage_tab == 'selected')-->
 							<td class="pmh-am-td-date">{zdate($app_row->regdate, 'Y-m-d')}</td>

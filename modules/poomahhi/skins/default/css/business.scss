@@ -924,6 +924,11 @@
 				border-radius: 5px;
 				padding: 3px;
 			}
+			a.pmh-am-avatar-link {
+				display: block;
+				text-decoration: none;
+				color: inherit;
+			}
 			.pmh-am-media-thumb {
 				width: 32px;
 				height: 32px;
@@ -936,8 +941,19 @@
 					object-fit: cover;
 				}
 			}
+			a.pmh-am-avatar-link:hover .pmh-am-media-thumb {
+				box-shadow: 0 0 0 2px var(--bh_color_main, #e91e63);
+			}
 			&.pmh-am-td-media {
 				text-align: left;
+				a.pmh-am-applicant-link {
+					display: block;
+					text-decoration: none;
+					color: inherit;
+				}
+				a.pmh-am-applicant-link:hover .pmh-am-info-name {
+					text-decoration: underline;
+				}
 				.pmh-am-info-line {
 					display: flex;
 					align-items: center;

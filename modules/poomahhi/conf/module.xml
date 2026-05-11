@@ -61,6 +61,7 @@
 		<action name="dispPoomahhiMyReviews" type="view" />
 		<action name="dispPoomahhiMyPoints" type="view" />
 		<action name="dispPoomahhiMemberReviews" type="view" />
+		<action name="dispPoomahhiMemberReceivedReviews" type="view" />
 		<action name="dispPoomahhiWishlist" type="view" />
 		<action name="dispPoomahhiSettlement" type="view" />
 		<action name="dispPoomahhiBusinessNotifications" type="view" />

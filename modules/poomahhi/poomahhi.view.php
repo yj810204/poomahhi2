@@ -2395,6 +2395,101 @@ class poomahhiView extends poomahhi
 	}
 
 	/**
+	 * @brief 특정 회원이 받은 개설자 평가(회원평가) 목록 (공개)
+	 */
+	function dispPoomahhiMemberReceivedReviews()
+	{
+		$target_member_srl = Context::get('target_member_srl');
+		if(!$target_member_srl) return $this->stop('잘못된 요청입니다.');
+
+		$oMemberModel = getModel('member');
+		$target_member = $oMemberModel->getMemberInfoByMemberSrl($target_member_srl);
+		if(!$target_member || !$target_member->member_srl)
+		{
+			return $this->stop('회원을 찾을 수 없습니다.');
+		}
+
+		$oModel = getModel('poomahhi');
+
+		$review_stats = $oModel->getMemberReviewStats($target_member_srl);
+		$review_stats->avg_score = $review_stats->avg_score ? round($review_stats->avg_score, 1) : 0;
+
+		$score_dist = $oModel->getMemberReviewScoreDistribution($target_member_srl);
+		$total_reviews = (int)$review_stats->review_count;
+		$score_distribution = new stdClass();
+		for($i = 5; $i >= 1; $i--)
+		{
+			$count_key = 'score_' . $i . '_count';
+			$percent_key = 'score_' . $i . '_percent';
+			$count = isset($score_dist->$count_key) ? (int)$score_dist->$count_key : 0;
+			$score_distribution->$count_key = $count;
+			$score_distribution->$percent_key = $total_reviews > 0 ? round(($count / $total_reviews) * 100) : 0;
+		}
+
+		$ranking = $oModel->getMemberReviewRanking($target_member_srl);
+		$avg = (float)$review_stats->avg_score;
+		$level = 1;
+		if($avg >= 4.5) $level = 5;
+		elseif($avg >= 3.5) $level = 4;
+		elseif($avg >= 2.5) $level = 3;
+		elseif($avg >= 1.5) $level = 2;
+
+		$args = new stdClass();
+		$args->target_member_srl = $target_member_srl;
+		$args->page = Context::get('page') ?: 1;
+		$args->list_count = $this->config->default_list_count;
+		$review_output = $oModel->getMemberReviewListByTarget($args);
+
+		if($review_output->data)
+		{
+			foreach($review_output->data as &$row)
+			{
+				$rev = $oMemberModel->getMemberInfoByMemberSrl($row->reviewer_member_srl);
+				$row->reviewer_nickname = $rev ? $rev->nick_name : '';
+				$row->reviewer_profile_image = null;
+				if($rev && !empty($rev->profile_image) && !empty($rev->profile_image->src))
+				{
+					$row->reviewer_profile_image = $rev->profile_image->src;
+				}
+				if(isset($row->product_type) && $row->product_type == 'local' && !empty($row->region_srl))
+				{
+					$region = $oModel->getRegion($row->region_srl);
+					$row->region_title = $region ? $region->title : '';
+				}
+				else
+				{
+					$row->region_title = '';
+				}
+				if(!empty($row->deadline_date))
+				{
+					$deadline_ts = strtotime(
+						substr($row->deadline_date, 0, 4) . '-' .
+						substr($row->deadline_date, 4, 2) . '-' .
+						substr($row->deadline_date, 6, 2)
+					);
+					$diff = ceil(($deadline_ts - strtotime(date('Y-m-d'))) / 86400);
+					$row->dday = ($diff > 0) ? 'D-' . $diff : (($diff == 0) ? 'D-Day' : '마감');
+				}
+			}
+			unset($row);
+		}
+
+		Context::set('target_member', $target_member);
+		Context::set('review_stats', $review_stats);
+		Context::set('score_distribution', $score_distribution);
+		Context::set('ranking', $ranking);
+		Context::set('member_level', $level);
+		Context::set('review_list', $review_output->data ?: array());
+		Context::set('total_count', $review_output->total_count);
+		Context::set('total_page', $review_output->total_page);
+		Context::set('page', (int)$args->page);
+		Context::set('page_navigation', $review_output->page_navigation);
+
+		$this->_setMemberMenuHeaderContext();
+		$this->setTemplateFile('member_received_reviews');
+	}
+
+	/**
 	 * @brief 관심 품앗이 목록
 	 */
 	function dispPoomahhiWishlist()
