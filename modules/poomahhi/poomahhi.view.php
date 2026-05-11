@@ -2218,7 +2218,7 @@ class poomahhiView extends poomahhi
 		if($oController->_isBusinessMember($logged_info))
 		{
 			Context::set('use_business_layout', true);
-			$this->_setBusinessCenterContext('reviews');
+			$this->_setBusinessCenterContext('received_reviews');
 		}
 		else
 		{
