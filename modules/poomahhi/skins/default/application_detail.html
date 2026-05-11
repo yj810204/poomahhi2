@@ -102,6 +102,36 @@
 					</ul>
 				</div>
 
+				<!--@if($application->status == 'rejected' && ($application->rejection_reason || $application->rejection_detail))-->
+				<div class="pmh-app-section pmh-rejection-detail-block">
+					<div class="pmh-rejection-inner-box">
+						<!--@if($application->rejection_reason)-->
+						<p class="pmh-rejection-headline"><strong>{$application->rejection_reason}</strong>{$rejection_josa_ro} 미선정되었습니다.</p>
+						<!--@else-->
+						<p class="pmh-rejection-headline">미선정되었습니다.</p>
+						<!--@end-->
+						<hr class="pmh-rejection-divider" />
+						<div class="pmh-rejection-reason-row">
+							<span class="pmh-rejection-reason-label">미선정 사유 내용</span>
+							<div class="pmh-rejection-reason-text<!--@if(!$application->rejection_detail)--> pmh-rejection-reason-empty<!--@end-->"><!--@if($application->rejection_detail)-->{$application->rejection_detail}<!--@else-->-<!--@end--></div>
+						</div>
+					</div>
+				</div>
+				<!--@end-->
+
+				<!--@if($application->status == 'revision_requested')-->
+				<div class="pmh-app-section pmh-revision-request-block">
+					<h3 class="pmh-app-section-title">인증 제출 상태</h3>
+					<div class="pmh-app-section-body">
+						<p class="pmh-revision-cert-status">수정요청</p>
+					</div>
+					<!--@if($application->revision_request_content)-->
+					<h3 class="pmh-app-section-title">수정요청 내용</h3>
+					<div class="pmh-app-section-body pmh-revision-request-body">{$application->revision_request_content}</div>
+					<!--@end-->
+				</div>
+				<!--@end-->
+
 				<!-- 상품 보러가기 -->
 				<div class="pmh-app-section">
 					<h3 class="pmh-app-section-title">상품 보러가기</h3>
@@ -425,6 +455,76 @@
 	font-weight: 600;
 	margin-bottom: 20px;
 	text-align: center;
+}
+
+.pmh-revision-request-block .pmh-revision-cert-status {
+	margin: 0;
+	font-size: 16px;
+	font-weight: 700;
+	color: #e91e8c;
+}
+
+.pmh-revision-request-block .pmh-revision-request-body {
+	white-space: pre-wrap;
+	word-break: break-word;
+	line-height: 1.6;
+}
+
+.pmh-rejection-detail-block {
+	margin-top: 8px;
+}
+
+.pmh-rejection-inner-box {
+	background: #f5f5f5;
+	border: 1px solid #e8e8e8;
+	border-radius: 12px;
+	padding: 20px 18px;
+}
+
+.pmh-rejection-headline {
+	margin: 0;
+	font-size: 17px;
+	font-weight: 600;
+	color: #e91e8c;
+	line-height: 1.5;
+}
+
+.pmh-rejection-headline strong {
+	font-weight: 700;
+}
+
+.pmh-rejection-divider {
+	border: none;
+	border-top: 1px solid #e0e0e0;
+	margin: 16px 0;
+}
+
+.pmh-rejection-reason-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 12px 20px;
+}
+
+.pmh-rejection-reason-label {
+	flex: 0 0 auto;
+	font-size: 15px;
+	font-weight: 700;
+	color: var(--bh_color_gray_900, #222);
+	min-width: 7em;
+}
+
+.pmh-rejection-reason-text {
+	flex: 1 1 200px;
+	font-size: 15px;
+	line-height: 1.65;
+	color: var(--bh_color_gray_800, #333);
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.pmh-rejection-reason-text.pmh-rejection-reason-empty {
+	color: var(--bh_color_gray_500, #888);
 }
 
 </style>

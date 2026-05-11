@@ -95,14 +95,14 @@
 								<!--@if($app->product)-->
 								<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationDetail', 'application_srl', $app->application_srl)}" class="pmh-app-card-title">
 									<div class="tag">
-										<!--@if($app->$product->product_type == 'local' && $app->$product->region_title)-->
+										<!--@if($app->product->product_type == 'local' && $app->product->region_title)-->
 										<span class="area 
 											<!--@if($app->product->region_title == '수도권')-->seoul<!--@end-->
 											<!--@if($app->product->region_title == '충청권')-->chungcheong<!--@end-->
 											<!--@if($app->product->region_title == '호남권')-->honam<!--@end-->
 											<!--@if($app->product->region_title == '영남권')-->yeongnam<!--@end-->
 											">
-										{$product->region_title}</span>
+										{$app->product->region_title}</span>
 										<!--@end-->
 										<!--@if($app->product->shopping_channel)-->
 										<span class="channel 
@@ -155,11 +155,18 @@
 				<div class="pmh-app-action-row">
 					<span class="pmh-app-action-dot"></span>
 					<div class="pmh-app-action-content">
-						<div>
+						<div class="pmh-app-action-main-text">
 							<span class="pmh-app-action-deadline"><!--@if($action_item->dday)--><span class="pmh-app-dday bh_color_main fw-b">마감 {$action_item->dday}</span> <!--@end--><!--@if($action_item->deadline_date)-->{$action_item->deadline_date}<!--@end--></span>
+							<!--@if($action_item->certification_substatus_label)-->
+							<span class="pmh-app-action-cert-substatus">{$action_item->certification_substatus_label}</span>
+							<!--@end-->
 							<a href="{$action_item->url}" class="pmh-app-action-link <!--@if($action_item->done)-->pmh-app-action-done-link<!--@end-->">{$action_item->label}</a>
 						</div>
+						<!--@if($action_item->certification_substatus_label && !$action_item->done)-->
+						<a href="{$action_item->url}" class="pmh-app-action-status pmh-action-waiting pmh-app-action-status-link">{str_replace('>', '', $action_item->status_label)}<i class="ri-arrow-right-s-line"></i></a>
+						<!--@else-->
 						<span class="pmh-app-action-status <!--@if($action_item->done)-->pmh-action-done<!--@else-->pmh-action-waiting<!--@end-->">{str_replace('>', '', $action_item->status_label)}<i class="ri-arrow-right-s-line"></i></span>
+						<!--@end-->
 					</div>
 				</div>
 				<!--@end-->

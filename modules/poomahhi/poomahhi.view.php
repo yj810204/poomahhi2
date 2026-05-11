@@ -363,6 +363,30 @@ class poomahhiView extends poomahhi
 	}
 
 	/**
+	 * 한국어 마지막 음절에 따른 조사 '로' / '으로' (예: 초과로, 미충족으로)
+	 */
+	function _poomahhiKoreanRoParticle($phrase)
+	{
+		$phrase = trim((string)$phrase);
+		if($phrase === '')
+		{
+			return '로';
+		}
+		if(!function_exists('mb_substr') || !function_exists('mb_ord'))
+		{
+			return '로';
+		}
+		$last = mb_substr($phrase, -1, 1, 'UTF-8');
+		$code = mb_ord($last, 'UTF-8');
+		if($code < 0xAC00 || $code > 0xD7A3)
+		{
+			return '로';
+		}
+		$local = $code - 0xAC00;
+		return (($local % 28) !== 0) ? '으로' : '로';
+	}
+
+	/**
 	 * @brief 품앗이 상품 목록
 	 */
 	function dispPoomahhiProductList()
@@ -1023,18 +1047,33 @@ class poomahhiView extends poomahhi
 						$deadline_str = zdate($app->deadline, 'Y.m.d');
 					}
 					$is_done = !empty($app->review);
-					$status_label = $is_done ? '완료' : '대기 >';
-					$action_label = $is_done ? '참여인증 보기' : (($app->status === 'revision_requested') ? '참여인증 수정하기' : '참여인증 등록하기');
-					$action_url = $is_done
-						? getUrl('', 'mid', Context::get('mid'), 'act', 'dispPoomahhiApplicationDetail', 'application_srl', $app->application_srl)
-						: getUrl('', 'mid', Context::get('mid'), 'act', 'dispPoomahhiReviewWrite', 'application_srl', $app->application_srl);
+					$detail_url = getUrl('', 'mid', Context::get('mid'), 'act', 'dispPoomahhiApplicationDetail', 'application_srl', $app->application_srl);
+					$certification_substatus_label = '';
+					if($app->status === 'revision_requested')
+					{
+						$status_label = '대기 >';
+						$action_label = '수정요청 확인';
+						$action_url = $detail_url;
+						$certification_substatus_label = '인증 제출 상태 수정요청';
+					}
+					else
+					{
+						$status_label = $is_done ? '완료' : '대기 >';
+						$action_label = $is_done ? '참여인증 보기' : '참여인증 등록하기';
+						$action_url = $is_done
+							? $detail_url
+							: getUrl('', 'mid', Context::get('mid'), 'act', 'dispPoomahhiReviewWrite', 'application_srl', $app->application_srl);
+					}
+					$action_done_ui = ($app->status === 'revision_requested') ? false : $is_done;
 					$app->action_list[] = (object)array(
 						'label' => $action_label,
 						'dday' => $dday_action,
 						'deadline_date' => $deadline_str,
-						'done' => $is_done,
+						'done' => $action_done_ui,
 						'status_label' => $status_label,
 						'url' => $action_url,
+						'certification_substatus_label' => $certification_substatus_label,
+						'detail_url' => $detail_url,
 					);
 				}
 			}
@@ -1421,6 +1460,17 @@ class poomahhiView extends poomahhi
 		Context::set('extra_vars', $extra_vars);
 		Context::set('category', $category);
 		Context::set('dday_text', $dday_text);
+
+		$rejection_josa_ro = '로';
+		if($application->status === 'rejected')
+		{
+			$rr = isset($application->rejection_reason) ? trim((string)$application->rejection_reason) : '';
+			if($rr !== '')
+			{
+				$rejection_josa_ro = $this->_poomahhiKoreanRoParticle($rr);
+			}
+		}
+		Context::set('rejection_josa_ro', $rejection_josa_ro);
 
 		$this->setTemplateFile('application_detail');
 	}
