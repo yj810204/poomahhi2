@@ -1,0 +1,13 @@
+<filter name="login" module="member" act="procMemberLogin">
+    <form>
+        <node target="user_id" required="true" filter="user_id" />
+        <node target="password" required="true" />
+    </form>
+    <parameter>
+        <param name="member_type" target="member_type" />
+    </parameter>
+    <response callback_func="completeLogin">
+        <tag name="error" />
+        <tag name="message" />
+    </response>
+</filter>

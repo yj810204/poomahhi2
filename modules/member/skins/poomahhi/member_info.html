@@ -1,0 +1,52 @@
+<include target="./common_header.html" />
+<div class="member-contents member_info_wrap">
+	<h1>{$lang->member_info}</h1>
+	<div class="mypage_wrap">
+		<div class="inner">
+			<div cond="$XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/member/skins/default/1'" class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
+				<p>{$XE_VALIDATOR_MESSAGE}</p>
+			</div>
+			<dl class="dl-horizontal">
+				<div class="profile-upload-section">
+					<a href="{getUrl('act','dispMemberModifyInfo','member_srl','')}">
+					<div class="profile_upload_wrap">
+						<img src="{$logged_info->profile_image->src}" alt="{$logged_info->nick_name}" class="profile_img" cond="$logged_info->profile_image" />
+						<img src="/assets/images/icon/profile.png" alt="{$logged_info->nick_name}" class="profile_img" cond="!$logged_info->profile_image" />
+						<div class="upload-icon-overlay">
+							<i class="ri-camera-fill"></i>
+						</div>
+					</div>
+					</a>
+				</div>
+				<block loop="$displayDatas => $item">
+					<div class="control-group">
+						<label><em cond="$item->required || $item->mustRequired" style="display:none">*</em> {$item->title}</label>
+						<input cond="$item->value" value="{$item->value}" <!--@if($item->title == '이메일 주소')-->disabled<!--@end-->></input>
+						<input cond="!$item->value" value="&hellip;"></input>
+					</div>
+				</block>
+				<div class="ds-n">
+					<dt>{$lang->member_group}</dt>
+					<dd>{implode(', ', $memberInfo['group_list'])}</dd>
+					<dt>{$lang->signup_date}</dt>
+					<dd>{zdate($memberInfo['regdate'],"Y-m-d")}</dd>
+					<block cond="$memberInfo['member_srl'] == $logged_info->member_srl || $logged_info->is_admin == 'Y'">
+						<dt>{$lang->last_login}</dt>
+						<dd>{zdate($memberInfo['last_login'],"Y-m-d")}</dd>
+					</block>
+				</div>
+			</dl>
+			<div class="bottom-btn-group" cond="$memberInfo['member_srl'] == $logged_info->member_srl">
+				<a href="{getUrl('act','dispMemberModifyInfo','member_srl','')}" class="lg:ds-b ds-n">회원정보 수정</a>
+				<a href="{getUrl('act','dispMemberModifyPassword','member_srl','')}" class="">{$lang->cmd_modify_member_password}</a>
+				<a href="{getUrl('act','dispMemberModifyEmailAddress')}" class="ds-n">{$lang->cmd_modify_member_email_address}</a>
+				<a href="{getUrl('act','dispMemberLeave','member_srl','')}" class="">회원 {$lang->cmd_leave}</a>
+			</div>
+		</div>
+	</div>
+	<div class="ta-c">
+		<a href="{getUrl('act','dispMemberModifyInfo','member_srl','')}" class="lg:ds-n ds-f ai-c jc-c fs-18 submit_btn round-5 mt-20">회원정보 수정</a>
+	</div>
+</div>
+
+<include target="./common_footer.html" />

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<skin version="0.2">
+    <title xml:lang="ko">품앗이 회원 스킨</title>
+    <title xml:lang="en">Poomahhi Member Skin</title>
+    <description xml:lang="ko">
+        품앗이 회원 스킨 - 일반회원/비즈니스회원 구분 기능 포함
+    </description>
+    <description xml:lang="en">
+        Poomahhi Member Skin - General/Business member type support
+    </description>
+    <version>1.0</version>
+    <date>2026-02-12</date>
+
+    <author email_address="" link="">
+        <name xml:lang="ko">wp</name>
+    </author>
+
+    <colorset>
+        <color name="white">
+            <title xml:lang="ko">기본</title>
+        </color>
+    </colorset>
+</skin>

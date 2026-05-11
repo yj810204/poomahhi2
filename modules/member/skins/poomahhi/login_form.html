@@ -1,0 +1,96 @@
+<include target="./common_header.html" />
+<load target="filter/openid_login.xml" />
+<h1 class="pmh-page-title ta-c">{$lang->cmd_login}</h1>
+<div class="signin common-wrap">
+	<!-- 회원 유형 탭 -->
+	<ul class="nav nav-tabs" id="loginTypeTabs">
+		<li class="active"><a href="#" data-type="general">일반회원</a></li>
+		<li><a href="#" data-type="business">비즈니스회원</a></li>
+	</ul>
+	<div class="login-body">
+		<div cond="$XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/member/skins'" class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
+			<p>{$XE_VALIDATOR_MESSAGE}</p>
+		</div>
+		<form ruleset="@login" action="./" method="post" id="fo_member_login" class="rx_ajax">
+			<input type="hidden" name="success_return_url" value="{$referer_url}" />
+			<input type="hidden" name="act" value="procMemberLogin" />
+			<input type="hidden" name="xe_validator_id" value="modules/member/skins" />
+			<input type="hidden" name="member_type" id="login_member_type" value="general" />
+			<fieldset>
+				<div class="control-group">
+					<label cond="$identifier != 'email_address'">{$lang->user_id}</label>
+					<label cond="$identifier == 'email_address'">이메일</label>
+
+					<input type="text" cond="$identifier != 'email_address'" name="user_id" id="uid" required placeholder="{$lang->user_id}를 입력해 주세요." title="{$lang->user_id}" />
+					<input type="email" cond="$identifier == 'email_address'" name="user_id" id="uid" required placeholder="{$lang->email_address}를 입력해 주세요." title="{$lang->email_address}" />
+				</div>
+				<div class="control-group">
+					<label>{$lang->password}</label>
+					<input type="password" name="password" id="upw" required placeholder="{$lang->password}를 입력해 주세요." title="{$lang->password}" />
+				</div>
+				<div class="control-group captcha" cond="isset($captcha) && $captcha && $captcha->isTargetAction('login')">
+					{$captcha}
+				</div>
+				<div class="control-group lg:mt-10 mt-35 mb-0">
+					<div class="ds-f ai-c jc-b">
+						<label for="keepid_opt" style="flex-direction: unset;" class="mb-0 ai-c">
+							<input type="checkbox" name="keep_signed" id="keepid_opt" value="Y" />
+							<span class="fs-16 fw-m pl-10">자동 로그인</span>
+						</label>
+						<div class="btn_wrap fs-16 fw-m bh_color_gray_700">
+							<a href="{getUrl('act','dispMemberFindAccount')}">{$lang->cmd_find_member_account}</a>
+							<span class="fs-14 bh_color_gray_300 ml-5 mr-5">|</span>
+							<a href="{getUrl('act','dispMemberSignUpForm')}">{$lang->cmd_signup}</a>
+						</div>
+					</div>
+					<div id="warning" class="mt-10">
+						<p>{$lang->about_keep_warning}</p>
+					</div>
+					<input type="submit" value="{$lang->cmd_login}" class="submit btn-inverse submit_btn" />
+				</div>
+				<div class="social-login-wrap">
+					<div class="fs-14 fw-b bh_color_gray_500 ta-c mt-30 mb-30">또는</div>
+					<div class="bh_row gutters-10 ai-c">
+						<div class="col"><div class="line"></div></div>
+						<div class="col-auto">
+							<p class="fw-m">소셜 로그인</p>
+						</div>
+						<div class="col"><div class="line"></div></div>
+					</div>
+					<a href="{\Rhymix\Modules\Sociallogin\Models\Config::getInstance()->getAuthUrl('kakao', 'login')}" class="social-login-btn kakao"><i class="ri-kakao-talk-fill"></i>카카오로 시작하기</a>
+					<a href="{\Rhymix\Modules\Sociallogin\Models\Config::getInstance()->getAuthUrl('naver', 'login')}" class="social-login-btn mt-10"><img src="img/naver.png" alt="naver">네이버로 시작하기</a>
+				</div>
+			</fieldset>
+		</form>
+	</div>
+	
+</div>
+<script>
+jQuery(function($){
+	// 로그인 유형 탭 전환
+	$('#loginTypeTabs a').on('click', function(e){
+		e.preventDefault();
+		$('#loginTypeTabs li').removeClass('active');
+		$(this).parent('li').addClass('active');
+		$('#login_member_type').val($(this).data('type'));
+
+		if ($(this).data('type') === 'general') {
+        	$('.social-login-wrap').show();
+		} else {
+			$('.social-login-wrap').hide();
+		}
+	});
+
+	// 로그인 유지 경고
+	var keep_msg = $('#warning');
+	keep_msg.hide();
+	$('#keepid_opt').change(function(){
+		if($(this).is(':checked')){
+			keep_msg.slideDown(200);
+		} else {
+			keep_msg.slideUp(200);
+		}
+	});
+});
+</script>
+<include target="./common_footer.html" />

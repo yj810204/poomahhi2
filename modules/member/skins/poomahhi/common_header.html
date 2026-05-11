@@ -1,0 +1,60 @@
+<load target="css/member.scss" />
+<load target="js/member.js" />
+
+<section class="xm <!--@if($is_logged && $logged_info->menu_list && (!isset($member_srl) || !$member_srl || $member_srl == $logged_info->member_srl))-->my_page_wrap<!--@end-->">
+	<div class="nav nav-tabs" cond="$is_logged && $logged_info->menu_list && (!isset($member_srl) || !$member_srl || $member_srl == $logged_info->member_srl)">
+		
+		<div class="top_info">
+			<div class="profile_wrap">
+				<img src="{$logged_info->profile_image->src}" alt="{$logged_info->nick_name}" cond="$logged_info->profile_image">
+				<img src="/assets/images/icon/profile.png" alt="no profile" cond="!$logged_info->profile_image">
+				
+				<span class="nickname">{$logged_info->nick_name}</span>
+			</div>
+			<a href="{getUrl('', 'mid', $mid ?? '', 'act', 'dispMemberLogout')}"><span>{$lang->cmd_logout}</span><i class="ri-logout-circle-r-line"></i></a>
+		</div>
+
+		<div class="img_menu">
+			<a href="{getUrl('', 'act', 'dispMemberOwnDocument')}">
+				<img src="img/nav_img1.png" alt="nav1">
+				<span>내가 쓴 글</span>
+			</a>
+			<a href="{getUrl('', 'act', 'dispPoomahhiWishlist')}">
+				<img src="img/nav_img2.png" alt="nav2">
+				<span>관심품앗이</span>
+			</a>
+			<a href="{getUrl('', 'act', 'dispPoomahhiMyPoints')}">
+				<img src="img/nav_img3.png" alt="nav3">
+				<span>내 포인트</span>
+			</a>
+		</div>
+
+		<ul class="mypage_menu">
+			<!--
+			<li loop="$logged_info->menu_list=>$key,$val" class="active"|cond="$key==$act">
+				<a href="{getUrl('', 'act', $key, 'mid', $mid)}">{lang($val)}</a>
+			</li>
+			-->
+			<li class="active"|cond="$act == 'dispPoomahhiMyReviews'">
+				<a href="{getUrl('', 'act', 'dispPoomahhiMyReviews')}">내가 받은 리뷰</a>
+			</li>
+			<li class="active"|cond="$act == 'dispMemberInfo' || $act == 'dispMemberModifyInfo'">
+				<a href="{getUrl('', 'act', 'dispMemberInfo')}">회원정보</a>
+			</li>
+			<li class="active"|cond="$act == 'dispPoomahhiMyPoints'">
+				<a href="{getUrl('', 'act', 'dispPoomahhiMyPoints')}">내 포인트</a>
+			</li>
+			<li class="active"|cond="$act == 'dispMemberOwnDocument'">
+				<a href="{getUrl('', 'act', 'dispMemberOwnDocument')}">내가 쓴 글</a>
+			</li>
+			<li class="active"|cond="$act == 'dispPoomahhiWishlist'">
+				<a href="{getUrl('', 'act', 'dispPoomahhiWishlist')}">관심 품앗이</a>
+			</li>
+			<li class="active"|cond="$act == 'dispPoomahhiApplicationList'">
+				<a href="{getUrl('', 'act', 'dispPoomahhiApplicationList')}">품앗이 현황</a>
+			</li>
+			<li class="active"|cond="$mid == 'board_inquiry'">
+				<a href="/board_inquiry">1:1 문의글</a>
+			</li>
+		</ul>
+	</div>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lang>
+	<!-- 회원 유형 -->
+	<item name="poomahhi_member_type">
+		<value xml:lang="ko">회원 유형</value>
+		<value xml:lang="en">Member Type</value>
+	</item>
+	<item name="poomahhi_member_general">
+		<value xml:lang="ko">일반회원</value>
+		<value xml:lang="en">General Member</value>
+	</item>
+	<item name="poomahhi_member_business">
+		<value xml:lang="ko">비즈니스회원</value>
+		<value xml:lang="en">Business Member</value>
+	</item>
+	<item name="poomahhi_login_type_mismatch">
+		<value xml:lang="ko">회원 유형이 일치하지 않습니다. 올바른 탭에서 로그인해주세요.</value>
+		<value xml:lang="en">Member type mismatch. Please login from the correct tab.</value>
+	</item>
+	<item name="poomahhi_tab_general_login">
+		<value xml:lang="ko">일반회원 로그인</value>
+		<value xml:lang="en">General Member Login</value>
+	</item>
+	<item name="poomahhi_tab_business_login">
+		<value xml:lang="ko">비즈니스 로그인</value>
+		<value xml:lang="en">Business Login</value>
+	</item>
+</lang>
