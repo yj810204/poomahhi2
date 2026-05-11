@@ -2490,6 +2490,77 @@ class poomahhiView extends poomahhi
 	}
 
 	/**
+	 * @brief 비즈니스 회원이 직접 작성한 회원평가(신청자 평가) 목록
+	 */
+	function dispPoomahhiMyMemberReviews()
+	{
+		$logged_info = Context::get('logged_info');
+		if(!$logged_info) return $this->stop('로그인이 필요합니다.');
+
+		$oModel = getModel('poomahhi');
+		$oMemberModel = getModel('member');
+
+		$args = new stdClass();
+		$args->reviewer_member_srl = $logged_info->member_srl;
+		$args->page = Context::get('page') ?: 1;
+		$args->list_count = $this->config->default_list_count;
+		$review_output = $oModel->getMyWrittenMemberReviews($args);
+
+		if($review_output->data)
+		{
+			foreach($review_output->data as &$row)
+			{
+				$target = $oMemberModel->getMemberInfoByMemberSrl($row->target_member_srl);
+				$row->target_nickname = $target ? $target->nick_name : ($row->applicant_name ?: '');
+				$row->target_profile_image = null;
+				if($target && !empty($target->profile_image) && !empty($target->profile_image->src))
+				{
+					$row->target_profile_image = $target->profile_image->src;
+				}
+				$participant_review = $oModel->getReviewByApplication($row->application_srl);
+				$row->cert_date = $participant_review ? $participant_review->regdate : null;
+
+				if(isset($row->gender))
+				{
+					$row->gender_display = ($row->gender === 'male' || $row->gender === 'M') ? '남성' : (($row->gender === 'female' || $row->gender === 'F') ? '여성' : $row->gender);
+				}
+				else
+				{
+					$row->gender_display = '';
+				}
+				if(!empty($row->birth_date))
+				{
+					$row->birth_display = str_replace('-', '.', substr($row->birth_date, 0, 10));
+				}
+				else
+				{
+					$row->birth_display = '';
+				}
+			}
+			unset($row);
+		}
+
+		Context::set('review_list', $review_output->data ?: array());
+		Context::set('total_count', $review_output->total_count);
+		Context::set('total_page', $review_output->total_page);
+		Context::set('page', (int)$args->page);
+		Context::set('page_navigation', $review_output->page_navigation);
+
+		$oController = getController('poomahhi');
+		if($oController->_isBusinessMember($logged_info))
+		{
+			Context::set('use_business_layout', true);
+			$this->_setBusinessCenterContext('reviews');
+		}
+		else
+		{
+			Context::set('use_business_layout', false);
+			$this->_setMemberMenuHeaderContext();
+		}
+		$this->setTemplateFile('my_member_reviews');
+	}
+
+	/**
 	 * @brief 관심 품앗이 목록
 	 */
 	function dispPoomahhiWishlist()

@@ -621,6 +621,15 @@ class poomahhiModel extends poomahhi
 	}
 
 	/**
+	 * @brief 내가 작성한 회원평가 목록 (reviewer_member_srl 기준)
+	 */
+	function getMyWrittenMemberReviews($args)
+	{
+		$output = executeQueryArray('poomahhi.getMyWrittenMemberReviews', $args);
+		return $output;
+	}
+
+	/**
 	 * @brief 받은 리뷰 통계 (건수, 평균점수)
 	 */
 	function getMemberReviewStats($member_srl)

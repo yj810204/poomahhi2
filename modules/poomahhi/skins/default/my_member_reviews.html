@@ -1,0 +1,126 @@
+<load target="css/business.scss" />
+<load target="../../../member/css/member.scss" />
+
+<!--@if($use_business_layout)-->
+<div class="pmh-business-layout">
+<include target="_business_sidebar.html" />
+<div class="member-contents pmh-business-main">
+<!--@else-->
+<include target="../../../member/skins/poomahhi/common_header.html" />
+<div class="member-contents">
+<!--@end-->
+
+<h1>내가 작성한 리뷰</h1>
+
+<div class="pmh-mmr-wrap">
+	<div class="pmh-mr-list mypage_wrap">
+		<div class="pmh-mr-list-title">총 <b><!--@if($total_count)-->{$total_count}<!--@else-->0<!--@end--></b>건</div>
+
+		<!--@if($review_list)-->
+		<!--@foreach($review_list as $review)-->
+		<div class="pmh-mr-card">
+			<div class="pmh-mr-card-head">
+				<div class="pmh-mr-card-author">
+					<!--@if($logged_info->profile_image)-->
+					<img src="{$logged_info->profile_image->src}" alt="" class="pmh-mr-card-avatar" />
+					<!--@else-->
+					<img src="img/noimage.png" alt="" class="pmh-mr-card-avatar" />
+					<!--@end-->
+					<span class="pmh-mr-card-name-time">
+						{$logged_info->nick_name}
+						• <!--@if($review->regdate)-->{zdate($review->regdate, 'Y-m-d H:i')}<!--@end-->
+						• {$review->score}점
+					</span>
+				</div>
+			</div>
+			<div class="pmh-mr-card-content"><!--@if($review->content)-->{$review->content}<!--@else-->-<!--@end--></div>
+
+			<!-- 신청자 카드 -->
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationManageDetail', 'application_srl', $review->application_srl)}" class="pmh-mmr-applicant-card">
+				<div class="pmh-mmr-applicant-img">
+					<!--@if($review->product_image)-->
+					<img src="{$review->product_image}" alt="" />
+					<!--@else-->
+					<div class="pmh-mmr-applicant-noimg"><i class="bi bi-image"></i></div>
+					<!--@end-->
+				</div>
+				<div class="pmh-mmr-applicant-info">
+					<div class="pmh-mmr-applicant-company">
+						<!--@if($review->company_name)-->{$review->company_name}<!--@end-->
+						<!--@if($review->product_title)-->[{$review->product_title}]<!--@end-->
+					</div>
+					<div class="pmh-mmr-applicant-meta">
+						<!--@if($review->target_nickname)-->{$review->target_nickname}<!--@end-->
+						<!--@if($review->gender_display)--> · {$review->gender_display}<!--@end-->
+						<!--@if($review->birth_display)--> · {$review->birth_display}<!--@end-->
+					</div>
+					<div class="pmh-mmr-applicant-dates">
+						<!--@if($review->apply_date)-->
+						<span><span class="pmh-mmr-date-label">품앗이 신청 날짜</span> <span class="pmh-mmr-date-val">{zdate($review->apply_date, 'y.m.d')}</span></span>
+						<!--@end-->
+						<!--@if($review->cert_date)-->
+						<span><span class="pmh-mmr-date-label">참여 인증 등록일</span> <span class="pmh-mmr-date-val">{zdate($review->cert_date, 'y.m.d')}</span></span>
+						<!--@end-->
+						<!--@if($review->regdate)-->
+						<span><span class="pmh-mmr-date-label">회원평가 등록일</span> <span class="pmh-mmr-date-val">{zdate($review->regdate, 'y.m.d')}</span></span>
+						<!--@end-->
+					</div>
+				</div>
+			</a>
+		</div>
+		<!--@end-->
+
+		<!--@if($page_navigation)-->
+		<div class="pmh-pagination pmh-mr-pagination ds-n">
+			<!--@if($page_navigation->cur_page > 1)-->
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiMyMemberReviews', 'page', $page_navigation->cur_page - 1)}" class="pmh-page-nav">&lsaquo; 이전</a>
+			<!--@end-->
+			<!--@for($i = $page_navigation->first_page; $i <= $page_navigation->last_page; $i++)-->
+			<!--@if($i == $page_navigation->cur_page)--><span class="pmh-page is-current">{$i}</span><!--@else--><a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiMyMemberReviews', 'page', $i)}" class="pmh-page">{$i}</a><!--@end-->
+			<!--@end-->
+			<!--@if($page_navigation->cur_page < $page_navigation->total_page)-->
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiMyMemberReviews', 'page', $page_navigation->cur_page + 1)}" class="pmh-page-nav">다음 &rsaquo;</a>
+			<!--@end-->
+		</div>
+		<!--@end-->
+
+		<!--@else-->
+		<p class="pmh-mr-empty">작성한 회원평가가 없습니다.</p>
+		<!--@end-->
+	</div>
+</div>
+
+<!--@if($use_business_layout)-->
+</div>
+</div>
+<!--@else-->
+</div>
+<!--@end-->
+
+<style>
+.pmh-mmr-wrap h1 { margin: 0 0 20px; font-size: 24px; font-weight: 700; }
+.pmh-mmr-applicant-card {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	background: #f8f8f8;
+	border-radius: 10px;
+	padding: 12px;
+	margin-top: 12px;
+	text-decoration: none;
+	color: inherit;
+	transition: background 0.15s;
+}
+.pmh-mmr-applicant-card:hover { background: #f0f0f0; }
+.pmh-mmr-applicant-img { width: 72px; height: 72px; flex-shrink: 0; border-radius: 6px; overflow: hidden; background: #e0e0e0; }
+.pmh-mmr-applicant-img img { width: 100%; height: 100%; object-fit: cover; }
+.pmh-mmr-applicant-noimg { width: 72px; height: 72px; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 24px; }
+.pmh-mmr-applicant-info { flex: 1; min-width: 0; }
+.pmh-mmr-applicant-company { font-size: 14px; font-weight: 600; color: #222; margin-bottom: 4px; }
+.pmh-mmr-applicant-meta { font-size: 13px; color: #555; margin-bottom: 6px; }
+.pmh-mmr-applicant-dates { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; }
+.pmh-mmr-date-label { color: #888; }
+.pmh-mmr-date-val { color: #333; font-weight: 500; }
+</style>
+
+<include target="../../../member/skins/poomahhi/common_footer.html" />

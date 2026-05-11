@@ -59,6 +59,7 @@
 		<action name="dispPoomahhiReviewWrite" type="view" />
 		<action name="dispPoomahhiReviewEdit" type="view" />
 		<action name="dispPoomahhiMyReviews" type="view" />
+		<action name="dispPoomahhiMyMemberReviews" type="view" />
 		<action name="dispPoomahhiMyPoints" type="view" />
 		<action name="dispPoomahhiMemberReviews" type="view" />
 		<action name="dispPoomahhiMemberReceivedReviews" type="view" />

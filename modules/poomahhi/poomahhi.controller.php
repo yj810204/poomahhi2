@@ -1311,7 +1311,7 @@ class poomahhiController extends poomahhi
 		$returnUrl = Context::get('success_return_url');
 		if(!$returnUrl)
 		{
-			$returnUrl = getNotEncodedUrl('', 'mid', $this->mid, 'act', 'dispPoomahhiApplicationManageDetail', 'application_srl', $application_srl);
+			$returnUrl = getNotEncodedUrl('', 'mid', $this->mid, 'act', 'dispPoomahhiMyMemberReviews');
 		}
 		$this->setRedirectUrl($returnUrl);
 	}
@@ -1348,7 +1348,7 @@ class poomahhiController extends poomahhi
 
 		$this->setMessage('수정되었습니다.');
 		$returnUrl = Context::get('success_return_url');
-		if(!$returnUrl) $returnUrl = getNotEncodedUrl('', 'mid', $this->mid, 'act', 'dispPoomahhiMyReviews');
+		if(!$returnUrl) $returnUrl = getNotEncodedUrl('', 'mid', $this->mid, 'act', 'dispPoomahhiMyMemberReviews');
 		$this->setRedirectUrl($returnUrl);
 	}
 
