@@ -237,6 +237,17 @@
 		&:hover {
 			opacity: 0.75;
 		}
+		&:disabled {
+			cursor: default;
+			opacity: 0.45;
+		}
+	}
+
+	&.is-dismissing {
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.2s ease-out;
+		will-change: opacity;
 	}
 
 	@media (max-width: 992px) {

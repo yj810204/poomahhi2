@@ -511,10 +511,16 @@ class poomahhiView extends poomahhi
 
 		$has_new_application_banner = false;
 		$new_banner_product_srl = null;
+		$has_review_dedicated_banner = false;
+		$has_deadline_dedicated_banner = false;
 		if($recent_applications)
 		{
 			foreach($recent_applications as $ra)
 			{
+				if(!is_object($ra) || !isset($ra->status) || $ra->status !== 'applied')
+				{
+					continue;
+				}
 				$rd = $this->_poomahhiYmdHisToTimestamp($ra->regdate);
 				if($rd && $rd >= $cutoff)
 				{
@@ -580,6 +586,7 @@ class poomahhiView extends poomahhi
 				'product_srl' => $app->product_srl,
 				'ncenter_notify' => '',
 			);
+			$has_review_dedicated_banner = true;
 			break;
 		}
 
@@ -661,6 +668,7 @@ class poomahhiView extends poomahhi
 				'application_srl' => 0,
 				'ncenter_notify' => '',
 			);
+			$has_deadline_dedicated_banner = true;
 		}
 
 		$oNcenterliteModel = getModel('ncenterlite');
@@ -734,8 +742,26 @@ class poomahhiView extends poomahhi
 				$this->_enrichNcenterliteNotifyRows($nc_rows, $oNcenterliteModel);
 				foreach($nc_rows as $nr)
 				{
-					$kind = isset($nr->notify_kind) ? $nr->notify_kind : '';
-					if($kind !== 'misc' && $kind !== 'ncenter_message')
+					$kind = isset($nr->notify_kind) ? (string)$nr->notify_kind : '';
+					$skip_kinds = array('poomahhi_broadcast', 'system_notice_board');
+					if(in_array($kind, $skip_kinds, true))
+					{
+						continue;
+					}
+					$dominated_by_dedicated = array();
+					if($has_new_application_banner)
+					{
+						$dominated_by_dedicated[] = 'poomahhi_apply';
+					}
+					if($has_review_dedicated_banner)
+					{
+						$dominated_by_dedicated[] = 'poomahhi_review';
+					}
+					if($has_deadline_dedicated_banner)
+					{
+						$dominated_by_dedicated[] = 'poomahhi_deadline';
+					}
+					if(in_array($kind, $dominated_by_dedicated, true))
 					{
 						continue;
 					}
@@ -2527,9 +2553,6 @@ class poomahhiView extends poomahhi
 		}
 		else
 		{
-			$args->filter_type = '';
-			$args->filter_url_like = '';
-			$args->filter_target_type = '';
 			if($tab === 'poomahhi')
 			{
 				$args->filter_type = 'X';
@@ -2553,6 +2576,18 @@ class poomahhiView extends poomahhi
 
 		if(!$output->toBool())
 		{
+			$fail_msg = '';
+			if(is_object($output))
+			{
+				if(method_exists($output, 'getMessage'))
+				{
+					$fail_msg = $output->getMessage();
+				}
+				elseif(isset($output->message))
+				{
+					$fail_msg = (string)$output->message;
+				}
+			}
 			return $output;
 		}
 

@@ -56,9 +56,11 @@ class poomahhiAdminController extends poomahhi
 		if($config->business_home_deadline_days > 90) $config->business_home_deadline_days = 90;
 		$config->noti_tpl_new_application = isset($args->noti_tpl_new_application) ? trim((string)$args->noti_tpl_new_application) : '';
 		$config->noti_tpl_review_submitted = isset($args->noti_tpl_review_submitted) ? trim((string)$args->noti_tpl_review_submitted) : '';
+		$config->noti_tpl_revision_requested = isset($args->noti_tpl_revision_requested) ? trim((string)$args->noti_tpl_revision_requested) : '';
 		$config->noti_tpl_deadline_banner = isset($args->noti_tpl_deadline_banner) ? trim((string)$args->noti_tpl_deadline_banner) : '';
 		if(strlen($config->noti_tpl_new_application) > 500) $config->noti_tpl_new_application = function_exists('mb_substr') ? mb_substr($config->noti_tpl_new_application, 0, 500, 'UTF-8') : substr($config->noti_tpl_new_application, 0, 500);
 		if(strlen($config->noti_tpl_review_submitted) > 500) $config->noti_tpl_review_submitted = function_exists('mb_substr') ? mb_substr($config->noti_tpl_review_submitted, 0, 500, 'UTF-8') : substr($config->noti_tpl_review_submitted, 0, 500);
+		if(strlen($config->noti_tpl_revision_requested) > 500) $config->noti_tpl_revision_requested = function_exists('mb_substr') ? mb_substr($config->noti_tpl_revision_requested, 0, 500, 'UTF-8') : substr($config->noti_tpl_revision_requested, 0, 500);
 		if(strlen($config->noti_tpl_deadline_banner) > 500) $config->noti_tpl_deadline_banner = function_exists('mb_substr') ? mb_substr($config->noti_tpl_deadline_banner, 0, 500, 'UTF-8') : substr($config->noti_tpl_deadline_banner, 0, 500);
 		$config->content_point_type = 'rhymix';
 
@@ -459,6 +461,7 @@ class poomahhiAdminController extends poomahhi
 			$nargs->srl = 0;
 			$nargs->target_srl = 0;
 			$nargs->target_p_srl = 0;
+			// sendNotification과 동일: 수신=member_srl, 발신(표시)=target_member_srl
 			$nargs->target_member_srl = (int)$logged_info->member_srl;
 			$nargs->target_url = $url;
 			$nargs->target_body = $message;

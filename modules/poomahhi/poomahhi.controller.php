@@ -66,6 +66,13 @@ class poomahhiController extends poomahhi
 		Context::set('act', $default_act);
 	}
 
+	/**
+	 * ncenterlite 알림 발송 (모듈 전역에서 이 메서드만 사용)
+	 *
+	 * Rhymix ncenterlite::sendNotification($from_member_srl, $to_member_srl, …)는
+	 * 수신자 member_srl = $to, 연관(관리 목록의 "보낸 사람") target_member_srl = $from 으로 저장된다.
+	 * 즉 "누가 알림함에 받는가"는 항상 두 번째 인자이다.
+	 */
 	function _sendNotification($from_member_srl, $to_member_srl, $message, $url = '', $target_srl = 0)
 	{
 		$oNcenterliteController = getController('ncenterlite');
@@ -725,6 +732,7 @@ class poomahhiController extends poomahhi
 		{
 			$noti_msg = sprintf('[%s] 품앗이에 새로운 품앗이 신청이 왔습니다.', $product->title);
 		}
+		// ncenter: 수신=개설자(product), 발신=신청자(신규 신청 알림)
 		$this->_sendNotification($logged_info->member_srl, $product->member_srl, $noti_msg, $manage_url, $insert_args->application_srl);
 
 		$this->setMessage('등록되었습니다.');
@@ -809,6 +817,7 @@ class poomahhiController extends poomahhi
 		$applicant_nick = $applicant_member && $applicant_member->nick_name ? $applicant_member->nick_name : '회원';
 		$detail_url = getNotEncodedUrl('', 'mid', $this->mid, 'act', 'dispPoomahhiApplicationDetail', 'application_srl', $application_srl);
 
+		// ncenter: 수신=신청자, 발신=개설자(개설자가 상태를 바꿀 때 신청자에게 통지)
 		if($new_status === 'selected')
 		{
 			$noti_msg = sprintf('[%s] 품앗이에 선정되었습니다.', $product->title);
@@ -821,7 +830,21 @@ class poomahhiController extends poomahhi
 		}
 		elseif($new_status === 'revision_requested')
 		{
-			$noti_msg = sprintf('%s님의 참여 인증 제출이 수정요청되었습니다.', $applicant_nick);
+			$applicant_user_id = $applicant_member && !empty($applicant_member->user_id) ? (string)$applicant_member->user_id : '';
+			$cfg = $oModel->getModuleConfig();
+			$tpl_rev = isset($cfg->noti_tpl_revision_requested) ? trim((string)$cfg->noti_tpl_revision_requested) : '';
+			if($tpl_rev !== '')
+			{
+				$noti_msg = $oModel->replacePoomahhiNotificationTemplate($tpl_rev, array(
+					'product_title' => (string)$product->title,
+					'applicant_nick' => (string)$applicant_nick,
+					'applicant_user_id' => $applicant_user_id,
+				));
+			}
+			else
+			{
+				$noti_msg = sprintf('%s님의 참여 인증 제출이 수정요청되었습니다.', $applicant_nick);
+			}
 			$this->_sendNotification($product->member_srl, $application->member_srl, $noti_msg, $detail_url, $application_srl);
 		}
 		elseif($new_status === 'completed')
@@ -877,6 +900,7 @@ class poomahhiController extends poomahhi
 
 		$detail_url = getNotEncodedUrl('', 'mid', $this->mid, 'act', 'dispPoomahhiApplicationDetail', 'application_srl', $application_srl);
 		$noti_msg = sprintf('[%s] 참여인증이 승인되었습니다.', $product->title);
+		// ncenter: 수신=신청자, 발신=개설자
 		$this->_sendNotification($product->member_srl, $application->member_srl, $noti_msg, $detail_url, $application_srl);
 
 		$this->setMessage('수정되었습니다.');
@@ -1031,6 +1055,7 @@ class poomahhiController extends poomahhi
 		{
 			$noti_msg = sprintf('[%s] %s님의 참여 인증 제출이 완료되었습니다.', $product->title, $applicant_nick);
 		}
+		// ncenter: 수신=개설자, 발신=신청자(참여 인증 제출 알림)
 		$this->_sendNotification($logged_info->member_srl, $product->member_srl, $noti_msg, $manage_url, $application_srl);
 
 		$this->setMessage('등록되었습니다.');
@@ -1086,6 +1111,32 @@ class poomahhiController extends poomahhi
 		$status_args->status = 'under_review';
 		$status_args->last_update = date('YmdHis');
 		executeQuery('poomahhi.updateApplicationStatusLite', $status_args);
+
+		$product = $oModel->getProduct($application->product_srl);
+		if($product && (int)$product->member_srl !== (int)$logged_info->member_srl)
+		{
+			$oMemberModel = getModel('member');
+			$applicant_member = $oMemberModel->getMemberInfoByMemberSrl($logged_info->member_srl);
+			$applicant_nick = $applicant_member && $applicant_member->nick_name ? $applicant_member->nick_name : '회원';
+			$applicant_user_id = $applicant_member && !empty($applicant_member->user_id) ? (string)$applicant_member->user_id : '';
+			$manage_url = getNotEncodedUrl('', 'mid', $this->mid, 'act', 'dispPoomahhiApplicationManage', 'product_srl', $product->product_srl);
+			$cfg = $oModel->getModuleConfig();
+			$tpl = isset($cfg->noti_tpl_review_submitted) ? trim((string)$cfg->noti_tpl_review_submitted) : '';
+			if($tpl !== '')
+			{
+				$noti_msg = $oModel->replacePoomahhiNotificationTemplate($tpl, array(
+					'product_title' => (string)$product->title,
+					'applicant_nick' => (string)$applicant_nick,
+					'applicant_user_id' => $applicant_user_id,
+				));
+			}
+			else
+			{
+				$noti_msg = sprintf('[%s] %s님의 참여 인증이 수정·재제출되었습니다.', $product->title, $applicant_nick);
+			}
+			// ncenter: 수신=개설자, 발신=신청자(수정요청 후 재제출)
+			$this->_sendNotification($logged_info->member_srl, $product->member_srl, $noti_msg, $manage_url, $application_srl);
+		}
 
 		$this->setMessage('수정되었습니다.');
 		$returnUrl = getNotEncodedUrl('', 'mid', $this->mid, 'act', 'dispPoomahhiApplicationList');

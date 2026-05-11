@@ -1032,6 +1032,7 @@ class poomahhiModel extends poomahhi
 		if(!isset($config->business_home_deadline_days)) $config->business_home_deadline_days = 7;
 		if(!isset($config->noti_tpl_new_application)) $config->noti_tpl_new_application = '';
 		if(!isset($config->noti_tpl_review_submitted)) $config->noti_tpl_review_submitted = '';
+		if(!isset($config->noti_tpl_revision_requested)) $config->noti_tpl_revision_requested = '';
 		if(!isset($config->noti_tpl_deadline_banner)) $config->noti_tpl_deadline_banner = '';
 		if(!isset($config->own_document_product_mid)) $config->own_document_product_mid = 'money1';
 		if(!isset($config->own_document_region_mid)) $config->own_document_region_mid = 'money2';

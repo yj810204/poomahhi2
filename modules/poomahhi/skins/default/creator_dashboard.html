@@ -198,14 +198,12 @@
 
 <script>
 (function($){
-	$(document).on('click', '.pmh-business-banner__close', function(e){
-		e.preventDefault();
-		var $b = $(this).closest('.pmh-business-banner');
-		var done = function(){ $b.slideUp(200); };
+	function pmhDismissBannerFromRoot($b)
+	{
 		var notify = ($b.attr('data-ncenter-notify') || '').trim();
 		if(notify.length)
 		{
-			$.exec_json('poomahhi.procPoomahhiDismissBusinessDashboardBanner', { notify: notify }, done, done);
+			$.exec_json('poomahhi.procPoomahhiDismissBusinessDashboardBanner', { notify: notify });
 			return;
 		}
 		var t = ($b.attr('data-banner-type') || '').trim();
@@ -218,7 +216,123 @@
 		{
 			params.product_srl = parseInt($b.attr('data-product-srl'), 10) || 0;
 		}
-		$.exec_json('poomahhi.procPoomahhiDismissBusinessDashboardBanner', params, done, done);
+		$.exec_json('poomahhi.procPoomahhiDismissBusinessDashboardBanner', params);
+	}
+
+	$(document).on('click', '.pmh-business-banner__go', function(e){
+		if(e.which !== 1 || e.metaKey || e.ctrlKey || e.shiftKey)
+		{
+			return;
+		}
+		var $a = $(this);
+		var href = ($a.attr('href') || '').trim();
+		if(!href)
+		{
+			return;
+		}
+		e.preventDefault();
+		var $b = $a.closest('.pmh-business-banner');
+		var navigated = false;
+		var go = function()
+		{
+			if(navigated)
+			{
+				return;
+			}
+			navigated = true;
+			window.location.href = href;
+		};
+		var fallback = window.setTimeout(go, 500);
+
+		var notify = ($b.attr('data-ncenter-notify') || '').trim();
+		if(notify.length)
+		{
+			$.exec_json('poomahhi.procPoomahhiDismissBusinessDashboardBanner', { notify: notify }, function()
+			{
+				window.clearTimeout(fallback);
+				go();
+			});
+			return;
+		}
+		var t = ($b.attr('data-banner-type') || '').trim();
+		if(!t)
+		{
+			window.clearTimeout(fallback);
+			go();
+			return;
+		}
+		var params = { banner_type: t };
+		if(t === 'review')
+		{
+			params.application_srl = parseInt($b.attr('data-application-srl'), 10) || 0;
+		}
+		else
+		{
+			params.product_srl = parseInt($b.attr('data-product-srl'), 10) || 0;
+		}
+		$.exec_json('poomahhi.procPoomahhiDismissBusinessDashboardBanner', params, function()
+		{
+			window.clearTimeout(fallback);
+			go();
+		});
+	});
+
+	$(document).on('click', '.pmh-business-banner__close', function(e){
+		e.preventDefault();
+		var $btn = $(this);
+		var $b = $btn.closest('.pmh-business-banner');
+		if($b.hasClass('is-dismissing'))
+		{
+			return;
+		}
+		$btn.prop('disabled', true);
+		$b.addClass('is-dismissing');
+
+		var removed = false;
+		var el = $b.get(0);
+		var fallbackTimer = null;
+
+		var doRemove = function(){
+			if(removed)
+			{
+				return;
+			}
+			removed = true;
+			if(fallbackTimer !== null)
+			{
+				window.clearTimeout(fallbackTimer);
+			}
+			if(el)
+			{
+				el.removeEventListener('transitionend', onTe);
+			}
+			var $wrap = $b.closest('.pmh-business-dashboard-banners');
+			$b.remove();
+			if($wrap.length && $wrap.children().length < 1)
+			{
+				$wrap.remove();
+			}
+		};
+
+		var onTe = function(ev){
+			if(!el || removed)
+			{
+				return;
+			}
+			if(ev.target !== el || ev.propertyName !== 'opacity')
+			{
+				return;
+			}
+			doRemove();
+		};
+
+		fallbackTimer = window.setTimeout(doRemove, 320);
+		if(el)
+		{
+			el.addEventListener('transitionend', onTe);
+		}
+
+		pmhDismissBannerFromRoot($b);
 	});
 })(jQuery);
 </script>

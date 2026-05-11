@@ -146,21 +146,28 @@
 				<tr>
 					<th scope="row" style="width:200px; vertical-align:top;">신청 알림 (개설자)</th>
 					<td>
-						<textarea name="noti_tpl_new_application" class="form-control" style="width:100%; min-height:72px;" maxlength="500" placeholder="예: 👤 {product_title}의 새로운 품앗이 신청이 왔습니다."><!--@if($config->noti_tpl_new_application)-->{$config->noti_tpl_new_application}<!--@end--></textarea>
+						<textarea name="noti_tpl_new_application" class="form-control" style="width:100%; min-height:72px;" maxlength="500" placeholder="예: {product_title}의 새로운 품앗이 신청이 왔습니다."><!--@if($config->noti_tpl_new_application)-->{$config->noti_tpl_new_application}<!--@end--></textarea>
 						<p style="color:#999; margin-top:6px;"><code>{product_title}</code> <code>{applicant_nick}</code> <code>{applicant_user_id}</code></p>
 					</td>
 				</tr>
 				<tr>
 					<th scope="row" style="vertical-align:top;">참여 인증 제출 알림 (개설자)</th>
 					<td>
-						<textarea name="noti_tpl_review_submitted" class="form-control" style="width:100%; min-height:72px;" maxlength="500" placeholder="예: ✍️ {applicant_user_id}님의 참여 인증 제출이 완료되었습니다."><!--@if($config->noti_tpl_review_submitted)-->{$config->noti_tpl_review_submitted}<!--@end--></textarea>
+						<textarea name="noti_tpl_review_submitted" class="form-control" style="width:100%; min-height:72px;" maxlength="500" placeholder="예: {applicant_user_id}님의 참여 인증 제출이 완료되었습니다."><!--@if($config->noti_tpl_review_submitted)-->{$config->noti_tpl_review_submitted}<!--@end--></textarea>
+						<p style="color:#999; margin-top:6px;"><code>{product_title}</code> <code>{applicant_nick}</code> <code>{applicant_user_id}</code></p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row" style="vertical-align:top;">참여 인증 수정요청 알림 (신청자)</th>
+					<td>
+						<textarea name="noti_tpl_revision_requested" class="form-control" style="width:100%; min-height:72px;" maxlength="500" placeholder="예: {applicant_user_id}님의 참여 인증 제출이 수정요청되었습니다."><!--@if($config->noti_tpl_revision_requested)-->{$config->noti_tpl_revision_requested}<!--@end--></textarea>
 						<p style="color:#999; margin-top:6px;"><code>{product_title}</code> <code>{applicant_nick}</code> <code>{applicant_user_id}</code></p>
 					</td>
 				</tr>
 				<tr>
 					<th scope="row" style="vertical-align:top;">마감 배너·알림 목록 (마감 임박 한 줄)</th>
 					<td>
-						<textarea name="noti_tpl_deadline_banner" class="form-control" style="width:100%; min-height:72px;" maxlength="500" placeholder="예: 📢 {product_title} 품앗이 마감이 {days_remaining}일 남았습니다."><!--@if($config->noti_tpl_deadline_banner)-->{$config->noti_tpl_deadline_banner}<!--@end--></textarea>
+						<textarea name="noti_tpl_deadline_banner" class="form-control" style="width:100%; min-height:72px;" maxlength="500" placeholder="예: {product_title} 품앗이 마감이 {days_remaining}일 남았습니다."><!--@if($config->noti_tpl_deadline_banner)-->{$config->noti_tpl_deadline_banner}<!--@end--></textarea>
 						<p style="color:#999; margin-top:6px;"><code>{product_title}</code> <code>{days_remaining}</code> (일 수)</p>
 					</td>
 				</tr>
