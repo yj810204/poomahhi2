@@ -874,7 +874,6 @@ class poomahhiView extends poomahhi
 		// 위시리스트 정보 (로그인한 사용자) 및 D-day 계산
 		$wishlist_map = array();
 		$logged_info = Context::get('logged_info');
-		$today = new DateTime('today');
 
 		if($output->data)
 		{
@@ -891,13 +890,11 @@ class poomahhiView extends poomahhi
 				$dday_source = $product->apply_end_date ?: $product->deadline_date;
 				if($dday_source)
 				{
-					$deadline = DateTime::createFromFormat('YmdHis', $dday_source);
-					if($deadline)
+					$days = $oModel->getProductApplyDeadlineDayOffset($dday_source);
+					if($days !== null)
 					{
-						$diff = $today->diff($deadline);
-						$days = (int)$diff->format('%r%a');
 						$product->dday = $days;
-						$product->dday_text = ($days > 0) ? 'D-' . $days : (($days == 0) ? 'D-Day' : '마감');
+						$product->dday_text = $oModel->getProductApplyDdayTextFromDayOffset($days);
 					}
 				}
 
@@ -1000,7 +997,6 @@ class poomahhiView extends poomahhi
 		}
 
 		$logged_info = Context::get('logged_info');
-		$today = new DateTime('today');
 		$wishlist_map = array();
 
 		$args_base = new stdClass();
@@ -1021,7 +1017,7 @@ class poomahhiView extends poomahhi
 		$product_list = $output_product->data ?: array();
 		$local_list = $output_local->data ?: array();
 
-		$enrich = function(&$item) use ($oModel, $logged_info, $region_map, $today, &$wishlist_map)
+		$enrich = function(&$item) use ($oModel, $logged_info, $region_map, &$wishlist_map)
 		{
 			if($logged_info)
 			{
@@ -1031,13 +1027,11 @@ class poomahhiView extends poomahhi
 			$dday_source = $item->apply_end_date ?: $item->deadline_date;
 			if($dday_source)
 			{
-				$deadline = DateTime::createFromFormat('YmdHis', $dday_source);
-				if($deadline)
+				$days = $oModel->getProductApplyDeadlineDayOffset($dday_source);
+				if($days !== null)
 				{
-					$diff = $today->diff($deadline);
-					$days = (int)$diff->format('%r%a');
 					$item->dday = $days;
-					$item->dday_text = ($days > 0) ? 'D-' . $days : (($days == 0) ? 'D-Day' : '마감');
+					$item->dday_text = $oModel->getProductApplyDdayTextFromDayOffset($days);
 				}
 			}
 			if($item->short_description)
@@ -1106,13 +1100,10 @@ class poomahhiView extends poomahhi
 		{
 			$deadline_ymdhis = (strlen($dday_source) === 8) ? $dday_source . '235959' : $dday_source;
 			if(date('YmdHis') > $deadline_ymdhis) $is_application_closed = true;
-			$today = new DateTime('today');
-			$deadline = DateTime::createFromFormat('YmdHis', $dday_source);
-			if($deadline)
+			$days = $oModel->getProductApplyDeadlineDayOffset($dday_source);
+			if($days !== null)
 			{
-				$diff = $today->diff($deadline);
-				$days = (int)$diff->format('%r%a');
-				$dday_text = ($days > 0) ? 'D-' . $days : (($days == 0) ? 'D-Day' : '마감');
+				$dday_text = $oModel->getProductApplyDdayTextFromDayOffset($days);
 			}
 		}
 
@@ -1361,13 +1352,10 @@ class poomahhiView extends poomahhi
 		$dday_source = $product->apply_end_date ?: $product->deadline_date;
 		if($dday_source)
 		{
-			$today = new DateTime('today');
-			$deadline = DateTime::createFromFormat('YmdHis', $dday_source);
-			if($deadline)
+			$days = $oModel->getProductApplyDeadlineDayOffset($dday_source);
+			if($days !== null)
 			{
-				$diff = $today->diff($deadline);
-				$days = (int)$diff->format('%r%a');
-				$dday_text = ($days > 0) ? 'D-' . $days : (($days == 0) ? 'D-Day' : '마감');
+				$dday_text = $oModel->getProductApplyDdayTextFromDayOffset($days);
 			}
 		}
 
@@ -1414,12 +1402,15 @@ class poomahhiView extends poomahhi
 		}
 
 		$output = $oModel->getApplicationListByMember($args);
-		$today = new DateTime('today');
 		if($output->data)
 		{
 			foreach($output->data as &$app)
 			{
 				$app->product = $oModel->getProduct($app->product_srl);
+				if($app->product && !property_exists($app->product, 'region_title'))
+				{
+					$oModel->attachProductRegionTitle($app->product);
+				}
 				$app->review = $oModel->getReviewByApplication($app->application_srl);
 
 				if($app->product)
@@ -1437,12 +1428,10 @@ class poomahhiView extends poomahhi
 					$dday_source = $p->apply_end_date ?: $p->deadline_date;
 					if($dday_source)
 					{
-						$deadline = DateTime::createFromFormat('YmdHis', $dday_source);
-						if($deadline)
+						$days = $oModel->getProductApplyDeadlineDayOffset($dday_source);
+						if($days !== null)
 						{
-							$diff = $today->diff($deadline);
-							$days = (int)$diff->format('%r%a');
-							$app->dday = ($days > 0) ? 'D-' . $days : (($days == 0) ? 'D-Day' : '마감');
+							$app->dday = $oModel->getProductApplyDdayTextFromDayOffset($days);
 						}
 					}
 				}
@@ -1502,6 +1491,7 @@ class poomahhiView extends poomahhi
 					);
 				}
 			}
+			unset($app);
 		}
 
 		$status_counts = $oModel->getApplicationStatusCountsByMember($logged_info->member_srl);
@@ -1868,13 +1858,14 @@ class poomahhiView extends poomahhi
 
 		// D-day 계산
 		$dday_text = '';
-		if($product && $product->apply_end_date)
+		$dday_src = $product->apply_end_date ?: $product->deadline_date;
+		if($product && $dday_src)
 		{
-			$end_ts = strtotime(substr($product->apply_end_date, 0, 8));
-			$diff = ceil(($end_ts - strtotime(date('Ymd'))) / 86400);
-			if($diff > 0) $dday_text = 'D-' . $diff;
-			elseif($diff == 0) $dday_text = 'D-Day';
-			else $dday_text = '마감';
+			$days = $oModel->getProductApplyDeadlineDayOffset($dday_src);
+			if($days !== null)
+			{
+				$dday_text = $oModel->getProductApplyDdayTextFromDayOffset($days);
+			}
 		}
 
 		Context::set('application', $application);
@@ -1941,6 +1932,27 @@ class poomahhiView extends poomahhi
 		{
 			$product->product_image_url = isset($product->product_image) ? $product->product_image : '';
 		}
+
+		$product->card_dday = '';
+		if($product && (int)$product->product_srl > 0)
+		{
+			$dday_source = !empty($product->apply_end_date) ? $product->apply_end_date : (isset($product->deadline_date) ? $product->deadline_date : '');
+			if($dday_source)
+			{
+				$days = $oModel->getProductApplyDeadlineDayOffset($dday_source);
+				if($days !== null)
+				{
+					$product->card_dday = $oModel->getProductApplyDdayTextFromDayOffset($days);
+				}
+			}
+		}
+
+		$lang_app = (object)array(
+			'product_purchase_link' => '구매 링크',
+			'contact' => '연락처',
+			'address' => '주소',
+		);
+		Context::set('lang_app', $lang_app);
 
 		// 품앗이 현황 대시보드(이미지1)용 상태별 건수
 		$status_counts = $oModel->getApplicationStatusCountsByMember($logged_info->member_srl);
@@ -2052,6 +2064,27 @@ class poomahhiView extends poomahhi
 			$product->product_image_url = '/' . ltrim($product->product_image, '/');
 		else
 			$product->product_image_url = isset($product->product_image) ? $product->product_image : '';
+
+		$product->card_dday = '';
+		if($product && (int)$product->product_srl > 0)
+		{
+			$dday_source = !empty($product->apply_end_date) ? $product->apply_end_date : (isset($product->deadline_date) ? $product->deadline_date : '');
+			if($dday_source)
+			{
+				$days = $oModel->getProductApplyDeadlineDayOffset($dday_source);
+				if($days !== null)
+				{
+					$product->card_dday = $oModel->getProductApplyDdayTextFromDayOffset($days);
+				}
+			}
+		}
+
+		$lang_app = (object)array(
+			'product_purchase_link' => '구매 링크',
+			'contact' => '연락처',
+			'address' => '주소',
+		);
+		Context::set('lang_app', $lang_app);
 
 		$status_counts = $oModel->getApplicationStatusCountsByMember($logged_info->member_srl);
 		Context::set('status_counts', $status_counts);
@@ -2593,8 +2626,6 @@ class poomahhiView extends poomahhi
 			}
 		}
 
-		$today = new DateTime('today');
-
 		if($output->data)
 		{
 			foreach($output->data as &$item)
@@ -2610,13 +2641,11 @@ class poomahhiView extends poomahhi
 				$dday_source = $product->apply_end_date ?: $product->deadline_date;
 				if($dday_source)
 				{
-					$deadline = DateTime::createFromFormat('YmdHis', $dday_source);
-					if($deadline)
+					$days = $oModel->getProductApplyDeadlineDayOffset($dday_source);
+					if($days !== null)
 					{
-						$diff = $today->diff($deadline);
-						$days = (int)$diff->format('%r%a');
 						$product->dday = $days;
-						$product->dday_text = ($days > 0) ? 'D-' . $days : (($days == 0) ? 'D-Day' : '마감');
+						$product->dday_text = $oModel->getProductApplyDdayTextFromDayOffset($days);
 					}
 				}
 				if($product->short_description)

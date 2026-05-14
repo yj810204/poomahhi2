@@ -4,52 +4,6 @@
 
 <div class="pmh-detail-layout <!--@if($require_login || $show_lock_ui)-->lock<!--@end-->">
 	<div class="pmh-detail-main">
-		<div class="lg:ds-n ds-b">
-			<div class="pmh-page-title">
-				<!--@if($product->product_type == 'local')-->
-				지역 품앗이
-				<!--@else-->
-				상품 품앗이
-				<!--@end-->
-			</div>
-
-			<h3 class="pmh-sidebar-title">
-				<!--@if($product->company_name)-->{$product->company_name} <!--@end-->[{$product->title}]
-			</h3>
-			<!--@if($product->short_description)-->
-			<p class="pmh-detail-desc">{$product->short_description}</p>
-			<!--@end-->
-
-			<div class="tag">
-				<!--@if($product->product_type == 'local' && $region)-->
-				<span class="area 
-					<!--@if($region->title == '수도권')-->seoul<!--@end-->
-					<!--@if($region->title == '충청권')-->chungcheong<!--@end-->
-					<!--@if($region->title == '호남권')-->honam<!--@end-->
-					<!--@if($region->title == '영남권')-->yeongnam<!--@end-->
-					">
-				{$region->title}</span>
-				<!--@elseif($product->shopping_channel)-->
-				<span class="channel 
-					<!--@if($product->shopping_channel == '올리브영')-->oliveyoung<!--@end-->
-					<!--@if($product->shopping_channel == '쿠팡')-->coupang<!--@end-->
-					<!--@if($product->shopping_channel == 'G마켓')-->gmarket<!--@end-->
-					<!--@if($product->shopping_channel == '11번가')-->11st<!--@end-->
-					<!--@if($product->shopping_channel == '자사몰')-->mall<!--@end-->
-					<!--@if($product->shopping_channel == '마켓컬리')-->marketcurly<!--@end-->
-					<!--@if($product->shopping_channel == '카카오선물하기')-->kakaogift<!--@end-->
-					<!--@if($product->shopping_channel == '네이버 스마트스토어')-->smartstore<!--@end-->
-					<!--@if($product->shopping_channel == '무신사')-->musinsa<!--@end-->
-					<!--@if($product->shopping_channel == '옥션')-->auction<!--@end-->
-					<!--@if($product->shopping_channel == '카카오쇼핑')-->kakaoshopping<!--@end-->
-					">
-				{$product->shopping_channel}</span>
-				<!--@end-->
-				<!--@if($dday_text)-->
-				<span class="dday">{$dday_text}</span>
-				<!--@end-->
-			</div>
-		</div>
 		<div class="pmh-detail-header">
 			<div class="tag">
 				<!--@if($product->product_type == 'local' && $region)-->
@@ -290,6 +244,53 @@
 					</h3>
 				</div>
 
+				<div class="lg:ds-n ds-b">
+					<div class="pmh-page-title">
+						<!--@if($product->product_type == 'local')-->
+						지역 품앗이
+						<!--@else-->
+						상품 품앗이
+						<!--@end-->
+					</div>
+
+					<h3 class="pmh-sidebar-title">
+						<!--@if($product->company_name)-->{$product->company_name} <!--@end-->[{$product->title}]
+					</h3>
+					<!--@if($product->short_description)-->
+					<p class="pmh-detail-desc">{$product->short_description}</p>
+					<!--@end-->
+
+					<div class="tag">
+						<!--@if($product->product_type == 'local' && $region)-->
+						<span class="area 
+							<!--@if($region->title == '수도권')-->seoul<!--@end-->
+							<!--@if($region->title == '충청권')-->chungcheong<!--@end-->
+							<!--@if($region->title == '호남권')-->honam<!--@end-->
+							<!--@if($region->title == '영남권')-->yeongnam<!--@end-->
+							">
+						{$region->title}</span>
+						<!--@elseif($product->shopping_channel)-->
+						<span class="channel 
+							<!--@if($product->shopping_channel == '올리브영')-->oliveyoung<!--@end-->
+							<!--@if($product->shopping_channel == '쿠팡')-->coupang<!--@end-->
+							<!--@if($product->shopping_channel == 'G마켓')-->gmarket<!--@end-->
+							<!--@if($product->shopping_channel == '11번가')-->11st<!--@end-->
+							<!--@if($product->shopping_channel == '자사몰')-->mall<!--@end-->
+							<!--@if($product->shopping_channel == '마켓컬리')-->marketcurly<!--@end-->
+							<!--@if($product->shopping_channel == '카카오선물하기')-->kakaogift<!--@end-->
+							<!--@if($product->shopping_channel == '네이버 스마트스토어')-->smartstore<!--@end-->
+							<!--@if($product->shopping_channel == '무신사')-->musinsa<!--@end-->
+							<!--@if($product->shopping_channel == '옥션')-->auction<!--@end-->
+							<!--@if($product->shopping_channel == '카카오쇼핑')-->kakaoshopping<!--@end-->
+							">
+						{$product->shopping_channel}</span>
+						<!--@end-->
+						<!--@if($dday_text)-->
+						<span class="dday">{$dday_text}</span>
+						<!--@end-->
+					</div>
+				</div>
+
 				<!--@if($product->actual_price)-->
 				<div class="pmh-sidebar-price">
 					<span class="pmh-price-label">실구매가</span>
@@ -305,33 +306,64 @@
 			</div>
 
 			<div class="pmh-sidebar-info">
+				{@
+					$weekdays = array(
+						'Sun' => '일',
+						'Mon' => '월',
+						'Tue' => '화',
+						'Wed' => '수',
+						'Thu' => '목',
+						'Fri' => '금',
+						'Sat' => '토'
+					);
+				}
+
 				<!--@if($product->apply_start_date && $product->apply_end_date)-->
 				<div class="pmh-info-row">
 					<span class="pmh-info-label">품앗이 신청기간</span>
-					<span class="pmh-info-value pmh-count-highlight">{zdate($product->apply_start_date, 'm.d')} ~ {zdate($product->apply_end_date, 'm.d')}</span>
+					<span class="pmh-info-value pmh-count-highlight">
+						{zdate($product->apply_start_date, 'm.d')}({$weekdays[zdate($product->apply_start_date, 'D')]})
+						~
+						{zdate($product->apply_end_date, 'm.d')}({$weekdays[zdate($product->apply_end_date, 'D')]})
+					</span>
 				</div>
 				<!--@end-->
+
 				<!--@if($product->selection_date)-->
 				<div class="pmh-info-row">
 					<span class="pmh-info-label">선정자 발표</span>
-					<span class="pmh-info-value">{zdate($product->selection_date, 'm.d')}</span>
+					<span class="pmh-info-value">
+						{zdate($product->selection_date, 'm.d')}({$weekdays[zdate($product->selection_date, 'D')]})
+					</span>
 				</div>
 				<!--@end-->
+
 				<!--@if($product->review_start_date && $product->review_end_date)-->
 				<div class="pmh-info-row">
 					<span class="pmh-info-label">리뷰 등록기간</span>
-					<span class="pmh-info-value">{zdate($product->review_start_date, 'm.d')} ~ {zdate($product->review_end_date, 'm.d')}</span>
+					<span class="pmh-info-value">
+						{zdate($product->review_start_date, 'm.d')}({$weekdays[zdate($product->review_start_date, 'D')]})
+						~
+						{zdate($product->review_end_date, 'm.d')}({$weekdays[zdate($product->review_end_date, 'D')]})
+					</span>
 				</div>
 				<!--@end-->
+
 				<!--@if($product->result_date)-->
 				<div class="pmh-info-row">
 					<span class="pmh-info-label">품앗이 결과발표</span>
-					<span class="pmh-info-value">{zdate($product->result_date, 'm.d')}</span>
+					<span class="pmh-info-value">
+						{zdate($product->result_date, 'm.d')}({$weekdays[zdate($product->result_date, 'D')]})
+					</span>
 				</div>
 				<!--@end-->
+
 				<div class="pmh-info-row">
 					<span class="pmh-info-label">신청자</span>
-					<span class="pmh-info-value"><span class="pmh-count-highlight">{$application_count}</span><!--@if($product->max_applicants > 0)-->/{$product->max_applicants}명<!--@else-->명<!--@end--></span>
+					<span class="pmh-info-value">
+						<span class="pmh-count-highlight">{$application_count}</span>
+						<!--@if($product->max_applicants > 0)-->/{$product->max_applicants}명<!--@else-->명<!--@end-->
+					</span>
 				</div>
 			</div>
 
@@ -438,11 +470,11 @@ function toggleDetailWishlist(){
 		if(ret.action === 'added'){
 			if(heartBtn){ heartBtn.querySelector('i').className = 'ri-heart-fill'; heartBtn.classList.add('active'); }
 			if(sideBtn){ sideBtn.innerHTML = '관심 <i class="ri-heart-fill"></i>'; sideBtn.classList.add('active'); }
-			if(sideBtn2){ sideBtn2.innerHTML = '관심 <i class="ri-heart-fill"></i>'; sideBtn.classList.add('active'); }
+			if(sideBtn2){ sideBtn2.innerHTML = '관심 <i class="ri-heart-fill"></i>'; sideBtn2.classList.add('active'); }
 		} else {
 			if(heartBtn){ heartBtn.querySelector('i').className = 'ri-heart-line'; heartBtn.classList.remove('active'); }
 			if(sideBtn){ sideBtn.innerHTML = '관심 <i class="ri-heart-line"></i>'; sideBtn.classList.remove('active'); }
-			if(sideBtn2){ sideBtn2.innerHTML = '관심 <i class="ri-heart-line"></i>'; sideBtn.classList.remove('active'); }
+			if(sideBtn2){ sideBtn2.innerHTML = '관심 <i class="ri-heart-line"></i>'; sideBtn2.classList.remove('active'); }
 		}
 	});
 }

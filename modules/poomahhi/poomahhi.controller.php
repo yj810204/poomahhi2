@@ -84,6 +84,50 @@ class poomahhiController extends poomahhi
 	}
 
 	/**
+	 * wp_kakao_noti: 상황별 알림톡 (templateId가 poomahhi 설정에 있을 때만)
+	 *
+	 * @param string $scenario new_application|selected|rejected|revision_requested|completed|review_approved|review_submitted|review_resubmitted
+	 */
+	function _maybeSendAlimtalkPoomahhi($scenario, $to_member_srl, array $variables, $url = '')
+	{
+		$to_member_srl = (int)$to_member_srl;
+		if($to_member_srl < 1)
+		{
+			return;
+		}
+		$oK = getController('wp_kakao_noti');
+		if(!$oK || !method_exists($oK, 'sendAlimtalkToMember'))
+		{
+			return;
+		}
+		$oModel = getModel('poomahhi');
+		$cfg = $oModel->getModuleConfig();
+		$key = 'alimtalk_tpl_' . $scenario;
+		if(!isset($cfg->$key))
+		{
+			return;
+		}
+		$tid = trim((string)$cfg->$key);
+		if($tid === '')
+		{
+			return;
+		}
+		$buttons = array();
+		if($url !== '')
+		{
+			$buttons[] = array(
+				'buttonType' => 'WL',
+				'buttonName' => '바로가기',
+				'linkMo' => $url,
+				'linkPc' => $url,
+			);
+		}
+		$oK->sendAlimtalkToMember($to_member_srl, $tid, $variables, $buttons, array(
+			'caller_module' => 'poomahhi',
+		));
+	}
+
+	/**
 	 * 비즈니스 홈 배너 닫기: ncenter 알림은 읽음 처리, 그 외(신청·리뷰·마감)는 쿠키로 숨김 기록
 	 */
 	function procPoomahhiDismissBusinessDashboardBanner()
@@ -119,19 +163,37 @@ class poomahhiController extends poomahhi
 		$product_srl = (int)Context::get('product_srl');
 		$application_srl = (int)Context::get('application_srl');
 
+		$dismiss_types = array('application', 'deadline', 'review');
+		if($banner_type === '' || !in_array($banner_type, $dismiss_types, true))
+		{
+			return new BaseObject();
+		}
+
 		$oModel = getModel('poomahhi');
 		$key = null;
+		$can_manage_product = function($product) use ($logged_info)
+		{
+			if(!$product || !isset($product->member_srl))
+			{
+				return false;
+			}
+			if((int)$product->member_srl === (int)$logged_info->member_srl)
+			{
+				return true;
+			}
+			return $this->_isAdmin($logged_info);
+		};
 
 		if($banner_type === 'application')
 		{
 			if($product_srl < 1)
 			{
-				return new BaseObject(-1, '요청이 올바르지 않습니다.');
+				return new BaseObject();
 			}
 			$product = $oModel->getProduct($product_srl);
-			if(!$product || (int)$product->member_srl !== (int)$logged_info->member_srl)
+			if(!$can_manage_product($product))
 			{
-				return new BaseObject(-1, '요청이 올바르지 않습니다.');
+				return new BaseObject();
 			}
 			$key = 'application:' . $product_srl;
 		}
@@ -139,12 +201,12 @@ class poomahhiController extends poomahhi
 		{
 			if($product_srl < 1)
 			{
-				return new BaseObject(-1, '요청이 올바르지 않습니다.');
+				return new BaseObject();
 			}
 			$product = $oModel->getProduct($product_srl);
-			if(!$product || (int)$product->member_srl !== (int)$logged_info->member_srl)
+			if(!$can_manage_product($product))
 			{
-				return new BaseObject(-1, '요청이 올바르지 않습니다.');
+				return new BaseObject();
 			}
 			$key = 'deadline:' . $product_srl;
 		}
@@ -152,23 +214,19 @@ class poomahhiController extends poomahhi
 		{
 			if($application_srl < 1)
 			{
-				return new BaseObject(-1, '요청이 올바르지 않습니다.');
+				return new BaseObject();
 			}
 			$app = $oModel->getApplication($application_srl);
 			if(!$app)
 			{
-				return new BaseObject(-1, '요청이 올바르지 않습니다.');
+				return new BaseObject();
 			}
 			$product = $oModel->getProduct($app->product_srl);
-			if(!$product || (int)$product->member_srl !== (int)$logged_info->member_srl)
+			if(!$can_manage_product($product))
 			{
-				return new BaseObject(-1, '요청이 올바르지 않습니다.');
+				return new BaseObject();
 			}
 			$key = 'review:' . $application_srl;
-		}
-		else
-		{
-			return new BaseObject(-1, '요청이 올바르지 않습니다.');
 		}
 
 		$map = $this->_poomahhiReadBannerDismissCookie();
@@ -734,6 +792,11 @@ class poomahhiController extends poomahhi
 		}
 		// ncenter: 수신=개설자(product), 발신=신청자(신규 신청 알림)
 		$this->_sendNotification($logged_info->member_srl, $product->member_srl, $noti_msg, $manage_url, $insert_args->application_srl);
+		$this->_maybeSendAlimtalkPoomahhi('new_application', (int)$product->member_srl, array(
+			'품앗이명' => (string)$product->title,
+			'신청자닉' => isset($logged_info->nick_name) ? (string)$logged_info->nick_name : '',
+			'신청자아이디' => isset($logged_info->user_id) ? (string)$logged_info->user_id : '',
+		), $manage_url);
 
 		$this->setMessage('등록되었습니다.');
 
@@ -822,11 +885,17 @@ class poomahhiController extends poomahhi
 		{
 			$noti_msg = sprintf('[%s] 품앗이에 선정되었습니다.', $product->title);
 			$this->_sendNotification($product->member_srl, $application->member_srl, $noti_msg, $detail_url, $application_srl);
+			$this->_maybeSendAlimtalkPoomahhi('selected', (int)$application->member_srl, array(
+				'품앗이명' => (string)$product->title,
+			), $detail_url);
 		}
 		elseif($new_status === 'rejected')
 		{
 			$noti_msg = sprintf('[%s] 품앗이에 미선정되었습니다.', $product->title);
 			$this->_sendNotification($product->member_srl, $application->member_srl, $noti_msg, $detail_url, $application_srl);
+			$this->_maybeSendAlimtalkPoomahhi('rejected', (int)$application->member_srl, array(
+				'품앗이명' => (string)$product->title,
+			), $detail_url);
 		}
 		elseif($new_status === 'revision_requested')
 		{
@@ -846,11 +915,19 @@ class poomahhiController extends poomahhi
 				$noti_msg = sprintf('%s님의 참여 인증 제출이 수정요청되었습니다.', $applicant_nick);
 			}
 			$this->_sendNotification($product->member_srl, $application->member_srl, $noti_msg, $detail_url, $application_srl);
+			$this->_maybeSendAlimtalkPoomahhi('revision_requested', (int)$application->member_srl, array(
+				'품앗이명' => (string)$product->title,
+				'신청자닉' => (string)$applicant_nick,
+				'신청자아이디' => $applicant_user_id,
+			), $detail_url);
 		}
 		elseif($new_status === 'completed')
 		{
 			$noti_msg = sprintf('%s님의 참여 인증 제출이 완료되었습니다.', $applicant_nick);
 			$this->_sendNotification($product->member_srl, $application->member_srl, $noti_msg, $detail_url, $application_srl);
+			$this->_maybeSendAlimtalkPoomahhi('completed', (int)$application->member_srl, array(
+				'신청자닉' => (string)$applicant_nick,
+			), $detail_url);
 		}
 
 		$this->setMessage('수정되었습니다.');
@@ -902,6 +979,9 @@ class poomahhiController extends poomahhi
 		$noti_msg = sprintf('[%s] 참여인증이 승인되었습니다.', $product->title);
 		// ncenter: 수신=신청자, 발신=개설자
 		$this->_sendNotification($product->member_srl, $application->member_srl, $noti_msg, $detail_url, $application_srl);
+		$this->_maybeSendAlimtalkPoomahhi('review_approved', (int)$application->member_srl, array(
+			'품앗이명' => (string)$product->title,
+		), $detail_url);
 
 		$this->setMessage('수정되었습니다.');
 		$returnUrl = Context::get('success_return_url');
@@ -1057,6 +1137,11 @@ class poomahhiController extends poomahhi
 		}
 		// ncenter: 수신=개설자, 발신=신청자(참여 인증 제출 알림)
 		$this->_sendNotification($logged_info->member_srl, $product->member_srl, $noti_msg, $manage_url, $application_srl);
+		$this->_maybeSendAlimtalkPoomahhi('review_submitted', (int)$product->member_srl, array(
+			'품앗이명' => (string)$product->title,
+			'신청자닉' => (string)$applicant_nick,
+			'신청자아이디' => $applicant_user_id,
+		), $manage_url);
 
 		$this->setMessage('등록되었습니다.');
 		$returnUrl = getNotEncodedUrl('', 'mid', $this->mid, 'act', 'dispPoomahhiApplicationList');
@@ -1136,6 +1221,11 @@ class poomahhiController extends poomahhi
 			}
 			// ncenter: 수신=개설자, 발신=신청자(수정요청 후 재제출)
 			$this->_sendNotification($logged_info->member_srl, $product->member_srl, $noti_msg, $manage_url, $application_srl);
+			$this->_maybeSendAlimtalkPoomahhi('review_resubmitted', (int)$product->member_srl, array(
+				'품앗이명' => (string)$product->title,
+				'신청자닉' => (string)$applicant_nick,
+				'신청자아이디' => $applicant_user_id,
+			), $manage_url);
 		}
 
 		$this->setMessage('수정되었습니다.');
@@ -1554,7 +1644,6 @@ class poomahhiController extends poomahhi
 		$region_map = array();
 		$wishlist_map = array();
 		$logged_info = Context::get('logged_info');
-		$today = new DateTime('today');
 
 		if ($module_srl > 0 && $region_srl > 0)
 		{
@@ -1599,13 +1688,11 @@ class poomahhiController extends poomahhi
 				$dday_source = $product->apply_end_date ?: $product->deadline_date;
 				if ($dday_source)
 				{
-					$deadline = DateTime::createFromFormat('YmdHis', $dday_source);
-					if ($deadline)
+					$days = $oModel->getProductApplyDeadlineDayOffset($dday_source);
+					if ($days !== null)
 					{
-						$diff = $today->diff($deadline);
-						$days = (int) $diff->format('%r%a');
 						$product->dday = $days;
-						$product->dday_text = ($days > 0) ? 'D-' . $days : (($days == 0) ? 'D-Day' : '마감');
+						$product->dday_text = $oModel->getProductApplyDdayTextFromDayOffset($days);
 					}
 				}
 				if ($product->short_description)

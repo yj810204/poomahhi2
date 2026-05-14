@@ -15,21 +15,21 @@
 				<span class="pmh-business-banner__main">
 					<strong class="pmh-business-banner__new">NEW</strong>
 					<!--@if($pmh_banner->type == 'application')-->
-					<span class="pmh-business-banner__icon pmh-business-banner__icon--application" aria-hidden="true">👤</span>
+					<span class="pmh-business-banner__icon pmh-business-banner__icon--application" aria-hidden="true"></span>
 					<span class="pmh-business-banner__text">새로운 <b>품앗이 신청</b>이 왔습니다.</span>
 					<!--@elseif($pmh_banner->type == 'review')-->
-					<span class="pmh-business-banner__icon pmh-business-banner__icon--review" aria-hidden="true">⛰️</span>
-					<span class="pmh-business-banner__text"><b>{$pmh_banner->applicant_nick}</b>님의 참여 인증 제출이 완료되었습니다.</span>
+					<span class="pmh-business-banner__icon pmh-business-banner__icon--review" aria-hidden="true"></span>
+					<span class="pmh-business-banner__text"><b>{$pmh_banner->applicant_nick}</b>님의 <b>참여 인증 제출</b>이 <b>완료</b>되었습니다.</span>
 					<!--@elseif($pmh_banner->type == 'deadline')-->
-					<span class="pmh-business-banner__icon pmh-business-banner__icon--deadline" aria-hidden="true">📢</span>
+					<span class="pmh-business-banner__icon pmh-business-banner__icon--deadline" aria-hidden="true"></span>
 					<!--@if($pmh_banner->deadline_line)-->
 					<span class="pmh-business-banner__text">{$pmh_banner->deadline_line}</span>
 					<!--@else-->
-					<span class="pmh-business-banner__text"><b>{$pmh_banner->product_title}</b> 품앗이 마감이 <b>{$pmh_banner->days_remaining}</b>일 남았습니다.</span>
+					<span class="pmh-business-banner__text"><b>{$pmh_banner->product_title}</b> 품앗이 <b>마감</b>이 <b>{$pmh_banner->days_remaining}일</b> 남았습니다.</span>
 					<!--@end-->
 					<!--@elseif($pmh_banner->type == 'notice_ncenter')-->
-					<span class="pmh-business-banner__icon pmh-business-banner__icon--notice" aria-hidden="true">⚙️</span>
-					<span class="pmh-business-banner__text"><span class="pmh-business-banner__catlabel">시스템 공지</span> {$pmh_banner->notify_text}</span>
+					<span class="pmh-business-banner__icon pmh-business-banner__icon--notice" aria-hidden="true"></span>
+					<span class="pmh-business-banner__text"><span class="pmh-business-banner__catlabel fw-b">시스템 공지</span> {$pmh_banner->notify_text}</span>
 					<!--@elseif($pmh_banner->type == 'ncenterlite_misc')-->
 					<span class="pmh-business-banner__icon pmh-business-banner__icon--ncenterlite-misc" aria-hidden="true">💬</span>
 					<span class="pmh-business-banner__text"><span class="pmh-business-banner__catlabel">기타알림</span> {$pmh_banner->notify_text}</span>
@@ -198,23 +198,41 @@
 
 <script>
 (function($){
-	function pmhDismissBannerFromRoot($b)
+	function pmhBannerDismissParams($b)
 	{
 		var notify = ($b.attr('data-ncenter-notify') || '').trim();
 		if(notify.length)
 		{
-			$.exec_json('poomahhi.procPoomahhiDismissBusinessDashboardBanner', { notify: notify });
-			return;
+			return { notify: notify };
 		}
 		var t = ($b.attr('data-banner-type') || '').trim();
-		var params = { banner_type: t };
 		if(t === 'review')
 		{
-			params.application_srl = parseInt($b.attr('data-application-srl'), 10) || 0;
+			var application_srl = parseInt($b.attr('data-application-srl'), 10) || 0;
+			if(application_srl < 1)
+			{
+				return null;
+			}
+			return { banner_type: t, application_srl: application_srl };
 		}
-		else
+		if(t === 'application' || t === 'deadline')
 		{
-			params.product_srl = parseInt($b.attr('data-product-srl'), 10) || 0;
+			var product_srl = parseInt($b.attr('data-product-srl'), 10) || 0;
+			if(product_srl < 1)
+			{
+				return null;
+			}
+			return { banner_type: t, product_srl: product_srl };
+		}
+		return null;
+	}
+
+	function pmhDismissBannerFromRoot($b)
+	{
+		var params = pmhBannerDismissParams($b);
+		if(!params)
+		{
+			return;
 		}
 		$.exec_json('poomahhi.procPoomahhiDismissBusinessDashboardBanner', params);
 	}
@@ -230,8 +248,13 @@
 		{
 			return;
 		}
-		e.preventDefault();
 		var $b = $a.closest('.pmh-business-banner');
+		var params = pmhBannerDismissParams($b);
+		if(!params)
+		{
+			return;
+		}
+		e.preventDefault();
 		var navigated = false;
 		var go = function()
 		{
@@ -243,34 +266,7 @@
 			window.location.href = href;
 		};
 		var fallback = window.setTimeout(go, 500);
-
-		var notify = ($b.attr('data-ncenter-notify') || '').trim();
-		if(notify.length)
-		{
-			$.exec_json('poomahhi.procPoomahhiDismissBusinessDashboardBanner', { notify: notify }, function()
-			{
-				window.clearTimeout(fallback);
-				go();
-			});
-			return;
-		}
-		var t = ($b.attr('data-banner-type') || '').trim();
-		if(!t)
-		{
-			window.clearTimeout(fallback);
-			go();
-			return;
-		}
-		var params = { banner_type: t };
-		if(t === 'review')
-		{
-			params.application_srl = parseInt($b.attr('data-application-srl'), 10) || 0;
-		}
-		else
-		{
-			params.product_srl = parseInt($b.attr('data-product-srl'), 10) || 0;
-		}
-		$.exec_json('poomahhi.procPoomahhiDismissBusinessDashboardBanner', params, function()
+		$.exec_json('poomahhi.procPoomahhiDismissBusinessDashboardBanner', params, function(ret)
 		{
 			window.clearTimeout(fallback);
 			go();

@@ -62,6 +62,15 @@ class poomahhiAdminController extends poomahhi
 		if(strlen($config->noti_tpl_review_submitted) > 500) $config->noti_tpl_review_submitted = function_exists('mb_substr') ? mb_substr($config->noti_tpl_review_submitted, 0, 500, 'UTF-8') : substr($config->noti_tpl_review_submitted, 0, 500);
 		if(strlen($config->noti_tpl_revision_requested) > 500) $config->noti_tpl_revision_requested = function_exists('mb_substr') ? mb_substr($config->noti_tpl_revision_requested, 0, 500, 'UTF-8') : substr($config->noti_tpl_revision_requested, 0, 500);
 		if(strlen($config->noti_tpl_deadline_banner) > 500) $config->noti_tpl_deadline_banner = function_exists('mb_substr') ? mb_substr($config->noti_tpl_deadline_banner, 0, 500, 'UTF-8') : substr($config->noti_tpl_deadline_banner, 0, 500);
+		$config->alimtalk_tpl_new_application = isset($args->alimtalk_tpl_new_application) ? trim((string)$args->alimtalk_tpl_new_application) : '';
+		$config->alimtalk_tpl_selected = isset($args->alimtalk_tpl_selected) ? trim((string)$args->alimtalk_tpl_selected) : '';
+		$config->alimtalk_tpl_rejected = isset($args->alimtalk_tpl_rejected) ? trim((string)$args->alimtalk_tpl_rejected) : '';
+		$config->alimtalk_tpl_revision_requested = isset($args->alimtalk_tpl_revision_requested) ? trim((string)$args->alimtalk_tpl_revision_requested) : '';
+		$config->alimtalk_tpl_completed = isset($args->alimtalk_tpl_completed) ? trim((string)$args->alimtalk_tpl_completed) : '';
+		$config->alimtalk_tpl_review_approved = isset($args->alimtalk_tpl_review_approved) ? trim((string)$args->alimtalk_tpl_review_approved) : '';
+		$config->alimtalk_tpl_review_submitted = isset($args->alimtalk_tpl_review_submitted) ? trim((string)$args->alimtalk_tpl_review_submitted) : '';
+		$config->alimtalk_tpl_review_resubmitted = isset($args->alimtalk_tpl_review_resubmitted) ? trim((string)$args->alimtalk_tpl_review_resubmitted) : '';
+		$config->alimtalk_tpl_business_broadcast = isset($args->alimtalk_tpl_business_broadcast) ? trim((string)$args->alimtalk_tpl_business_broadcast) : '';
 		$config->content_point_type = 'rhymix';
 
 		$output = $oModuleController->insertModuleConfig('poomahhi', $config);
@@ -478,6 +487,29 @@ class poomahhiAdminController extends poomahhi
 			if($nout->toBool())
 			{
 				$sent++;
+				$oK = getController('wp_kakao_noti');
+				if($oK && method_exists($oK, 'sendAlimtalkToMember'))
+				{
+					$oPm = getModel('poomahhi');
+					$pmc = $oPm->getModuleConfig();
+					$atid = isset($pmc->alimtalk_tpl_business_broadcast) ? trim((string)$pmc->alimtalk_tpl_business_broadcast) : '';
+					if($atid !== '')
+					{
+						$oK->sendAlimtalkToMember($member_srl, $atid, array(
+							'공지내용' => $message,
+							'발송일시' => date('Y-m-d H:i'),
+							'관리자닉' => isset($logged_info->nick_name) ? (string)$logged_info->nick_name : '',
+							'관리자아이디' => isset($logged_info->user_id) ? (string)$logged_info->user_id : '',
+						), ($url !== '' ? array(array(
+							'buttonType' => 'WL',
+							'buttonName' => '공지 확인',
+							'linkMo' => $url,
+							'linkPc' => $url,
+						)) : array()), array(
+							'caller_module' => 'poomahhi_business_broadcast',
+						));
+					}
+				}
 			}
 			else
 			{

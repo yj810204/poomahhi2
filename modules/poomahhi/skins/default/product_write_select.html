@@ -1,5 +1,7 @@
 <load target="css/business.scss" />
 <load target="../../../member/css/member.scss" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <div class="pmh-business-layout">
 <include target="_business_sidebar.html" />
 <div class="member-contents pmh-business-main pmh-product-write-select">
@@ -12,26 +14,33 @@
 					<h3>상품 품앗이</h3>
 					<p class="pmh-pws-desc">내가 인터넷에 판매하는 상품을 품앗이에 올려서 <br>퀄리티 높은 리뷰를 받아보세요!</p>
 					<div class="tag">
-						<!--@foreach($pws_channel_list as $ch_item)-->
-						<span class="channel
-							<!--@if($ch_item->title == '올리브영')-->oliveyoung<!--@end-->
-							<!--@if($ch_item->title == '쿠팡')-->coupang<!--@end-->
-							<!--@if($ch_item->title == 'G마켓')-->gmarket<!--@end-->
-							<!--@if($ch_item->title == '11번가')-->11st<!--@end-->
-							<!--@if($ch_item->title == '자사몰')-->mall<!--@end-->
-							<!--@if($ch_item->title == '마켓컬리')-->marketcurly<!--@end-->
-							<!--@if($ch_item->title == '카카오선물하기')-->kakaogift<!--@end-->
-							<!--@if($ch_item->title == '네이버 스마트스토어')-->smartstore<!--@end-->
-							<!--@if($ch_item->title == '무신사')-->musinsa<!--@end-->
-							<!--@if($ch_item->title == '옥션')-->auction<!--@end-->
-							<!--@if($ch_item->title == '카카오쇼핑')-->kakaoshopping<!--@end-->
-							<!--@if($ch_item->title == '수도권')-->seoul<!--@end-->
-							<!--@if($ch_item->title == '충청권')-->chungcheong<!--@end-->
-							<!--@if($ch_item->title == '호남권')-->honam<!--@end-->
-							<!--@if($ch_item->title == '영남권')-->yeongnam<!--@end-->
-							">
-						{$ch_item->title}</span>
-						<!--@end-->
+						<div class="swiper pmh-channel-swiper">
+							<div class="swiper-wrapper">
+								<!--@foreach($pws_channel_list as $ch_item)-->
+								<div class="swiper-slide">
+									<span class="channel
+										<!--@if($ch_item->title == '올리브영')-->oliveyoung<!--@end-->
+										<!--@if($ch_item->title == '쿠팡')-->coupang<!--@end-->
+										<!--@if($ch_item->title == 'G마켓')-->gmarket<!--@end-->
+										<!--@if($ch_item->title == '11번가')-->11st<!--@end-->
+										<!--@if($ch_item->title == '자사몰')-->mall<!--@end-->
+										<!--@if($ch_item->title == '마켓컬리')-->marketcurly<!--@end-->
+										<!--@if($ch_item->title == '카카오선물하기')-->kakaogift<!--@end-->
+										<!--@if($ch_item->title == '네이버 스마트스토어')-->smartstore<!--@end-->
+										<!--@if($ch_item->title == '무신사')-->musinsa<!--@end-->
+										<!--@if($ch_item->title == '옥션')-->auction<!--@end-->
+										<!--@if($ch_item->title == '카카오쇼핑')-->kakaoshopping<!--@end-->
+										<!--@if($ch_item->title == '수도권')-->seoul<!--@end-->
+										<!--@if($ch_item->title == '충청권')-->chungcheong<!--@end-->
+										<!--@if($ch_item->title == '호남권')-->honam<!--@end-->
+										<!--@if($ch_item->title == '영남권')-->yeongnam<!--@end-->
+									">
+										{$ch_item->title}
+									</span>
+								</div>
+								<!--@end-->
+							</div>
+						</div>
 					</div>
 				</div>
 				<div class="pmh-pws-card-side">
@@ -87,3 +96,21 @@
 	</div>
 </div>
 </div>
+
+<script>
+jQuery(function($){
+
+	new Swiper('.pmh-channel-swiper', {
+		slidesPerView:'auto',
+		spaceBetween:5,
+		freeMode:true,
+		watchOverflow:true,
+	});
+
+});
+</script>
+<style>
+	.pmh-channel-swiper .swiper-slide {
+		width: auto;
+	}
+</style>

@@ -12,10 +12,11 @@
 
 <h1>내가 작성한 리뷰</h1>
 
-<div class="pmh-mmr-wrap">
-	<div class="pmh-mr-list mypage_wrap">
+<div class="pmh-mmr-wrap poomahhi-my-reviews">
+	<div class="pmh-mr-list mt-0">
 		<div class="pmh-mr-list-title">총 <b><!--@if($total_count)-->{$total_count}<!--@else-->0<!--@end--></b>건</div>
 
+		<div>
 		<!--@if($review_list)-->
 		<!--@foreach($review_list as $review)-->
 		<div class="pmh-mr-card">
@@ -24,7 +25,7 @@
 					<!--@if($logged_info->profile_image)-->
 					<img src="{$logged_info->profile_image->src}" alt="" class="pmh-mr-card-avatar" />
 					<!--@else-->
-					<img src="img/noimage.png" alt="" class="pmh-mr-card-avatar" />
+					<img src="/assets/images/icon/profile.png" alt="" class="pmh-mr-card-avatar" />
 					<!--@end-->
 					<span class="pmh-mr-card-name-time">
 						{$logged_info->nick_name}
@@ -36,23 +37,21 @@
 			<div class="pmh-mr-card-content"><!--@if($review->content)-->{$review->content}<!--@else-->-<!--@end--></div>
 
 			<!-- 신청자 카드 -->
-			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationManageDetail', 'application_srl', $review->application_srl)}" class="pmh-mmr-applicant-card">
-				<div class="pmh-mmr-applicant-img">
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationManageDetail', 'application_srl', $review->application_srl)}" class="pmh-mr-product">
+				<div class="pmh-mr-product-img">
 					<!--@if($review->product_image)-->
 					<img src="{$review->product_image}" alt="" />
-					<!--@else-->
-					<div class="pmh-mmr-applicant-noimg"><i class="bi bi-image"></i></div>
 					<!--@end-->
 				</div>
-				<div class="pmh-mmr-applicant-info">
-					<div class="pmh-mmr-applicant-company">
+				<div class="pmh-mr-product-info">
+					<div class="pmh-mr-product-company">
 						<!--@if($review->company_name)-->{$review->company_name}<!--@end-->
 						<!--@if($review->product_title)-->[{$review->product_title}]<!--@end-->
 					</div>
 					<div class="pmh-mmr-applicant-meta">
 						<!--@if($review->target_nickname)-->{$review->target_nickname}<!--@end-->
-						<!--@if($review->gender_display)--> · {$review->gender_display}<!--@end-->
-						<!--@if($review->birth_display)--> · {$review->birth_display}<!--@end-->
+						<!--@if($review->gender_display)--> <span class=bh_color_gray_300>•</span> {$review->gender_display}<!--@end-->
+						<!--@if($review->birth_display)--> <span class=bh_color_gray_300>•</span> {$review->birth_display}<!--@end-->
 					</div>
 					<div class="pmh-mmr-applicant-dates">
 						<!--@if($review->apply_date)-->
@@ -69,7 +68,8 @@
 			</a>
 		</div>
 		<!--@end-->
-
+		</div>
+		
 		<!--@if($page_navigation)-->
 		<div class="pmh-pagination pmh-mr-pagination ds-n">
 			<!--@if($page_navigation->cur_page > 1)-->
@@ -96,31 +96,5 @@
 <!--@else-->
 </div>
 <!--@end-->
-
-<style>
-.pmh-mmr-wrap h1 { margin: 0 0 20px; font-size: 24px; font-weight: 700; }
-.pmh-mmr-applicant-card {
-	display: flex;
-	align-items: flex-start;
-	gap: 12px;
-	background: #f8f8f8;
-	border-radius: 10px;
-	padding: 12px;
-	margin-top: 12px;
-	text-decoration: none;
-	color: inherit;
-	transition: background 0.15s;
-}
-.pmh-mmr-applicant-card:hover { background: #f0f0f0; }
-.pmh-mmr-applicant-img { width: 72px; height: 72px; flex-shrink: 0; border-radius: 6px; overflow: hidden; background: #e0e0e0; }
-.pmh-mmr-applicant-img img { width: 100%; height: 100%; object-fit: cover; }
-.pmh-mmr-applicant-noimg { width: 72px; height: 72px; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 24px; }
-.pmh-mmr-applicant-info { flex: 1; min-width: 0; }
-.pmh-mmr-applicant-company { font-size: 14px; font-weight: 600; color: #222; margin-bottom: 4px; }
-.pmh-mmr-applicant-meta { font-size: 13px; color: #555; margin-bottom: 6px; }
-.pmh-mmr-applicant-dates { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; }
-.pmh-mmr-date-label { color: #888; }
-.pmh-mmr-date-val { color: #333; font-weight: 500; }
-</style>
 
 <include target="../../../member/skins/poomahhi/common_footer.html" />

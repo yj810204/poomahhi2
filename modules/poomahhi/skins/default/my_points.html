@@ -6,7 +6,7 @@
 		<!-- 라이믹스 포인트: 보유 / 레벨 -->
 		<div class="pmh-mp-summary">
 			<div class="pmh-mp-summary-item">
-				<div class="pmh-mp-summary-label">보유 포인트</div>
+				<div class="pmh-mp-summary-label">전체 보유 포인트</div>
 				<div class="pmh-mp-summary-value">{$point_summary->point_formatted}P</div>
 			</div>
 			<div class="pmh-mp-summary-item">
@@ -27,15 +27,15 @@
 				</div>
 				<div class="pmh-mp-month-nav">
 					<!--@if($current_month > 1)-->
-					<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiMyPoints', 'year', $current_year, 'month', $current_month - 1, 'type', $current_type, 'page', 1)}" class="pmh-mp-month-btn"><i class="bi bi-chevron-left"></i></a>
+					<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiMyPoints', 'year', $current_year, 'month', $current_month - 1, 'type', $current_type, 'page', 1)}" class="pmh-mp-month-btn"><i class="ri-arrow-left-s-line"></i></a>
 					<!--@else-->
-					<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiMyPoints', 'year', $current_year - 1, 'month', 12, 'type', $current_type, 'page', 1)}" class="pmh-mp-month-btn"><i class="bi bi-chevron-left"></i></a>
+					<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiMyPoints', 'year', $current_year - 1, 'month', 12, 'type', $current_type, 'page', 1)}" class="pmh-mp-month-btn"><i class="ri-arrow-left-double-line"></i></a>
 					<!--@end-->
 					<span class="pmh-mp-month-label">{$current_year}년 {$current_month}월</span>
 					<!--@if($current_month < 12)-->
-					<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiMyPoints', 'year', $current_year, 'month', $current_month + 1, 'type', $current_type, 'page', 1)}" class="pmh-mp-month-btn"><i class="bi bi-chevron-right"></i></a>
+					<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiMyPoints', 'year', $current_year, 'month', $current_month + 1, 'type', $current_type, 'page', 1)}" class="pmh-mp-month-btn"><i class="ri-arrow-right-s-line"></i></a>
 					<!--@else-->
-					<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiMyPoints', 'year', $current_year + 1, 'month', 1, 'type', $current_type, 'page', 1)}" class="pmh-mp-month-btn"><i class="bi bi-chevron-right"></i></a>
+					<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiMyPoints', 'year', $current_year + 1, 'month', 1, 'type', $current_type, 'page', 1)}" class="pmh-mp-month-btn"><i class="ri-arrow-right-double-line"></i></a>
 					<!--@end-->
 				</div>
 			</div>
@@ -60,20 +60,6 @@
 				</div>
 				<!--@end-->
 
-				<!--@if($page_navigation)-->
-				<div class="pmh-mp-pagination">
-					<!--@if($page_navigation->cur_page > 1)-->
-					<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiMyPoints', 'year', $current_year, 'month', $current_month, 'type', $current_type, 'page', $page_navigation->cur_page - 1)}">&lsaquo; 이전</a>
-					<!--@end-->
-					<!--@for($i = $page_navigation->first_page; $i <= $page_navigation->last_page; $i++)-->
-					<!--@if($i == $page_navigation->cur_page)--><strong>[{$i}]</strong><!--@else--><a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiMyPoints', 'year', $current_year, 'month', $current_month, 'type', $current_type, 'page', $i)}">[{$i}]</a><!--@end-->
-					<!--@end-->
-					<!--@if($page_navigation->cur_page < $page_navigation->total_page)-->
-					<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiMyPoints', 'year', $current_year, 'month', $current_month, 'type', $current_type, 'page', $page_navigation->cur_page + 1)}">다음 &rsaquo;</a>
-					<!--@end-->
-				</div>
-				<!--@end-->
-
 				<!--@else-->
 				<p class="pmh-mp-empty"><!--@if($rhymix_point_history_available)-->해당 기간에 포인트 내역이 없습니다.<!--@else-->내역을 불러올 수 없습니다. 포인트 히스토리 모듈 설치 후 이용해 주세요.<!--@end--></p>
 				<!--@end-->
@@ -82,30 +68,4 @@
 	</div>
 </div>
 
-<style>
-
-.pmh-mp-month-nav { display: flex; align-items: center; gap: 12px; }
-.pmh-mp-month-btn { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; color: #666; text-decoration: none; border: 1px solid #ddd; border-radius: 6px; }
-.pmh-mp-month-btn:hover { background: #f5f5f5; color: #333; }
-.pmh-mp-month-label { font-size: 14px; font-weight: 600; }
-.pmh-mp-list { }
-.pmh-mp-card { display: flex; align-items: flex-start; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid #eee; gap: 16px; }
-.pmh-mp-card:last-of-type { border-bottom: none; }
-.pmh-mp-card-left { flex: 1; min-width: 0; }
-.pmh-mp-badge { display: inline-block; padding: 4px 10px; font-size: 12px; font-weight: 600; border-radius: 4px; margin-bottom: 8px; }
-.pmh-mp-badge-earn { background: #7b1fa2; color: #fff; }
-.pmh-mp-badge-deduct { background: #1976d2; color: #fff; }
-.pmh-mp-card-content { font-size: 14px; line-height: 1.5; color: #333; margin-bottom: 6px; }
-.pmh-mp-card-time { font-size: 12px; color: #999; }
-.pmh-mp-card-right { flex-shrink: 0; }
-.pmh-mp-point { font-size: 16px; font-weight: 700; }
-.pmh-mp-point-earn { color: #7b1fa2; }
-.pmh-mp-point-deduct { color: #1976d2; }
-.pmh-mp-pagination { margin-top: 20px; text-align: center; font-size: 14px; }
-.pmh-mp-pagination a { margin: 0 4px; color: #1976d2; text-decoration: none; }
-.pmh-mp-pagination a:hover { text-decoration: underline; }
-.pmh-mp-empty { text-align: center; padding: 40px 0; color: #999; font-size: 14px; }
-.pmh-mp-notice { font-size: 13px; color: #666; line-height: 1.5; padding: 12px 14px; background: #f7f7f9; border-radius: 8px; margin-bottom: 16px; }
-
-</style>
 <include target="../../../member/skins/poomahhi/common_footer.html" />

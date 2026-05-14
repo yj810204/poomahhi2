@@ -460,8 +460,6 @@ class popular_docs extends WidgetHandler
 			$cache_action = self::_popularDocsWriteRankCache($rank_cache_path, $current_ranks, $rank_arrow_map) ? 'recalc_save' : 'recalc_save_failed';
 		}
 
-		debugPrint('[PD]', $period, $rank_cache_scope, $cache_action, 'arrows', $rank_arrow_map);
-
 		$skin_path = $this->widget_path . 'skins/' . (isset($args->skin) ? $args->skin : 'default') . '/';
 
 		Context::set('list', $list);

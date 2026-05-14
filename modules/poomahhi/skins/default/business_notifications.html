@@ -34,33 +34,39 @@
 
 		<!--@if($notification_list)-->
 		<div class="pmh-bn-list-wrap">
-			<div class="pmh-bn-list-head" aria-hidden="true">
-				<span class="pmh-bn-list-head__cat">항목</span>
-				<span class="pmh-bn-list-head__ico"></span>
-				<span class="pmh-bn-list-head__main">내용</span>
-				<span class="pmh-bn-list-head__meta">상태</span>
-			</div>
+		<table>
+			<colgroup>
+				<col width="14%">
+				<col width="50%">
+				<col width="13%">
+				<col width="13%">
+			</colgroup>
+			<thead class="pmh-bn-list-head" aria-hidden="true">
+				<th class="pmh-bn-list-head__cat">항목</th>
+				<th class="pmh-bn-list-head__main">내용</th>
+				<th class="pmh-bn-list-head__meta">상태</th>
+				<th class="pmh-bn-list-head__data">날짜</th>
+			</thead>
 			<!--@foreach($notification_list as $notify_row)-->
-			<div class="pmh-bn-row">
-				<a href="{$notify_row->url}" class="pmh-bn-row__link">
-					<span class="pmh-bn-row__cat"><!--@if($notify_row->notify_category_label)-->{$notify_row->notify_category_label}<!--@else-->—<!--@end--></span>
-					<!--@if($notify_row->is_poomahhi_synthetic == 'deadline')-->
-					<span class="pmh-bn-row__emoji" aria-hidden="true">📢</span>
-					<!--@else-->
-					<i class="bi {$notify_row->notify_icon_class} pmh-bn-row__ico" aria-hidden="true"></i>
-					<!--@end-->
-					<span class="pmh-bn-row__text"><!--@if($notify_row->pmh_list_text)-->{$notify_row->pmh_list_text}<!--@else-->{$notify_row->notify_display_title}<!--@end--></span>
-					<span class="pmh-bn-row__meta">
-						<!--@if($notify_row->readed == 'SYN')-->
-						<span class="pmh-bn-meta">{$notify_row->ago}</span>
-						<!--@else-->
-						<!--@if($notify_row->readed == 'N')--><span class="pmh-bn-meta unread">안읽음</span><!--@else--><span class="pmh-bn-meta read">읽음</span><!--@end-->
-						<span class="pmh-bn-meta sep">{$notify_row->ago}</span>
-						<!--@end-->
-					</span>
-				</a>
-			</div>
+			<tbody class="pmh-bn-row">
+				<td class="category">
+					<span><!--@if($notify_row->notify_category_label)-->{$notify_row->notify_category_label}<!--@else-->—<!--@end--></span>
+				</td>
+				<td class="title">
+					<a href="{$notify_row->url}" class="pmh-bn-row__link">
+						<i class="bi {$notify_row->notify_icon_class} pmh-bn-row__ico" aria-hidden="true"></i>
+						<!--@if($notify_row->pmh_list_text)-->{$notify_row->pmh_list_text}<!--@else-->{$notify_row->notify_display_title}<!--@end-->
+					</a>
+				</td>
+				<td class="status">
+					<!--@if($notify_row->readed == 'N')--><span class="pmh-bn-meta unread">안읽음</span><!--@else--><span class="pmh-bn-meta read">읽음</span><!--@end-->
+				</td>
+				<td class="date">
+					<span class="pmh-bn-meta">{$notify_row->ago}</span>
+				</td>
+			</tbody>
 			<!--@end-->
+		</table>
 		</div>
 		<!--@else-->
 		<p class="empty">표시할 알림이 없습니다.</p>

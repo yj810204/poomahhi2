@@ -18,19 +18,92 @@
 			</div>
 			<!--@end-->
 			<div class="pmh-app-product-info">
-				<h3 class="pmh-app-product-title">{$product->title}</h3>
-				<!--@if($product->company_name)-->
-				<p class="pmh-app-product-company">{$product->company_name}</p>
-				<!--@end-->
+				<div class="tag mb-10">
+					<!--@if($product->product_type == 'local' && $product->region_title)-->
+					<span class="area 
+						<!--@if($product->region_title == '수도권')-->seoul<!--@end-->
+						<!--@if($product->region_title == '충청권')-->chungcheong<!--@end-->
+						<!--@if($product->region_title == '호남권')-->honam<!--@end-->
+						<!--@if($product->region_title == '영남권')-->yeongnam<!--@end-->
+						">
+					{$product->region_title}</span>
+					<!--@elseif($product->shopping_channel)-->
+					<span class="channel 
+						<!--@if($product->shopping_channel == '올리브영')-->oliveyoung<!--@end-->
+						<!--@if($product->shopping_channel == '쿠팡')-->coupang<!--@end-->
+						<!--@if($product->shopping_channel == 'G마켓')-->gmarket<!--@end-->
+						<!--@if($product->shopping_channel == '11번가')-->11st<!--@end-->
+						<!--@if($product->shopping_channel == '자사몰')-->mall<!--@end-->
+						<!--@if($product->shopping_channel == '마켓컬리')-->marketcurly<!--@end-->
+						<!--@if($product->shopping_channel == '카카오선물하기')-->kakaogift<!--@end-->
+						<!--@if($product->shopping_channel == '네이버 스마트스토어')-->smartstore<!--@end-->
+						<!--@if($product->shopping_channel == '무신사')-->musinsa<!--@end-->
+						<!--@if($product->shopping_channel == '옥션')-->auction<!--@end-->
+						<!--@if($product->shopping_channel == '카카오쇼핑')-->kakaoshopping<!--@end-->
+						">
+						{$product->shopping_channel}</span>
+					<!--@end-->
+					<!--@if($product->dday_text)-->
+						<span class="pmh-tag dday">{$product->dday_text}</span>
+					<!--@end-->
+				</div>
+				<div class="text-title mb-5">
+					{$product->title}
+					<!--@if($product->company_name)-->
+					{$product->company_name}
+					<!--@end-->
+				</div>
+				<div class="bh_color_gray_500">{$product->product_url}</div>
 			</div>
+		</div>
+
+		<div class="pmh-app-date-wrap">
+			<!-- 신청 날짜 -->
+			<!--@if($product->apply_start_date)-->
+			<div class="pmh-app-date-item">
+				<span class="label">품앗이 신청 날짜</span>
+
+				{@
+					$applyDate = zdate($product->apply_start_date, 'y.m.d');
+				}
+
+				<span class="date">{$applyDate}</span>
+			</div>
+			<!--@end-->
+
+			<!-- 선정 날짜 -->
+			<!--@if($product->selection_date)-->
+			<div class="pmh-app-date-item">
+				<span class="label">품앗이 선정 날짜</span>
+
+				{@
+					$selectDate = zdate($product->selection_date, 'y.m.d');
+				}
+
+				<span class="date">{$selectDate}</span>
+			</div>
+			<!--@end-->
 		</div>
 		<!--@end-->
 
+		<!-- 상품 보러가기 -->
+		<div class="pmh-app-section go-product ai-c jc-b" style="flex-wrap: nowrap;">
+			<h3 class="pmh-app-section-title mb-0">상품 보러가기</h3>
+			<div class="pmh-app-section-text">
+				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductDetail', 'product_srl', $product->product_srl)}" class="product-btn">상품 보러가기<i class="ri-arrow-right-line fw-n pl-5"></i></a>
+			</div>
+		</div>
+
+		<div class="gray-line"></div>
+		
 		<!-- 신청자 한마디 -->
 		<!--@if($application->applicant_comment)-->
 		<div class="pmh-app-section">
 			<h3 class="pmh-app-section-title">신청자 한마디</h3>
-			<div class="pmh-app-section-body">{$application->applicant_comment}</div>
+			<div class="pmh-app-section-text">
+				<div class="text-title fw-m">신청자 한마디</div>
+				<div class="info-input">{$application->applicant_comment}</div>
+			</div>
 		</div>
 		<!--@end-->
 
@@ -38,6 +111,7 @@
 		<!--@if($extra_vars)-->
 		<div class="pmh-app-section">
 			<h3 class="pmh-app-section-title">추가 정보</h3>
+			<div class="pmh-app-section-text">
 			<table class="pmh-info-table">
 				<tbody>
 					<!--@foreach($extra_vars as $ev)-->
@@ -48,13 +122,41 @@
 					<!--@end-->
 				</tbody>
 			</table>
+			</div>
 		</div>
 		<!--@end-->
 
-		<!-- 신청자 정보 -->
+		<!-- 신청자 정보 입력 -->
 		<div class="pmh-app-section">
 			<h3 class="pmh-app-section-title">신청 정보 입력</h3>
-			<table class="pmh-info-table">
+			<div class="pmh-app-section-text">
+				<div class="info-wrap">
+					<div class="info-row">
+						<!--@if($application->applicant_name)-->
+						<div class="info-item">
+							<div class="text-title fw-m">이름</div>
+							<div class="info-input">{$application->applicant_name}</div>
+						</div>
+						<!--@end-->
+						<!--@if($application->phone)-->
+						<div class="info-item">
+							<div class="text-title fw-m">연락처</div>
+							<div class="info-input">{$application->phone}</div>
+						</div>
+						<!--@end-->
+					</div>
+				</div>
+				<!--@if($application->applicant_address)-->
+				<div class="info-wrap">
+					<div class="text-title fw-m">주소</div>
+					<div class="info-input">
+						<!--@if($application->applicant_zipcode)-->({$application->applicant_zipcode}) <!--@end-->
+						{$application->applicant_address}<!--@if($application->applicant_address_detail)--> {$application->applicant_address_detail}<!--@end-->	
+					</div>
+				</div>
+				<!--@end-->
+			</div>
+			<table class="pmh-info-table ds-n">
 				<tbody>
 					<!--@if($applicant_member)-->
 					<tr>
@@ -62,12 +164,7 @@
 						<td>{$applicant_member->nick_name}</td>
 					</tr>
 					<!--@end-->
-					<!--@if($application->applicant_name)-->
-					<tr>
-						<th>이름</th>
-						<td>{$application->applicant_name}</td>
-					</tr>
-					<!--@end-->
+					
 					<!--@if($application->gender)-->
 					<tr>
 						<th>성별</th>
@@ -80,21 +177,7 @@
 						<td>{$application->birth_date}</td>
 					</tr>
 					<!--@end-->
-					<!--@if($application->phone)-->
-					<tr>
-						<th>연락처</th>
-						<td>{$application->phone}</td>
-					</tr>
-					<!--@end-->
-					<!--@if($application->applicant_address)-->
-					<tr>
-						<th>주소</th>
-						<td>
-							<!--@if($application->applicant_zipcode)-->({$application->applicant_zipcode}) <!--@end-->
-							{$application->applicant_address}<!--@if($application->applicant_address_detail)--> {$application->applicant_address_detail}<!--@end-->
-						</td>
-					</tr>
-					<!--@end-->
+					
 					<tr>
 						<th>신청일</th>
 						<td><!--@if($application->regdate)-->{zdate($application->regdate, 'Y-m-d H:i')}<!--@else-->-<!--@end--></td>
@@ -130,36 +213,44 @@
 		<div class="pmh-app-section">
 			<h3 class="pmh-app-section-title">참여 인증</h3>
 			<div class="pmh-app-section-text">
-				<div class="text-title">상품 만족도</div>
-				{$review->score}/5
-
-				<!--@if($review->content)-->
-				<div class="text-title">{$review->content}</div>
-				<!--@end-->
-				<div class="text-title">등록일</div>
-				<!--@if($review->regdate)-->{zdate($review->regdate, 'Y-m-d H:i')}<!--@else-->-<!--@end-->
-
-				<div class="text-title">최종 수정</div>
-				<!--@if($review->last_update)-->{zdate($review->last_update, 'Y-m-d H:i')}<!--@else-->-<!--@end-->
-
-				<!-- 참여 인증 업로드 이미지: 인증샷 / 구매경로 구분 -->
-				<!--@if($review_certification_files)-->
-				<div class="pmh-app-section-sub">
-					<h4 class="pmh-app-subsection-title">리뷰작성 인증 샷 이미지</h4>
-					<div class="pmh-review-images">
-						<!--@foreach($review_certification_files as $file)-->
-						<div class="pmh-review-image-item">
-							<a href="{$file->download_url}" target="_blank">
-								<img src="{$file->download_url}" alt="{$file->source_filename}" />
-							</a>
-						</div>
+				<div class="info-wrap">
+					<div class="text-title">상품 만족도</div>
+					<div class="score-wrap">
+						<!--@if($review->score == 1)-->
+						<i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i>
+						<!--@elseif($review->score == 2)-->
+						<i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i>
+						<!--@elseif($review->score == 3)-->
+						<i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i>
+						<!--@elseif($review->score == 4)-->
+						<i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill"></i>
+						<!--@elseif($review->score == 5)-->
+						<i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill bh_color_main"></i>
 						<!--@end-->
 					</div>
 				</div>
+
+				<!--@if($review->content)-->
+				<div class="info-wrap">
+					<div class="text-title">{$review->content}</div>
+				</div>
 				<!--@end-->
+
+				<div class="info-wrap">
+					<div class="text-title">등록일</div>
+					<!--@if($review->regdate)-->{zdate($review->regdate, 'Y-m-d H:i')}<!--@else-->-<!--@end-->
+				</div>
+
+				<div class="info-wrap">
+					<div class="text-title">최종 수정</div>
+					<!--@if($review->last_update)-->{zdate($review->last_update, 'Y-m-d H:i')}<!--@else-->-<!--@end-->
+				</div>
+
+				<!-- 참여 인증 업로드 이미지: 인증샷 / 구매경로 구분 -->
+				
 				<!--@if($review_purchase_files)-->
-				<div class="pmh-app-section-sub">
-					<h4 class="pmh-app-subsection-title">구매경로 인증샷 이미지</h4>
+				<div class="info-wrap">
+					<h4 class="text-title">구매경로 인증샷 이미지</h4>
 					<div class="pmh-review-images">
 						<!--@foreach($review_purchase_files as $file)-->
 						<div class="pmh-review-image-item">
@@ -171,55 +262,81 @@
 					</div>
 				</div>
 				<!--@end-->
+
+				<!--@if($review_certification_files)-->
+				<div class="info-wrap">
+					<h4 class="text-title">리뷰작성 인증 샷 이미지</h4>
+					<div class="pmh-review-images">
+						<!--@foreach($review_certification_files as $file)-->
+						<div class="pmh-review-image-item">
+							<a href="{$file->download_url}" target="_blank">
+								<img src="{$file->download_url}" alt="{$file->source_filename}" />
+							</a>
+						</div>
+						<!--@end-->
+					</div>
+				</div>
+				<!--@end-->
 			</div>
+			<!-- 참여인증 통과 (검수중 상태 + 리뷰 존재 시) -->
+			<!--@if($application->status == 'under_review' && $review)-->
+			<form action="./" method="post" class="pmh-review-approve-form" onsubmit="return confirm('참여인증을 통과 처리하시겠습니까?');">
+				<input type="hidden" name="mid" value="{$mid}" />
+				<input type="hidden" name="act" value="procPoomahhiApproveReview" />
+				<input type="hidden" name="application_srl" value="{$application->application_srl}" />
+				<input type="hidden" name="success_return_url" value="{$form_success_return_url}" />
+				<button type="submit" class="product-btn right-btn pmh-btn-review-approve">참여 인증 통과</button>
+			</form>
+			<!--@end-->
 		</div>
 		<!--@else-->
 		<div class="pmh-app-section">
 			<h3 class="pmh-app-section-title">참여 인증</h3>
-			<p class="pmh-app-empty-text">참여 인증 내역이 없습니다.</p>
-		</div>
-		<!--@end-->
-
-		<!-- 참여인증 통과 (검수중 상태 + 리뷰 존재 시) -->
-		<!--@if($application->status == 'under_review' && $review)-->
-		<div class="pmh-app-section">
-			<h3 class="pmh-app-section-title">참여인증 통과</h3>
 			<div class="pmh-app-section-text">
-				<form action="./" method="post" class="pmh-review-approve-form" onsubmit="return confirm('참여인증을 통과 처리하시겠습니까?');">
-					<input type="hidden" name="mid" value="{$mid}" />
-					<input type="hidden" name="act" value="procPoomahhiApproveReview" />
-					<input type="hidden" name="application_srl" value="{$application->application_srl}" />
-					<input type="hidden" name="success_return_url" value="{$form_success_return_url}" />
-					<button type="submit" class="pmh-btn-primary pmh-btn-review-approve">참여인증 통과</button>
-				</form>
+				<p class="pmh-app-empty-text">참여 인증 내역이 없습니다.</p>
 			</div>
 		</div>
 		<!--@end-->
 
+	</div>
+
+	<div class="business_inner lg:mt-30 mt-20">
 		<!-- 회원 리뷰 섹션 -->
-		<div class="pmh-app-section">
-			<h3 class="pmh-app-section-title">회원 평가 작성</h3>
+		<div class="pmh-app-section mt-0">
+			<h3 class="pmh-app-section-title">회원 리뷰 작성</h3>
 			<div class="pmh-app-section-text">
 				<!--@if($existing_member_review)-->
-				<table class="pmh-info-table">
-					<tbody>
-						<tr>
-							<th class="text-title">평가 점수</th>
-							<td>{$existing_member_review->score}점</td>
-						</tr>
-						<!--@if($existing_member_review->content)-->
-						<tr>
-							<th class="text-title">내용</th>
-							<td><div class="pmh-app-section-body">{$existing_member_review->content}</div></td>
-						</tr>
+				<div class="pmh-info-table">
+					<div class="info-wrap">
+						<div class="text-title">평가 점수</div>
+						<div class="score-wrap st2">
+						<!--@if($existing_member_review->score == 1)-->
+						<i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i>
+						<!--@elseif($existing_member_review->score == 2)-->
+						<i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i>
+						<!--@elseif($existing_member_review->score == 3)-->
+						<i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i>
+						<!--@elseif($existing_member_review->score == 4)-->
+						<i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill"></i>
+						<!--@elseif($existing_member_review->score == 5)-->
+						<i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill bh_color_main"></i>
 						<!--@end-->
-						<tr>
-							<th class="text-title">등록일</th>
-							<td><!--@if($existing_member_review->regdate)-->{zdate($existing_member_review->regdate, 'Y-m-d H:i')}<!--@else-->-<!--@end--></td>
-						</tr>
-					</tbody>
-				</table>
-				<p class="pmh-app-notice">이미 평가를 작성했습니다.</p>
+						</div>
+					</div>
+
+					<!--@if($existing_member_review->content)-->
+					<div class="info-wrap">
+						<div class="text-title">내용</div>
+						<div class="pmh-app-section-body">{$existing_member_review->content}</div>
+					</div>
+					<!--@end-->
+
+					<div class="info-wrap">
+						<div class="text-title">등록일</div>
+						<!--@if($existing_member_review->regdate)-->{zdate($existing_member_review->regdate, 'Y-m-d H:i')}<!--@else-->-<!--@end-->
+					</div>
+				</div>
+				<p class="pmh-app-notice mt-30">이미 평가를 작성했습니다.</p>
 				<!--@elseif($application->status == 'under_review' || $application->status == 'completed')-->
 				<!--@if($XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/poomahhi/member_review')-->
 				<div class="pmh-app-message {$XE_VALIDATOR_MESSAGE_TYPE}">
@@ -233,23 +350,56 @@
 					<input type="hidden" name="success_return_url" value="{$form_success_return_url}" />
 					<input type="hidden" name="xe_validator_id" value="modules/poomahhi/member_review" />
 
-					<div class="pmh-form-group">
-						<label for="member_review_score" class="text-title">평가 점수</label>
-						<select name="score" id="member_review_score" class="pmh-select">
-							<!--@for($i = 1; $i <= 5; $i++)-->
-							<option value="{$i}" selected|cond="$i == 5">{$i}점</option>
-							<!--@end-->
-						</select>
+					<div class="info-wrap ">
+						<div class="text-title">
+							<label for="member_review_score">평가 점수</label>
+						</div>
+						<div class="review-score-box">
+							<select name="score" id="member_review_score" class="pmh-select">
+								<!--@for($i = 1; $i <= 5; $i++)-->
+								<option value="{$i}" selected|cond="$i == 5">{$i}점</option>
+								<!--@end-->
+							</select>
+
+							<div class="score-wrap st2">
+								<i class="ri-star-fill"></i>
+								<i class="ri-star-fill"></i>
+								<i class="ri-star-fill"></i>
+								<i class="ri-star-fill"></i>
+								<i class="ri-star-fill"></i>
+							</div>
+						</div>
+						<script>
+							jQuery(function($) {
+								function updateStars(score) {
+									const $stars = $('.review-score-box .score-wrap i');
+
+									$stars.removeClass('bh_color_main');
+
+									$stars.each(function(index) {
+										if(index < score) {
+											$(this).addClass('bh_color_main');
+										}
+									});
+								}
+
+								updateStars($('#member_review_score').val());
+
+								$('#member_review_score').on('change', function() {
+									updateStars($(this).val());
+								});
+							});
+						</script>
 					</div>
 
-					<div class="pmh-form-group">
-						<label for="member_review_content" class="text-title">내용</label>
-						<textarea name="content" id="member_review_content" class="pmh-textarea" rows="4" placeholder="평가 내용"></textarea>
+					<div class="info-wrap">
+						<div class="text-title">
+							<label for="member_review_content">내용</label>
+						</div>
+						<textarea name="content" id="member_review_content" class="pmh-textarea" rows="4" placeholder="내용을 입력해 주세요."></textarea>
 					</div>
 
-					<div class="pmh-form-actions">
-						<button type="submit" class="pmh-btn-primary">평가 등록</button>
-					</div>
+					<button type="submit" class="product-btn right-btn">평가 등록</button>
 				</form>
 				<!--@else-->
 				<p class="pmh-app-notice">회원 평가를 작성할 수 없는 상태입니다.</p>
@@ -283,7 +433,7 @@
 							<option value="rejected" selected|cond="$application->status == 'rejected'">미선정한 품앗이</option>
 							<option value="cancelled" selected|cond="$application->status == 'cancelled'">취소한 품앗이</option>
 						</select>
-						<button type="submit" class="pmh-btn-primary">상태 변경</button>
+						<button type="submit" class="pmh-btn-primary">상태변경</button>
 					</div>
 				</form>
 			</div>
@@ -291,10 +441,8 @@
 
 		<!-- 하단 버튼 -->
 		<div class="pmh-app-detail-actions">
-			<div class="pmh-app-detail-actions-left">
-				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationManage', 'product_srl', $product->product_srl)}" class="pmh-btn-outline">뒤로가기</a>
-				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductDetail', 'product_srl', $product->product_srl)}" class="pmh-btn-primary">상품 보러가기</a>
-			</div>
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationManage', 'product_srl', $product->product_srl)}" class="bh_bg_color_gray_600">뒤로가기</a>
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductDetail', 'product_srl', $product->product_srl)}" class="bh_bg_color_main">상품 보러가기</a>
 		</div>
 	</div>
 </div>

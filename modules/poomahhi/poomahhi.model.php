@@ -14,6 +14,28 @@ class poomahhiModel extends poomahhi
 	}
 
 	/**
+	 * @brief 상품 객체에 region_title 설정 (스키마에 컬럼 없음, 로컬 품앗이 표시용)
+	 */
+	function attachProductRegionTitle($product)
+	{
+		if(!$product || !is_object($product))
+		{
+			return;
+		}
+		$ptype = isset($product->product_type) ? trim((string) $product->product_type) : '';
+		$region_srl = isset($product->region_srl) ? (int) $product->region_srl : 0;
+		if($ptype === 'local' && $region_srl > 0)
+		{
+			$region = $this->getRegion($region_srl);
+			$product->region_title = ($region && isset($region->title) && $region->title !== '') ? $region->title : '';
+		}
+		else
+		{
+			$product->region_title = '';
+		}
+	}
+
+	/**
 	 * @brief 상품 단일 조회
 	 */
 	function getProduct($product_srl)
@@ -22,7 +44,28 @@ class poomahhiModel extends poomahhi
 		$args->product_srl = $product_srl;
 		$output = executeQuery('poomahhi.getProduct', $args);
 		if(!$output->toBool() || !$output->data) return null;
-		return $output->data;
+		$data = $output->data;
+		if(is_array($data))
+		{
+			if(isset($data[0]) && is_object($data[0]))
+			{
+				$data = $data[0];
+			}
+			elseif(isset($data['product_srl']))
+			{
+				$data = (object) $data;
+			}
+			else
+			{
+				return null;
+			}
+		}
+		if(!is_object($data))
+		{
+			return null;
+		}
+		$this->attachProductRegionTitle($data);
+		return $data;
 	}
 
 	/**
@@ -1043,6 +1086,15 @@ class poomahhiModel extends poomahhi
 		if(!isset($config->noti_tpl_review_submitted)) $config->noti_tpl_review_submitted = '';
 		if(!isset($config->noti_tpl_revision_requested)) $config->noti_tpl_revision_requested = '';
 		if(!isset($config->noti_tpl_deadline_banner)) $config->noti_tpl_deadline_banner = '';
+		if(!isset($config->alimtalk_tpl_new_application)) $config->alimtalk_tpl_new_application = '';
+		if(!isset($config->alimtalk_tpl_selected)) $config->alimtalk_tpl_selected = '';
+		if(!isset($config->alimtalk_tpl_rejected)) $config->alimtalk_tpl_rejected = '';
+		if(!isset($config->alimtalk_tpl_revision_requested)) $config->alimtalk_tpl_revision_requested = '';
+		if(!isset($config->alimtalk_tpl_completed)) $config->alimtalk_tpl_completed = '';
+		if(!isset($config->alimtalk_tpl_review_approved)) $config->alimtalk_tpl_review_approved = '';
+		if(!isset($config->alimtalk_tpl_review_submitted)) $config->alimtalk_tpl_review_submitted = '';
+		if(!isset($config->alimtalk_tpl_review_resubmitted)) $config->alimtalk_tpl_review_resubmitted = '';
+		if(!isset($config->alimtalk_tpl_business_broadcast)) $config->alimtalk_tpl_business_broadcast = '';
 		if(!isset($config->own_document_product_mid)) $config->own_document_product_mid = 'money1';
 		if(!isset($config->own_document_region_mid)) $config->own_document_region_mid = 'money2';
 		$config->content_point_type = 'rhymix';
@@ -1158,6 +1210,57 @@ class poomahhiModel extends poomahhi
 			$out = str_replace('{' . $k . '}', (string)$val, $out);
 		}
 		return $out;
+	}
+
+	/**
+	 * @brief 신청 마감일(apply_end_date·deadline_date 저장값) 기준 달력 일수 오프셋
+	 * 마감 당일=0, 익일 0시부터 음수. DateTime::diff(%a)가 자정 vs 전일 23:59에서 0일로 뭉개지는 문제 방지.
+	 * @param string $dday_source 8자리(Ymd) 또는 14자리(YmdHis) 등 앞 8자리가 날짜인 값
+	 * @return int|null 유효하지 않으면 null
+	 */
+	function getProductApplyDeadlineDayOffset($dday_source)
+	{
+		$src = trim((string)$dday_source);
+		if($src === '' || strlen($src) < 8)
+		{
+			return null;
+		}
+		$ymdhis = (strlen($src) === 8) ? $src . '235959' : $src;
+		$deadline_day = substr($ymdhis, 0, 8);
+		if(strlen($deadline_day) !== 8 || !ctype_digit($deadline_day))
+		{
+			return null;
+		}
+		$todayYmd = date('Ymd');
+		$today_ts = strtotime(substr($todayYmd, 0, 4) . '-' . substr($todayYmd, 4, 2) . '-' . substr($todayYmd, 6, 2));
+		$deadline_ts = strtotime(substr($deadline_day, 0, 4) . '-' . substr($deadline_day, 4, 2) . '-' . substr($deadline_day, 6, 2));
+		if($today_ts === false || $deadline_ts === false)
+		{
+			return null;
+		}
+		return (int)(($deadline_ts - $today_ts) / 86400);
+	}
+
+	/**
+	 * @brief getProductApplyDeadlineDayOffset 결과에 대응하는 D-day 표시 문구
+	 * @param int|null $day_offset
+	 * @return string '' | 'D-n' | 'D-Day' | '마감'
+	 */
+	function getProductApplyDdayTextFromDayOffset($day_offset)
+	{
+		if($day_offset === null)
+		{
+			return '';
+		}
+		if($day_offset > 0)
+		{
+			return 'D-' . $day_offset;
+		}
+		if($day_offset === 0)
+		{
+			return 'D-Day';
+		}
+		return '마감';
 	}
 
 	/**

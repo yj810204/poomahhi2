@@ -16,6 +16,7 @@
 		<column name="p.short_description" alias="product_description" />
 		<column name="p.product_type" />
 		<column name="p.region_srl" />
+		<column name="p.shopping_channel" />
 		<column name="p.deadline_date" />
 	</columns>
 	<conditions>

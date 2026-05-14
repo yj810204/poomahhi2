@@ -14,10 +14,20 @@
 
 		<!--@if($product->product_url)-->
 		<div class="pmh-apply-section">
-			<div class="pmh-section-block ai-c jc-b">
-				<h3 class="pmh-block-title w-a">상품 보러가기</h3>
-				<div class="pmh-block-body w-a">
+			<div class="lg:ds-b ds-n">
+			<div class="pmh-section-block">
+				<h3 class="pmh-block-title">상품 보러가기</h3>
+				<div class="pmh-block-body">
 					<a href="{$product->product_url}" target="_blank" class="pmh-link-product mg-0">상품 보러가기 <i class="ri-arrow-right-line fw-n"></i></a>
+				</div>
+			</div>
+			</div>
+			<div class="lg:ds-n ds-b">
+				<div class="pmh-section-block ai-c jc-b">
+					<h3 class="pmh-block-title w-a">상품 보러가기</h3>
+					<div class="pmh-block-body w-a">
+						<a href="{$product->product_url}" target="_blank" class="pmh-link-product mg-0">상품 보러가기 <i class="ri-arrow-right-line fw-n"></i></a>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -215,33 +225,62 @@
 			</div>
 
 			<div class="pmh-sidebar-info">
+				{@
+				$weekdays = array(
+					'Sun' => '일',
+					'Mon' => '월',
+					'Tue' => '화',
+					'Wed' => '수',
+					'Thu' => '목',
+					'Fri' => '금',
+					'Sat' => '토'
+				);
+				}
 				<!--@if($product->apply_start_date && $product->apply_end_date)-->
 				<div class="pmh-info-row">
 					<span class="pmh-info-label">품앗이 신청기간</span>
-					<span class="pmh-info-value pmh-info-highlight"><span class="pmh-count-highlight">{zdate($product->apply_start_date, 'm.d')}({zdate($product->apply_start_date, 'D')}) ~ {zdate($product->apply_end_date, 'm.d')}({zdate($product->apply_end_date, 'D')})</span></span>
+					<span class="pmh-info-value pmh-info-highlight">
+						<span class="pmh-count-highlight">
+							{zdate($product->apply_start_date, 'm.d')}
+							({$weekdays[zdate($product->apply_start_date, 'D')]}) ~ ({$weekdays[zdate($product->apply_end_date, 'D')]})
+							{zdate($product->apply_end_date, 'm.d')}
+						</span>
+					</span>
 				</div>
 				<!--@end-->
 				<!--@if($product->selection_date)-->
 				<div class="pmh-info-row">
 					<span class="pmh-info-label">선정자 발표</span>
-					<span class="pmh-info-value">{zdate($product->selection_date, 'm.d')}({zdate($product->selection_date, 'D')})</span>
+					<span class="pmh-info-value">
+						{zdate($product->selection_date, 'm.d')}
+						({$weekdays[zdate($product->selection_date, 'D')]})
+					</span>
 				</div>
 				<!--@end-->
 				<!--@if($product->review_start_date && $product->review_end_date)-->
 				<div class="pmh-info-row">
 					<span class="pmh-info-label">품앗이 등록기간</span>
-					<span class="pmh-info-value">{zdate($product->review_start_date, 'm.d')}({zdate($product->review_start_date, 'D')}) ~ {zdate($product->review_end_date, 'm.d')}({zdate($product->review_end_date, 'D')})</span>
+					<span class="pmh-info-value">
+						{zdate($product->review_start_date, 'm.d')}
+						({$weekdays[zdate($product->review_start_date, 'D')]})
+						~
+						{zdate($product->review_end_date, 'm.d')}
+						({$weekdays[zdate($product->review_end_date, 'D')]})
+					</span>
 				</div>
 				<!--@end-->
 				<!--@if($product->result_date)-->
 				<div class="pmh-info-row">
 					<span class="pmh-info-label">품앗이 결과발표</span>
-					<span class="pmh-info-value">{zdate($product->result_date, 'm.d')}({zdate($product->result_date, 'D')})</span>
+					<span class="pmh-info-value">
+						{zdate($product->result_date, 'm.d')}
+						({$weekdays[zdate($product->result_date, 'D')]})
+					</span>
 				</div>
 				<!--@end-->
 				<div class="pmh-info-row">
 					<span class="pmh-info-label">신청자</span>
-					<span class="pmh-info-value"><span class="pmh-count-highlight">{$application_count}</span><!--@if($product->max_applicants > 0)-->/{$product->max_applicants}명<!--@else-->명<!--@end--></span>
+					<span class="pmh-info-value fw-n"><span class="pmh-count-highlight fw-b">{$application_count}</span><!--@if($product->max_applicants > 0)-->/{$product->max_applicants}명<!--@else-->명<!--@end--></span>
 				</div>
 			</div>
 		</div>

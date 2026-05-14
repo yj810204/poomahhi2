@@ -31,6 +31,16 @@
             line-height: 1;
         }
     }
+    @media(max-width:992px) {
+        margin: 10px 0;
+        .pmh-btn-write {
+            padding: 5px 15px;
+            font-size: 12px;
+            i {
+                font-size: 14px;
+            }
+        }
+    }
 }
 
 /* 지역 탭 */
@@ -128,6 +138,11 @@
         width: 390px;
         flex-shrink: 0;
     }
+    &.lock {
+        .pmh-link-product {
+            display: none;
+        }
+    }
 }
 @media(max-width:992px) {
     .pmh-detail-layout {
@@ -135,6 +150,29 @@
         gap: 30px;
         &.lock {
             flex-direction: column;
+            .pmh-detail-main {
+                position: relative;
+                .pmh-detail-header {
+                    display: block;
+                    position: absolute;
+                    top: 65px;
+                    left: 0;
+                    width: 100%;
+                }
+                .pmh-detail-title {
+                    display: block;
+                    font-size: 18px;
+                    margin-bottom: 5px;
+                }
+                .pmh-detail-desc {
+                    display: block;
+                    font-size: 13px;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    margin-bottom: 50px;
+                }
+            }
         }
         .pmh-detail-sidebar {
             width: 100%;
@@ -370,6 +408,11 @@
                 background-color: var(--bh_color_gray_100);
             }
         }
+        input[readonly] {
+            color: var(--bh_color_gray_400);
+            background-color: var(--bh_color_gray_100);
+            pointer-events: none;
+        }
         .pmh-apply-textarea {
             min-width: 100%;
             max-width: 100%;
@@ -526,6 +569,7 @@
     padding: 50px;
     border-radius: 20px;
     text-align: center;
+    margin-top: 50px;
     i {
         display: block;
         font-size: 50px;
@@ -710,7 +754,7 @@
 	font-weight: bold;
 	background-color: var(--bh_color_gray_900);
 	border-radius: 50px;
-	margin: 30px 0;
+	margin: 30px 0 0 0;
     @media(max-width:992px) {
         display: none;
     }
@@ -735,7 +779,10 @@
             background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0), #fff);
             pointer-events: none;
         }
-        @media(max-width:992px) {
+    }
+    @media(max-width:992px) {
+        margin-top: 0;
+        .pmh-content-wrap {
             max-height: 203px;
             .pmh-content-inner {
                 img {
@@ -787,7 +834,7 @@
 .pmh-detail-bottom {
 	margin-top: 50px;
 	display: flex;
-	justify-content: space-between;
+	justify-content: end;
 	align-items: center;
     .pmh-owner-actions {
         display: flex;
@@ -909,7 +956,7 @@
     }
     &.local {
         .pmh-section-title {
-            border-color: var(--bh_color_gray_300);
+            /*border-color: var(--bh_color_gray_300);*/
         }
     }
     .pmh-row-half {
@@ -958,6 +1005,9 @@
             background-image: url(../img/select.png);
             background-position: 97%;
             background-repeat: no-repeat;
+            &:invalid{
+                color:var(--bh_color_gray_400);
+            }
         }
         .pmh-address-wrap {
             .pmh-input {
@@ -1118,12 +1168,21 @@
         }
     }
 }
+.date-placeholder{
+	color:var(--bh_color_gray_400);
+}
+.date-placeholder.has-value{
+	color:var(--bh_color_gray_900);
+}
+.date-placeholder:invalid{
+	color:var(--bh_color_gray_400);
+}
 @media(max-width:992px) {
     .pmh-section {
         margin-bottom: 30px;
         .pmh-section-title {
             font-size: 16px;
-            margin-bottom: 15x;
+            margin-bottom: 15px;
         }
         .pmh-row-half {
             display: block;
@@ -1212,6 +1271,102 @@
             padding: 10px 15px;
             border-radius: 5px;
             font-size: 14px;
+        }
+    }
+
+    .xefu-controll, .xefu-list {
+        border: 1px solid var(--bh_color_gray_300);
+        border-radius: 5px;
+        padding: 10px;
+        margin-top: 10px;
+    }
+    .xefu-controll{
+        display:flex !important;
+        gap:5px;
+        align-items:center;
+        flex-direction:row-reverse;
+        justify-content:space-between;
+        font-size:12px;
+        color:#9e9e9e;
+
+        > div{
+            float:none !important;
+
+            &:last-child{
+                display:flex;
+                gap:5px;
+            }
+        }
+
+        /* 버튼 */
+        .xefu-btn{
+            height:29px;
+            padding:4px 10px;
+            border:none;
+            border-radius:5px;
+            background:#eeeeee;
+            color:#757575;
+            font-size:13px;
+            font-weight:500;
+            cursor:pointer;
+            transition:.2s;
+        }
+    }
+
+    /* 첨부 리스트 */
+    .xefu-list{
+        padding:10px;
+        .xefu-list-images{
+            margin: 0;
+            padding: 0;
+            border: 0;
+            ul{
+                display:flex;
+                flex-wrap:wrap;
+                gap:5px;
+                margin:0;
+                padding:0;
+                list-style:none;
+            }
+            li {
+                border: 0;
+            }
+        }
+        .xefu-file{
+            position:relative;
+            width:60px;
+        }
+        .xefu-file-name{
+            display:none;
+        }
+        .xefu-file-info{
+            display:block;
+            position:relative;
+        }
+        .xefu-thumbnail{
+            display:block !important;
+            width:60px !important;
+            height:60px !important;
+            border-radius:5px;
+            background-size:cover !important;
+            background-position:center !important;
+            background-repeat:no-repeat;
+            overflow:hidden;
+        }
+        .xefu-file input[type="checkbox"]{
+            position:absolute;
+            top:6px;
+            left:6px;
+            width:16px;
+            height:16px;
+            margin:0;
+            z-index:5;
+            accent-color:#111;
+        }
+        .xefu-file-size,
+        .xefu-act-set-cover,
+        .xefu-list-files{
+            display:none !important;
         }
     }
 }

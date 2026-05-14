@@ -24,7 +24,9 @@
 				</div>
 				<div class="col"><div class="line"></div></div>
 			</div>
-			<a href="{\Rhymix\Modules\Sociallogin\Models\Config::getInstance()->getAuthUrl('kakao', 'login')}" class="social-login-btn kakao"><i class="ri-kakao-talk-fill"></i>카카오로 회원가입하기</a>
+			<a href="{getUrl('', 'mid', $signup_member_mid, 'act', 'dispMemberSignUpForm', 'member_type', 'general', 'social', 'kakao')}" class="social-login-btn kakao">
+				<i class="ri-kakao-talk-fill"></i>카카오로 회원가입하기
+			</a>
 			<a href="{\Rhymix\Modules\Sociallogin\Models\Config::getInstance()->getAuthUrl('naver', 'login')}" class="social-login-btn"><img src="img/signup_naver.png" alt="naver">네이버로 회원가입하기</a>
 		</div>
 

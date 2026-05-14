@@ -29,15 +29,56 @@
 							<!--@if($product->product_image)-->
 							<img src="{$product->product_image}" alt="{$product->title}" class="pmh-app-card-img" />
 							<!--@end-->
+							<span class="pmh-app-card-badge">
+								<!--@if($application->status == 'applied')-->
+								<span class="pmh-status-badge applied">신청한</span>
+								<!--@elseif($application->status == 'selected')-->
+								<span class="pmh-status-badge selected">선정된</span>
+								<!--@elseif($application->status == 'under_review')-->
+								<span class="pmh-status-badge under_review">검수중인</span>
+								<!--@elseif($application->status == 'revision_requested')-->
+								<span class="pmh-status-badge revision_requested">수정요청된</span>
+								<!--@elseif($application->status == 'completed')-->
+								<span class="pmh-status-badge completed">완료된</span>
+								<!--@elseif($application->status == 'rejected')-->
+								<span class="pmh-status-badge rejected">미선정된</span>
+								<!--@elseif($application->status == 'cancelled')-->
+								<span class="pmh-status-badge cancelled">취소된</span>
+								<!--@else-->
+								<span>{$application->status}</span>
+								<!--@end-->
+							</span>
 						</div>
 					</div>
 					<div class="pmh-app-card-body">
-						<div class="pmh-app-product-badges">
-							<!--@if($category)-->
-							<span class="pmh-badge-category">{$category->title}</span>
+						<div class="tag">
+							<!--@if($product->region_title)-->
+							<span class="area 
+								<!--@if($product->region_title == '수도권')-->seoul<!--@end-->
+								<!--@if($product->region_title == '충청권')-->chungcheong<!--@end-->
+								<!--@if($product->region_title == '호남권')-->honam<!--@end-->
+								<!--@if($product->region_title == '영남권')-->yeongnam<!--@end-->
+								">
+							{$product->region_title}</span>
+							<!--@end-->
+							<!--@if($product->shopping_channel)-->
+							<span class="channel 
+							<!--@if($product->shopping_channel == '올리브영')-->oliveyoung<!--@end-->
+							<!--@if($product->shopping_channel == '쿠팡')-->coupang<!--@end-->
+							<!--@if($product->shopping_channel == 'G마켓')-->gmarket<!--@end-->
+							<!--@if($product->shopping_channel == '11번가')-->11st<!--@end-->
+							<!--@if($product->shopping_channel == '자사몰')-->mall<!--@end-->
+							<!--@if($product->shopping_channel == '마켓컬리')-->marketcurly<!--@end-->
+							<!--@if($product->shopping_channel == '카카오선물하기')-->kakaogift<!--@end-->
+							<!--@if($product->shopping_channel == '네이버 스마트스토어')-->smartstore<!--@end-->
+							<!--@if($product->shopping_channel == '무신사')-->musinsa<!--@end-->
+							<!--@if($product->shopping_channel == '옥션')-->auction<!--@end-->
+							<!--@if($product->shopping_channel == '카카오쇼핑')-->kakaoshopping<!--@end-->
+							">
+							{$product->shopping_channel}</span>
 							<!--@end-->
 							<!--@if($dday_text)-->
-							<span class="pmh-badge-dday">{$dday_text}</span>
+							<span class="dday">{$dday_text}</span>
 							<!--@end-->
 						</div>
 						<div class="title">
@@ -47,14 +88,14 @@
 							<h3 class="pmh-app-card-company">{$product->title}</h3>
 						</div>
 						<!--@if($product->product_type != 'local' && $product->product_url)-->
-						<a href="{$product->product_url}" target="_blank" class="pmh-app-card-link"><i class="bi bi-box-arrow-up-right"></i> 상품 정보</a>
+						<a href="{$product->product_url}" target="_blank" class="pmh-app-card-link">상품 구매 링크 · {$product->product_url}</a>
 						<!--@end-->
 						<!--@if($product->product_type == 'local')-->
 						<!--@if($product->contact)-->
-						<p class="pmh-app-card-link"><i class="bi bi-telephone"></i> {$product->contact}</p>
+						<p class="pmh-app-card-link">연락처 · {$product->contact}</p>
 						<!--@end-->
 						<!--@if($product->address)-->
-						<p class="pmh-app-card-link"><i class="bi bi-geo-alt"></i> {$product->address}<!--@if($product->address_detail)--> {$product->address_detail}<!--@end--></p>
+						<p class="pmh-app-card-link">주소 · {$product->address}<!--@if($product->address_detail)--> {$product->address_detail}<!--@end--></p>
 						<!--@end-->
 						<!--@end-->
 					</div>
@@ -65,78 +106,63 @@
 					<ul class="pmh-info-table">
 						<li>
 							<span>품앗이 신청 날짜</span>
-							<span><!--@if($application->regdate)-->{zdate($application->regdate, 'Y-m-d H:i')}<!--@else-->-<!--@end--></span>
+							<span><!--@if($application->regdate)-->{zdate($application->regdate, 'y.m.d')}<!--@else-->-<!--@end--></span>
+						</li>
+						<li>
+							<span>품앗이 선정 날짜</span>
+							<span><!--@if($product->selection_date)-->{zdate($product->selection_date, 'y.m.d')}<!--@else-->-<!--@end--></span>
 						</li>
 						<!--@if($application->last_update)-->
-						<li>
+						<li class="ds-n">
 							<span>최종 수정</span>
 							<span>{zdate($application->last_update, 'Y-m-d H:i')}</span>
 						</li>
 						<!--@end-->
 						<!--@if($application->deadline)-->
-						<li>
+						<li class="ds-n">
 							<span>등록 기한</span>
 							<span>{zdate($application->deadline, 'Y-m-d')}</span>
 						</li>
 						<!--@end-->
-						<li>
-							<span>현재 상태</span>
-							<!--@if($application->status == 'applied')-->
-								<span class="pmh-status-badge applied">신청한 품앗이</span>
-								<!--@elseif($application->status == 'selected')-->
-								<span class="pmh-status-badge selected">선정된 품앗이</span>
-								<!--@elseif($application->status == 'under_review')-->
-								<span class="pmh-status-badge under_review">검수중인 품앗이</span>
-								<!--@elseif($application->status == 'revision_requested')-->
-								<span class="pmh-status-badge revision_requested">수정요청된 품앗이</span>
-								<!--@elseif($application->status == 'completed')-->
-								<span class="pmh-status-badge completed">완료된 품앗이</span>
-								<!--@elseif($application->status == 'rejected')-->
-								<span class="pmh-status-badge rejected">미선정된 품앗이</span>
-								<!--@elseif($application->status == 'cancelled')-->
-								<span class="pmh-status-badge cancelled">취소된 품앗이</span>
-								<!--@else-->
-								<span>{$application->status}</span>
-							<!--@end-->
-						</li>
 					</ul>
 				</div>
 
 				<!--@if($application->status == 'rejected' && ($application->rejection_reason || $application->rejection_detail))-->
-				<div class="pmh-app-section pmh-rejection-detail-block">
-					<div class="pmh-rejection-inner-box">
+				<div class="pmh-app-section jc-c pmh-rejection-detail-block">
+					<div class="lg:fs-24 fs-18 fw-b ta-c">
 						<!--@if($application->rejection_reason)-->
-						<p class="pmh-rejection-headline"><strong>{$application->rejection_reason}</strong>{$rejection_josa_ro} 미선정되었습니다.</p>
+						<p><span class="bh_color_main">{$application->rejection_reason}</span>{$rejection_josa_ro} 미선정되었습니다.</p>
 						<!--@else-->
 						<p class="pmh-rejection-headline">미선정되었습니다.</p>
 						<!--@end-->
-						<hr class="pmh-rejection-divider" />
-						<div class="pmh-rejection-reason-row">
-							<span class="pmh-rejection-reason-label">미선정 사유 내용</span>
-							<div class="pmh-rejection-reason-text<!--@if(!$application->rejection_detail)--> pmh-rejection-reason-empty<!--@end-->"><!--@if($application->rejection_detail)-->{$application->rejection_detail}<!--@else-->-<!--@end--></div>
-						</div>
 					</div>
+				</div>
+				<div class="pmh-app-section pmh-revision-request-block">
+					<h3 class="pmh-app-section-title <!--@if(!$application->rejection_detail)--> pmh-rejection-reason-empty<!--@end-->">미선정 사유 내용</h3>
+					<div class="pmh-app-section-body pmh-revision-request-body"><!--@if($application->rejection_detail)-->{$application->rejection_detail}<!--@else-->-<!--@end--></div>
 				</div>
 				<!--@end-->
 
 				<!--@if($application->status == 'revision_requested')-->
-				<div class="pmh-app-section pmh-revision-request-block">
-					<h3 class="pmh-app-section-title">인증 제출 상태</h3>
-					<div class="pmh-app-section-body">
-						<p class="pmh-revision-cert-status">수정요청</p>
+				<div class="pmh-app-section jc-c pmh-revision-request-block">
+					<div class="lg:fs-24 fs-18 fw-b ta-c">
+						<p>인증 제출 상태</p>
+						<p class="bh_color_main">수정요청</p>
 					</div>
-					<!--@if($application->revision_request_content)-->
+				</div>
+				<!--@if($application->revision_request_content)-->
+				<div class="pmh-app-section pmh-revision-request-block">
 					<h3 class="pmh-app-section-title">수정요청 내용</h3>
 					<div class="pmh-app-section-body pmh-revision-request-body">{$application->revision_request_content}</div>
-					<!--@end-->
 				</div>
+				<!--@end-->
 				<!--@end-->
 
 				<!-- 상품 보러가기 -->
-				<div class="pmh-app-section">
-					<h3 class="pmh-app-section-title">상품 보러가기</h3>
-					<div class="pmh-app-section-body">
-						<a href="{$product->product_url}" target="_blank" class="pmh-app-card-link"><i class="bi bi-box-arrow-up-right"></i> 상품 정보</a>
+				<div class="pmh-app-section go-product">
+					<h3 class="pmh-app-section-title mb-0">상품 보러가기</h3>
+					<div class="pmh-app-section-text">
+						<a href="{$product->product_url}" target="_blank" class="product-btn">상품 보러가기<i class="ri-arrow-right-line fw-n pl-5"></i></a>
 					</div>
 				</div>
 
@@ -153,6 +179,7 @@
 				<div class="pmh-app-section">
 					<h3 class="pmh-app-section-title">신청자 한마디</h3>
 					<div class="pmh-app-section-body">
+						<h3>신청자 한마디</h3>
 						<div class="val">{$application->applicant_comment}</div>
 					</div>
 				</div>
@@ -196,31 +223,29 @@
 				<!--@if($product->product_type == 'local' && ($application->applicant_contact_name || $application->applicant_contact_phone || $application->applicant_address))-->
 				<div class="pmh-app-section">
 					<h3 class="pmh-app-section-title">신청 정보 입력</h3>
-					<table class="pmh-info-table">
-						<tbody>
+					<div class="pmh-app-section-body">
+						<div class="info_wrap">
 							<!--@if($application->applicant_contact_name)-->
-							<tr>
-								<th>이름</th>
-								<td>{$application->applicant_contact_name}</td>
-							</tr>
+							<div class="info">
+								<h3>이름</h3>
+								<div class="val">{$application->applicant_contact_name}</div>
+							</div>
 							<!--@end-->
 							<!--@if($application->applicant_contact_phone)-->
-							<tr>
-								<th>연락처</th>
-								<td>{$application->applicant_contact_phone}</td>
-							</tr>
+							<div class="info">
+								<h3>연락처</h3>
+								<div class="val">{$application->applicant_contact_phone}</div>
+							</div>
 							<!--@end-->
-							<!--@if($application->applicant_address)-->
-							<tr>
-								<th>주소</th>
-								<td>
-									<!--@if($application->applicant_zipcode)-->({$application->applicant_zipcode}) <!--@end-->
-									{$application->applicant_address}<!--@if($application->applicant_address_detail)--> {$application->applicant_address_detail}<!--@end-->
-								</td>
-							</tr>
-							<!--@end-->
-						</tbody>
-					</table>
+						</div>
+						<!--@if($application->applicant_address)-->
+						<h3>주소</h3>
+						<div class="val">
+							<!--@if($application->applicant_zipcode)-->({$application->applicant_zipcode}) <!--@end-->
+								{$application->applicant_address}<!--@if($application->applicant_address_detail)--> {$application->applicant_address_detail}<!--@end-->
+						</div>
+						<!--@end-->
+					</div>
 				</div>
 				<!--@end-->
 
@@ -228,16 +253,12 @@
 				<!--@if($extra_vars)-->
 				<div class="pmh-app-section">
 					<h3 class="pmh-app-section-title">추가 정보</h3>
-					<table class="pmh-info-table">
-						<tbody>
-							<!--@foreach($extra_vars as $ev)-->
-							<tr>
-								<th>{$ev->var_name}</th>
-								<td>{$ev->var_value}</td>
-							</tr>
-							<!--@end-->
-						</tbody>
-					</table>
+					<div class="pmh-app-section-body">
+						<!--@foreach($extra_vars as $ev)-->
+						<h3>{$ev->var_name}</h3>
+						<div class="val">{$ev->var_value}</div>
+						<!--@end-->
+					</div>
 				</div>
 				<!--@end-->
 
@@ -245,6 +266,13 @@
 				<!--@if($review)-->
 				<div class="pmh-app-section">
 					<h3 class="pmh-app-section-title">참여 인증</h3>
+
+					<!--@if($application->status == 'revision_requested' && $review)-->
+					<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiReviewEdit', 'application_srl', $application->application_srl)}" class="product-btn right-btn">
+						참여 인증 수정
+					</a>
+					<!--@end-->
+
 					<div class="pmh-app-section-body">
 						<div class="info_wrap style2">
 							<div class="info">
@@ -366,6 +394,17 @@
 				</div>
 				<!--@end-->
 				
+				<!--@if($application->status == 'selected' && !$review || $application->status == 'revision_requested' && !$review)-->
+				<div class="pmh-app-section pmh-review-actions cert ai-c jc-b">
+					<h3 class="pmh-app-section-title w-a">참여 인증</h3>
+					<div class="pmh-app-section-body ds-f jc-e">
+							<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiReviewWrite', 'application_srl', $application->application_srl)}" class="product-btn">
+								참여 인증하기
+							</a>
+					</div>
+				</div>
+				<!--@end-->
+
 				<!-- 하단 버튼 -->
 				<div class="pmh-app-detail-actions">
 					<!--@if($XE_VALIDATOR_MESSAGE && ($XE_VALIDATOR_ID == 'modules/poomahhi/application_detail_cancel' || $XE_VALIDATOR_ID == 'modules/poomahhi/application_detail_delete'))-->
@@ -413,118 +452,31 @@
 							<!--@end-->
 
 							<!--@if($application->status == 'selected' && !$review)-->
-							<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiReviewWrite', 'application_srl', $application->application_srl)}" class="pmh-btn-primary review">
-								<i class="bi bi-pencil"></i> 참여 인증 등록하기
+							<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiReviewWrite', 'application_srl', $application->application_srl)}" class="pmh-btn-primary review ds-n">
+								참여 인증 등록하기
 							</a>
 							<!--@end-->
 							<!--@if($application->status == 'revision_requested' && $review)-->
-							<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiReviewEdit', 'application_srl', $application->application_srl)}" class="pmh-btn-primary review">
-								<i class="bi bi-pencil-square"></i> 참여 인증 수정
+							<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiReviewEdit', 'application_srl', $application->application_srl)}" class="pmh-btn-primary review ds-n">
+								참여 인증 수정
 							</a>
 							<!--@end-->
 							<!--@if($application->status == 'revision_requested' && !$review)-->
 							<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiReviewWrite', 'application_srl', $application->application_srl)}" class="pmh-btn-primary review">
-								<i class="bi bi-pencil"></i> 참여 인증 등록하기
+								참여 인증 등록하기
 							</a>
 							<!--@end-->
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="lg:ds-n ds-b">
-				<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductDetail', 'product_srl', $product->product_srl)}" class="ds-b submit_btn">
-					품앗이 보러가기
-				</a>
-			</div>
+		</div>
+		<div class="lg:ds-n ds-b">
+			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductDetail', 'product_srl', $product->product_srl)}" class="ds-b submit_btn">
+				품앗이 보러가기
+			</a>
 		</div>
 		<!--@end-->
 
 	</div>
 </div>
-
-<style>
-
-
-/* 거절/취소 */
-.pmh-app-rejected-notice {
-	padding: 12px 16px;
-	background: #fbe9e7;
-	color: #e53935;
-	border-radius: 8px;
-	font-size: 14px;
-	font-weight: 600;
-	margin-bottom: 20px;
-	text-align: center;
-}
-
-.pmh-revision-request-block .pmh-revision-cert-status {
-	margin: 0;
-	font-size: 16px;
-	font-weight: 700;
-	color: #e91e8c;
-}
-
-.pmh-revision-request-block .pmh-revision-request-body {
-	white-space: pre-wrap;
-	word-break: break-word;
-	line-height: 1.6;
-}
-
-.pmh-rejection-detail-block {
-	margin-top: 8px;
-}
-
-.pmh-rejection-inner-box {
-	background: #f5f5f5;
-	border: 1px solid #e8e8e8;
-	border-radius: 12px;
-	padding: 20px 18px;
-}
-
-.pmh-rejection-headline {
-	margin: 0;
-	font-size: 17px;
-	font-weight: 600;
-	color: #e91e8c;
-	line-height: 1.5;
-}
-
-.pmh-rejection-headline strong {
-	font-weight: 700;
-}
-
-.pmh-rejection-divider {
-	border: none;
-	border-top: 1px solid #e0e0e0;
-	margin: 16px 0;
-}
-
-.pmh-rejection-reason-row {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: flex-start;
-	gap: 12px 20px;
-}
-
-.pmh-rejection-reason-label {
-	flex: 0 0 auto;
-	font-size: 15px;
-	font-weight: 700;
-	color: var(--bh_color_gray_900, #222);
-	min-width: 7em;
-}
-
-.pmh-rejection-reason-text {
-	flex: 1 1 200px;
-	font-size: 15px;
-	line-height: 1.65;
-	color: var(--bh_color_gray_800, #333);
-	white-space: pre-wrap;
-	word-break: break-word;
-}
-
-.pmh-rejection-reason-text.pmh-rejection-reason-empty {
-	color: var(--bh_color_gray_500, #888);
-}
-
-</style>

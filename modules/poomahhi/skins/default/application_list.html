@@ -95,7 +95,7 @@
 								<!--@if($app->product)-->
 								<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationDetail', 'application_srl', $app->application_srl)}" class="pmh-app-card-title">
 									<div class="tag">
-										<!--@if($app->product->product_type == 'local' && $app->product->region_title)-->
+										<!--@if($app->product->region_title)-->
 										<span class="area 
 											<!--@if($app->product->region_title == '수도권')-->seoul<!--@end-->
 											<!--@if($app->product->region_title == '충청권')-->chungcheong<!--@end-->
@@ -140,10 +140,10 @@
 							<!--@end-->
 							</div>
 							<!--@if($app->product->product_type != 'local' && $app->product->product_url)-->
-							<p class="pmh-app-card-link">{$lang_app->product_purchase_link} · <a href="{$app->product->product_url}" target="_blank" rel="noopener">{$app->product->product_url}</a></p>
+							<p class="pmh-app-card-link">상품 {$lang_app->product_purchase_link} · <a href="{$app->product->product_url}" target="_blank" rel="noopener">{$app->product->product_url}</a></p>
 							<!--@elseif($app->product->product_type == 'local')-->
-							<!--@if($app->product->contact)--><p class="pmh-app-card-link">{$lang_app->contact} {$app->product->contact}</p><!--@end-->
-							<!--@if($app->product->address)--><p class="pmh-app-card-link">{$lang_app->address} {$app->product->address}</p><!--@end-->
+							<!--@if($app->product->contact)--><p class="pmh-app-card-link">{$lang_app->contact} · {$app->product->contact}</p><!--@end-->
+							<!--@if($app->product->address)--><p class="pmh-app-card-link">{$lang_app->address} · {$app->product->address}</p><!--@end-->
 							<!--@end-->
 						<!--@end-->
 					</div>
@@ -160,7 +160,9 @@
 							<!--@if($action_item->certification_substatus_label)-->
 							<span class="pmh-app-action-cert-substatus">{$action_item->certification_substatus_label}</span>
 							<!--@end-->
-							<a href="{$action_item->url}" class="pmh-app-action-link <!--@if($action_item->done)-->pmh-app-action-done-link<!--@end-->">{$action_item->label}</a>
+							<a href="{$action_item->url}" class="pmh-app-action-link <!--@if($action_item->done)-->pmh-app-action-done-link<!--@end-->">
+								{$action_item->label}
+							</a>
 						</div>
 						<!--@if($action_item->certification_substatus_label && !$action_item->done)-->
 						<a href="{$action_item->url}" class="pmh-app-action-status pmh-action-waiting pmh-app-action-status-link">{str_replace('>', '', $action_item->status_label)}<i class="ri-arrow-right-s-line"></i></a>
@@ -174,7 +176,7 @@
 			<!--@end-->
 				<!-- 신청한 상태: 취소 버튼 -->
 				<!--@if($app->status == 'applied')-->
-				<div class="pmh-app-detail-actions">
+				<div class="pmh-app-detail-actions ds-n">
 					<form action="./" method="post" style="display:inline;">
 						<input type="hidden" name="mid" value="{$mid}" />
 						<input type="hidden" name="act" value="procPoomahhiUpdateApplicationStatus" />
@@ -203,7 +205,11 @@
 		</div>
 		<!--@end-->
 		<!--@else-->
-		<p class="empty">신청 내역이 없습니다.</p>
+		<div class="pmh-app-list-cards">
+			<div class="pmh-app-card">
+				<p class="empty">신청 내역이 없습니다.</p>
+			</div>
+		</div>
 		<!--@end-->
 	</div>
 </div>

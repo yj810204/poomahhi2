@@ -118,29 +118,29 @@
 		<div class="pmh-field">
 			<label class="pmh-label req">품앗이 신청 기간</label>
 			<div class="pmh-date-range">
-				<input type="date" name="apply_start_date" value="<!--@if($product->apply_start_date)-->{zdate($product->apply_start_date, 'Y-m-d')}<!--@else--><!--@end-->" class="pmh-input" required="required" />
+				<input type="date" name="apply_start_date" value="<!--@if($product->apply_start_date)-->{zdate($product->apply_start_date, 'Y-m-d')}<!--@else--><!--@end-->" class="pmh-input date-placeholder" required="required" />
 				<span class="pmh-date-sep">~</span>
-				<input type="date" name="apply_end_date" value="<!--@if($product->apply_end_date)-->{zdate($product->apply_end_date, 'Y-m-d')}<!--@else--><!--@end-->" class="pmh-input" required="required" />
+				<input type="date" name="apply_end_date" value="<!--@if($product->apply_end_date)-->{zdate($product->apply_end_date, 'Y-m-d')}<!--@else--><!--@end-->" class="pmh-input date-placeholder" required="required" />
 			</div>
 		</div>
 
 		<div class="pmh-field">
 			<label class="pmh-label req">선정자 발표 날짜</label>
-			<input type="date" name="selection_date" value="<!--@if($product->selection_date)-->{zdate($product->selection_date, 'Y-m-d')}<!--@else--><!--@end-->" class="pmh-input pmh-input-half" required="required" />
+			<input type="date" name="selection_date" value="<!--@if($product->selection_date)-->{zdate($product->selection_date, 'Y-m-d')}<!--@else--><!--@end-->" class="pmh-input pmh-input-half date-placeholder" required="required" />
 		</div>
 
 		<div class="pmh-field">
 			<label class="pmh-label req">리뷰 등록 기간</label>
 			<div class="pmh-date-range">
-				<input type="date" name="review_start_date" value="<!--@if($product->review_start_date)-->{zdate($product->review_start_date, 'Y-m-d')}<!--@else--><!--@end-->" class="pmh-input" required="required" />
+				<input type="date" name="review_start_date" value="<!--@if($product->review_start_date)-->{zdate($product->review_start_date, 'Y-m-d')}<!--@else--><!--@end-->" class="pmh-input date-placeholder" required="required" />
 				<span class="pmh-date-sep">~</span>
-				<input type="date" name="review_end_date" value="<!--@if($product->review_end_date)-->{zdate($product->review_end_date, 'Y-m-d')}<!--@else--><!--@end-->" class="pmh-input" required="required" />
+				<input type="date" name="review_end_date" value="<!--@if($product->review_end_date)-->{zdate($product->review_end_date, 'Y-m-d')}<!--@else--><!--@end-->" class="pmh-input date-placeholder" required="required" />
 			</div>
 		</div>
 
 		<div class="pmh-field">
 			<label class="pmh-label req">품앗이 결과발표 날짜</label>
-			<input type="date" name="result_date" value="<!--@if($product->result_date)-->{zdate($product->result_date, 'Y-m-d')}<!--@else--><!--@end-->" class="pmh-input pmh-input-half" required="required" />
+			<input type="date" name="result_date" value="<!--@if($product->result_date)-->{zdate($product->result_date, 'Y-m-d')}<!--@else--><!--@end-->" class="pmh-input pmh-input-half date-placeholder" required="required" />
 		</div>
 	</section>
 
@@ -376,4 +376,24 @@ function removeImage() {
     // 3. 서버에 삭제 알림 플래그 설정
     document.getElementById('deleteImageFlag').value = 'Y';
 }
+</script>
+
+<script>
+jQuery(function($){
+	$('.date-placeholder').each(function(){
+		toggleDateState(this);
+	});
+
+	$(document).on('change input', '.date-placeholder', function(){
+		toggleDateState(this);
+	});
+
+	function toggleDateState(el){
+		if($(el).val()){
+			$(el).addClass('has-value');
+		}else{
+			$(el).removeClass('has-value');
+		}
+	}
+});
 </script>

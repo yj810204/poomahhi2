@@ -79,23 +79,65 @@
 					<div class="pmh-app-card-left">
 						<div class="pmh-app-card-img-wrap">
 							<!--@if($product->product_image_url)-->
-							<img src="{$product->product_image_url}" alt="{$product->title}" class="pmh-app-card-img" />
+							<img src="{$product->product_image_url}" alt="" class="pmh-app-card-img" />
 							<!--@end-->
 							<span class="pmh-app-card-badge">선정된</span>
 						</div>
 					</div>
 					<div class="pmh-app-card-body">
+						<div class="pmh-app-card-head">
+							<div class="pmh-app-card-title-wrap tag">
+								<!--@if($product->product_srl)-->
+								<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationDetail', 'application_srl', $application->application_srl)}" class="pmh-app-card-title">
+									<div class="tag">
+										<!--@if($product->region_title)-->
+										<span class="area
+											<!--@if($product->region_title == '수도권')-->seoul<!--@end-->
+											<!--@if($product->region_title == '충청권')-->chungcheong<!--@end-->
+											<!--@if($product->region_title == '호남권')-->honam<!--@end-->
+											<!--@if($product->region_title == '영남권')-->yeongnam<!--@end-->
+											">
+										{$product->region_title}</span>
+										<!--@end-->
+										<!--@if($product->shopping_channel)-->
+										<span class="channel
+										<!--@if($product->shopping_channel == '올리브영')-->oliveyoung<!--@end-->
+										<!--@if($product->shopping_channel == '쿠팡')-->coupang<!--@end-->
+										<!--@if($product->shopping_channel == 'G마켓')-->gmarket<!--@end-->
+										<!--@if($product->shopping_channel == '11번가')-->11st<!--@end-->
+										<!--@if($product->shopping_channel == '자사몰')-->mall<!--@end-->
+										<!--@if($product->shopping_channel == '마켓컬리')-->marketcurly<!--@end-->
+										<!--@if($product->shopping_channel == '카카오선물하기')-->kakaogift<!--@end-->
+										<!--@if($product->shopping_channel == '네이버 스마트스토어')-->smartstore<!--@end-->
+										<!--@if($product->shopping_channel == '무신사')-->musinsa<!--@end-->
+										<!--@if($product->shopping_channel == '옥션')-->auction<!--@end-->
+										<!--@if($product->shopping_channel == '카카오쇼핑')-->kakaoshopping<!--@end-->
+										">
+										{$product->shopping_channel}</span>
+										<!--@end-->
+										<!--@if($product->card_dday)--><span class="pmh-app-dday dday"> {$product->card_dday}</span><!--@end-->
+									</div>
+								</a>
+								<!--@else-->
+								<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationDetail', 'application_srl', $application->application_srl)}" class="pmh-app-card-title">삭제된 상품</a>
+								<!--@end-->
+							</div>
+						</div>
+						<!--@if($product->product_srl)-->
 						<div class="title">
 							<!--@if($product->company_name)-->
-							<p class="pmh-app-card-company">{$product->company_name} <!--@if($product->title)-->[{$product->title}]<!--@end--></p>
-							<!--@else-->
-							<!--@if($product->title)--><p class="pmh-app-card-company">{$product->title}</p><!--@end-->
+							<p class="pmh-app-card-company">{$product->company_name}<!--@if($product->title)--> [{$product->title}]<!--@end--></p>
+							<!--@elseif($product->title)-->
+							<p class="pmh-app-card-company">{$product->title}</p>
 							<!--@end-->
 						</div>
 						<!--@if($product->product_type != 'local' && $product->product_url)-->
-						<p class="pmh-app-card-link">구매 링크 <a href="{$product->product_url}" target="_blank" rel="noopener">{$product->product_url}</a></p>
+						<p class="pmh-app-card-link">상품 {$lang_app->product_purchase_link} · <a href="{$product->product_url}" target="_blank" rel="noopener">{$product->product_url}</a></p>
+						<!--@elseif($product->product_type == 'local')-->
+						<!--@if($product->contact)--><p class="pmh-app-card-link">{$lang_app->contact} · {$product->contact}</p><!--@end-->
+						<!--@if($product->address)--><p class="pmh-app-card-link">{$lang_app->address} · {$product->address}</p><!--@end-->
 						<!--@end-->
-						<!--@if(!$product->company_name && !$product->title && !$product->product_url)-->
+						<!--@else-->
 						<p class="pmh-app-card-link">상품을 찾을 수 없습니다.</p>
 						<!--@end-->
 					</div>
@@ -119,7 +161,8 @@
 										<div class="modal_title">리뷰작성 인증 샷 예시</div>
 										<div class="bh_modal_close"><i class="ri-close-large-line"></i></div>
 									</div>
-									<img src="/assets/images/sub/review_popup_ex.png" alt="ex">
+									<img src="/assets/images/sub/review_popup_ex.png" alt="ex" class="lg:ds-b ds-n">
+									<img src="/assets/images/sub/review_popup_ex_mobile.png" alt="ex" class="lg:ds-n ds-b">
 								</div>
 								<div class="bh_modal_dimmed"></div>
 							</div>
@@ -193,7 +236,8 @@
 										<div class="modal_title">구매경로 인증샷 예시</div>
 										<div class="bh_modal_close"><i class="ri-close-large-line"></i></div>
 									</div>
-									<img src="/assets/images/sub/review_popup_ex2.png" alt="ex">
+									<img src="/assets/images/sub/review_popup_ex2.png" alt="ex" class="lg:ds-b ds-n">
+									<img src="/assets/images/sub/review_popup_ex2_mobile.png" alt="ex" class="lg:ds-n ds-b">
 								</div>
 								<div class="bh_modal_dimmed"></div>
 							</div>
@@ -275,13 +319,14 @@
 					</div>
 
 					<!--@if($is_review_edit)-->
-					<div class="pmh-review-actions edit">
-						<button type="submit" class="pmh-btn-primary" id="pmhReviewSubmitBtn">수정 완료</button>
+					<div class="pmh-review-actions cert jc-c lg:mt-30 mt-20">
+						<button type="submit" class="bh_bg_color_main submit-btn fs-24 pt-15 pb-15" id="pmhReviewSubmitBtn">수정 완료</button>
 					</div>
 					<!--@else-->
-					<div class="pmh-review-actions cert">
-						<p>참여 인증</p>
-						<button type="submit" class="pmh-btn-primary" id="pmhReviewSubmitBtn">참여 인증하기</button>
+					<div class="pmh-review-actions cert jc-c lg:mt-30 mt-20">
+						<button type="submit" class="bh_bg_color_main submit-btn fs-24 pt-15 pb-15" id="pmhReviewSubmitBtn">
+							<span>인증 제출하기</span>
+						</button>
 						<!--@if(!$is_review_edit)-->
 						<button type="button" class="pmh-btn-outline ds-n" id="pmhReviewDraftBtn">임시저장</button>
 						<!--@end-->
@@ -295,22 +340,10 @@
 </div>
 
 <style>
-/* 품앗이 현황 (이미지1) */
-
-
-
-.pmh-review-content { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; resize: vertical; box-sizing: border-box; }
-.pmh-review-message { padding: 10px 14px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; }
-.pmh-review-message.error { background: #fbe9e7; color: #e53935; }
-.pmh-review-message.info { background: #e3f2fd; color: #1976d2; }
-.pmh-review-message.success { background: #e8f5e9; color: #2e7d32; }
-.pmh-review-draft-images { margin-bottom: 20px; padding: 12px 16px; background: #f5f5f5; border-radius: 8px; }
-.pmh-review-draft-images-label { margin: 0 0 10px; font-size: 13px; color: #666; }
-.pmh-review-draft-thumbs { display: flex; flex-wrap: wrap; gap: 8px; }
-.pmh-review-draft-thumb { width: 64px; height: 64px; object-fit: cover; border-radius: 6px; border: 1px solid #eee; }
-.pmh-review-actions { display: flex; gap: 12px; margin-top: 24px; }
-.pmh-btn-primary { padding: 12px 24px; background: #e91e63; color: #fff; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; }
-.pmh-btn-outline { padding: 12px 24px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; color: #333; text-decoration: none; display: inline-block; }
+	#pmhReviewSubmitBtn {
+		width: 260px;
+		cursor: pointer;
+	}
 </style>
 
 <script type="text/javascript">

@@ -108,7 +108,8 @@
 
 				<select name="sort" class="pmh-select" onchange="this.form.submit();">
 					<option value="" selected|cond="!Context::get('sort')">신규오픈</option>
-					<option value="deadline" selected|cond="Context::get('sort') == 'deadline'">마감임박</option>
+					<option>인기순</option>
+					<option value="deadline" selected|cond="Context::get('sort') == 'deadline'">마감순</option>
 				</select>
 			</div>
 		</form>

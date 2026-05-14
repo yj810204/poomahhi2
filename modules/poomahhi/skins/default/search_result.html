@@ -6,7 +6,7 @@
 	<!--@if($product_list)-->
 	<div class="pmh-card-grid common_product_display">
 		<!--@foreach($product_list as $item)-->
-		<div class="pmh-card <!--@if($item->is_paid)-->pmh-card-paid<!--@end--> card_wrap">
+		<div class="pmh-card <!--@if($item->is_paid)-->card-paid<!--@end--> card_wrap">
 			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductDetail', 'product_srl', $item->product_srl)}" class="pmh-card-link">
 				<div class="pmh-card-image image_wrap">
 					<!--@if($item->product_image)-->
@@ -16,7 +16,7 @@
 					<!--@end-->
 
 					<!--@if($item->is_paid)-->
-					<span class="pmh-badge-paid"><i class="bi bi-lock-fill"></i> <!--@if($item->point_cost_display)-->{$item->point_cost_display}<!--@else-->0<!--@end-->P</span>
+					<span class="paid"><i class="ri-lock-line"></i> <!--@if($item->point_cost_display)-->{$item->point_cost_display}<!--@else-->0<!--@end-->P</span>
 					<!--@end-->
 
 					<!--@if($logged_info)-->
@@ -79,7 +79,7 @@
 	<!--@if($local_list)-->
 	<div class="pmh-card-grid pmh-local-grid common_product_display">
 		<!--@foreach($local_list as $item)-->
-		<div class="pmh-card <!--@if($item->is_paid)-->pmh-card-paid<!--@end--> card_wrap">
+		<div class="pmh-card <!--@if($item->is_paid)-->card-paid<!--@end--> card_wrap">
 			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductDetail', 'product_srl', $item->product_srl)}" class="pmh-card-link">
 				<div class="pmh-card-image image_wrap">
 					<!--@if($item->product_image)-->
@@ -89,7 +89,7 @@
 					<!--@end-->
 
 					<!--@if($item->is_paid)-->
-					<span class="pmh-badge-paid"><i class="bi bi-lock-fill"></i> <!--@if($item->point_cost_display)-->{$item->point_cost_display}<!--@else-->0<!--@end-->P</span>
+					<span class="paid"><i class="ri-lock-line"></i> <span><!--@if($item->point_cost_display)-->{$item->point_cost_display}<!--@else-->0<!--@end-->P</span></span>
 					<!--@end-->
 
 					<!--@if($logged_info)-->
@@ -113,7 +113,13 @@
 						</div>
 						<div class="pmh-card-tags tag">
 							<!--@if($item->region_title)-->
-							<span class="pmh-tag region">{$item->region_title}</span>
+							<span class="rp-tag area 
+								<!--@if($item->region_title == '수도권')-->seoul<!--@end-->
+								<!--@if($item->region_title == '충청권')-->chungcheong<!--@end-->
+								<!--@if($item->region_title == '호남권')-->honam<!--@end-->
+								<!--@if($item->region_title == '영남권')-->yeongnam<!--@end-->
+								">
+							{$item->region_title}</span>
 							<!--@end-->
 							<!--@if($item->dday_text)-->
 							<span class="pmh-tag dday">{$item->dday_text}</span>
@@ -135,6 +141,36 @@
 	</div>
 	<!--@end-->
 </div>
+
+<style>
+	@media(max-width:992px) {
+		.pmh-search-result .common_product_display .card_wrap.card-paid .image_wrap::after {
+			width: 125px;
+		}
+		.pmh-search-result .common_product_display .card_wrap .image_wrap .paid {
+			top: 25px;
+		}
+		.pmh-search-result .common_product_display .card_wrap .image_wrap .paid span {
+			display: none;
+		}
+		.pmh-search-result .common_product_display .card_wrap .body_wrap .row {
+			flex-direction: column-reverse;
+			align-items: self-start;
+		}
+		.pmh-search-result .common_product_display .card_wrap .image_wrap .wishlist-btn {
+			width: 24px;
+			height: 24px;
+			background-color: #fafafa;
+		}
+		.pmh-search-result .common_product_display .card_wrap .image_wrap .wishlist-btn i {
+			font-size: 12px;
+			color: #bdbdbd;
+		}
+		.pmh-search-result .common_product_display .card_wrap .image_wrap .wishlist-btn.active i {
+			color: var(--bh_color_main);
+		}
+	}
+</style>
 
 <script>
 function toggleWishlist(btn){
