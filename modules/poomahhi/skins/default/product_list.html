@@ -35,24 +35,14 @@
 	<!-- 지역 품앗이: 지역 탭 필터 -->
 	<!--@if($product_type == 'local' && $region_list)-->
 	<div class="pmh-region-bar">
-		{@ $i = 0; }
 		<!--@foreach($region_list as $rg)-->
-
 		<!--@if(Context::get('category_srl'))-->
 		<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductList', 'region_srl', $rg->region_srl, 'category_srl', Context::get('category_srl'))}"
-		class="pmh-region-item 
-		<!--@if(Context::get('region_srl') == $rg->region_srl || (!Context::get('region_srl') && $i == 0))-->active<!--@end-->">
-			{$rg->title}
-		</a>
+			class="pmh-region-item <!--@if(Context::get('region_srl') == $rg->region_srl)-->active<!--@end-->">{$rg->title}</a>
 		<!--@else-->
 		<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductList', 'region_srl', $rg->region_srl)}"
-		class="pmh-region-item 
-		<!--@if(Context::get('region_srl') == $rg->region_srl || (!Context::get('region_srl') && $i == 0))-->active<!--@end-->">
-			{$rg->title}
-		</a>
+			class="pmh-region-item <!--@if(Context::get('region_srl') == $rg->region_srl)-->active<!--@end-->">{$rg->title}</a>
 		<!--@end-->
-
-		{@ $i++; }
 		<!--@end-->
 	</div>
 	<!--@end-->
@@ -60,26 +50,20 @@
 	<!-- 카테고리 아이콘 영역 -->
 	<!--@if($category_list)-->
 	<div class="pmh-category-bar">
-		{@ $i = 0; }
 		<!--@foreach($category_list as $cat)-->
-
 		<!--@if(Context::get('region_srl'))-->
 		<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductList', 'category_srl', $cat->category_srl, 'region_srl', Context::get('region_srl'))}"
-		class="pmh-cat-item 
-		<!--@if(Context::get('category_srl') == $cat->category_srl || (!Context::get('category_srl') && $i == 0))-->active<!--@end-->">
+			class="pmh-cat-item <!--@if(Context::get('category_srl') == $cat->category_srl)-->active<!--@end-->">
 			<div class="img"></div>
 			<span>{$cat->title}</span>
 		</a>
 		<!--@else-->
 		<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductList', 'category_srl', $cat->category_srl)}"
-		class="pmh-cat-item 
-		<!--@if(Context::get('category_srl') == $cat->category_srl || (!Context::get('category_srl') && $i == 0))-->active<!--@end-->">
+			class="pmh-cat-item <!--@if(Context::get('category_srl') == $cat->category_srl)-->active<!--@end-->">
 			<div class="img"></div>
 			<span>{$cat->title}</span>
 		</a>
 		<!--@end-->
-
-		{@ $i++; }
 		<!--@end-->
 	</div>
 	<!--@end-->
@@ -108,7 +92,7 @@
 
 				<select name="sort" class="pmh-select" onchange="this.form.submit();">
 					<option value="" selected|cond="!Context::get('sort')">신규오픈</option>
-					<option>인기순</option>
+					<option value="popular" selected|cond="Context::get('sort') == 'popular'">인기순</option>
 					<option value="deadline" selected|cond="Context::get('sort') == 'deadline'">마감순</option>
 				</select>
 			</div>

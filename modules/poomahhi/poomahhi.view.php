@@ -818,23 +818,47 @@ class poomahhiView extends poomahhi
 	{
 		$oModel = getModel('poomahhi');
 
+		// mid 기반 품앗이 유형 필터 (init에서 설정)
+		$product_type = $this->product_type;
+
+		$category_list = $oModel->getCategoryList($this->primary_module_srl);
+		$region_list = $oModel->getRegionList($this->primary_module_srl);
+
+		$category_srl = Context::get('category_srl');
+		$region_srl = Context::get('region_srl');
+
+		// 탭과 목록 일치: URL에 없으면 첫 지역·첫 카테고리로 필터
+		if($product_type === 'local' && $region_list && !$region_srl)
+		{
+			$first_rg = is_array($region_list) ? reset($region_list) : $region_list;
+			if($first_rg && (int)$first_rg->region_srl > 0)
+			{
+				$region_srl = (int)$first_rg->region_srl;
+				Context::set('region_srl', $region_srl);
+			}
+		}
+		if($category_list && !$category_srl)
+		{
+			$first_cat = is_array($category_list) ? reset($category_list) : $category_list;
+			if($first_cat && (int)$first_cat->category_srl > 0)
+			{
+				$category_srl = (int)$first_cat->category_srl;
+				Context::set('category_srl', $category_srl);
+			}
+		}
+
 		$args = new stdClass();
 		$args->module_srl = $this->primary_module_srl;
 		$args->page = Context::get('page') ?: 1;
 		$args->list_count = $this->config->default_list_count ?: 20;
 
-		// mid 기반 품앗이 유형 필터 (init에서 설정)
-		$product_type = $this->product_type;
 		$args->product_type = $product_type;
 
-		$category_srl = Context::get('category_srl');
 		if($category_srl) $args->category_srl = $category_srl;
 
 		$shopping_channel = Context::get('shopping_channel');
 		if($shopping_channel) $args->shopping_channel = $shopping_channel;
 
-		// 지역 필터 (지역 품앗이용)
-		$region_srl = Context::get('region_srl');
 		if($region_srl) $args->region_srl = $region_srl;
 
 		$search_keyword = Context::get('search_keyword');
@@ -842,24 +866,31 @@ class poomahhiView extends poomahhi
 
 		// 정렬 옵션
 		$sort = Context::get('sort');
+		$use_popular_sort = ($sort === 'popular');
 		if($sort === 'deadline')
 		{
 			$args->sort_index = 'deadline_date';
 			$args->order = 'asc';
 		}
+		elseif($use_popular_sort)
+		{
+			$args->sort_index = 'wish_count';
+			$args->order = 'desc';
+		}
 
 		$args->status = 'active';
 
-		$output = $oModel->getProductList($args);
-
-		// 카테고리 목록 (메인 모듈 기준 공유 데이터)
-		$category_list = $oModel->getCategoryList($this->primary_module_srl);
+		if($use_popular_sort)
+		{
+			$output = $oModel->getProductListByWishlistCount($args);
+		}
+		else
+		{
+			$output = $oModel->getProductList($args);
+		}
 
 		// 쇼핑채널 목록 (필터용)
 		$channel_list = $oModel->getChannelList($this->primary_module_srl);
-
-		// 지역 목록 (필터용)
-		$region_list = $oModel->getRegionList($this->primary_module_srl);
 
 		// 지역 맵 생성 (region_srl => title, 리스트 카드에서 사용)
 		$region_map = array();
@@ -2809,7 +2840,7 @@ class poomahhiView extends poomahhi
 			}));
 		}
 
-		if(!$use_search && ($tab === 'all' || $tab === 'poomahhi') && $page === 1)
+		if(!$unread_only && !$use_search && ($tab === 'all' || $tab === 'poomahhi') && $page === 1)
 		{
 			$synth = $oModel->getDeadlineSyntheticRowsForBusinessNotifications($logged_info->member_srl, $this->mid);
 			if($synth && count($synth) > 0)

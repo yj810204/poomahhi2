@@ -15,6 +15,9 @@
 		<condition operation="equal" column="p.module_srl" var="module_srl" notnull="notnull" pipe="AND" />
 		<condition operation="equal" column="p.product_type" var="product_type" default="product" pipe="AND" />
 		<condition operation="equal" column="p.region_srl" var="region_srl" pipe="AND" />
+		<condition operation="equal" column="p.category_srl" var="category_srl" pipe="AND" />
+		<condition operation="equal" column="p.shopping_channel" var="shopping_channel" pipe="AND" />
+		<condition operation="like" column="p.title" var="search_keyword" pipe="AND" />
 		<condition operation="equal" column="p.status" var="status" default="active" pipe="AND" />
 	</conditions>
 	<groups>
@@ -23,7 +26,7 @@
 	<navigation>
 		<index var="sort_index" default="wish_count" order="desc" />
 		<list_count var="list_count" default="9" />
-		<page_count var="page_count" default="1" />
+		<page_count var="page_count" default="10" />
 		<page var="page" default="1" />
 	</navigation>
 </query>

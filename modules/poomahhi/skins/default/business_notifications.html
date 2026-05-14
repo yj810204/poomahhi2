@@ -27,8 +27,7 @@
 			</div>
 			<label class="pmh-bn-unread-label">
 				읽지않음만 보기
-				<input type="checkbox" name="unread_only" value="Y" checked|cond="$notify_unread_only == 'Y'" />
-				<button type="submit" class="pmh-bn-submit">적용</button>
+				<input type="checkbox" name="unread_only" value="Y" id="pmh_bn_unread_only" checked|cond="$notify_unread_only == 'Y'" onchange="this.form.submit();" />
 			</label>
 		</form>
 
