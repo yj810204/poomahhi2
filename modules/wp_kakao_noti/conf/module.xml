@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module>
+	<grants />
+	<permissions>
+		<permission action="dispWp_kakao_notiAdminConfig" target="manager" />
+		<permission action="dispWp_kakao_notiAdminSendLog" target="manager" />
+		<permission action="dispWp_kakao_notiAdminTemplateList" target="manager" />
+		<permission action="dispWp_kakao_notiAdminTemplateWrite" target="manager" />
+		<permission action="dispWp_kakao_notiAdminTemplateDetail" target="manager" />
+		<permission action="procWp_kakao_notiAdminSaveConfig" target="manager" />
+		<permission action="procWp_kakao_notiAdminTestSend" target="manager" />
+		<permission action="procWp_kakao_notiAdminSaveTemplate" target="manager" />
+		<permission action="procWp_kakao_notiAdminDeleteTemplate" target="manager" />
+		<permission action="procWp_kakao_notiAdminRequestInspection" target="manager" />
+		<permission action="procWp_kakao_notiAdminCancelInspection" target="manager" />
+		<permission action="procWp_kakao_notiAdminReleaseDormant" target="manager" />
+		<permission action="procWp_kakao_notiAdminResendFromLog" target="manager" />
+	</permissions>
+	<actions>
+		<action name="dispWp_kakao_notiAdminConfig" type="view" admin_index="true" menu_name="wp_kakao_noti" />
+		<action name="dispWp_kakao_notiAdminSendLog" type="view" menu_name="wp_kakao_noti" />
+		<action name="dispWp_kakao_notiAdminTemplateList" type="view" menu_name="wp_kakao_noti" />
+		<action name="dispWp_kakao_notiAdminTemplateWrite" type="view" menu_name="wp_kakao_noti" />
+		<action name="dispWp_kakao_notiAdminTemplateDetail" type="view" menu_name="wp_kakao_noti" />
+
+		<action name="procWp_kakao_notiAdminSaveConfig" type="controller" />
+		<action name="procWp_kakao_notiAdminTestSend" type="controller" />
+		<action name="procWp_kakao_notiAdminSaveTemplate" type="controller" />
+		<action name="procWp_kakao_notiAdminDeleteTemplate" type="controller" />
+		<action name="procWp_kakao_notiAdminRequestInspection" type="controller" />
+		<action name="procWp_kakao_notiAdminCancelInspection" type="controller" />
+		<action name="procWp_kakao_notiAdminReleaseDormant" type="controller" />
+		<action name="procWp_kakao_notiAdminResendFromLog" type="controller" />
+	</actions>
+	<menus>
+		<menu name="wp_kakao_noti">
+			<title xml:lang="ko">카카오 알림톡</title>
+			<title xml:lang="en">Kakao Alimtalk</title>
+		</menu>
+	</menus>
+</module>

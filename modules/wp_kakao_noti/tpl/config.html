@@ -1,0 +1,175 @@
+<include target="_header.html" />
+
+<!--@if($XE_VALIDATOR_MESSAGE)-->
+<div class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
+	<p>{$XE_VALIDATOR_MESSAGE}</p>
+</div>
+<!--@end-->
+
+<form id="wkn_config_save_form" action="./" method="post">
+	<input type="hidden" name="module" value="admin" />
+	<include target="_admin_mid.html" />
+	<input type="hidden" name="act" value="procWp_kakao_notiAdminSaveConfig" />
+
+	<section class="section">
+		<h2>SOLAPI 인증</h2>
+		<table class="x_table x_table-striped x_table-bordered">
+			<tbody>
+				<tr>
+					<th scope="row" style="width:220px;">API Key</th>
+					<td><input type="text" name="solapi_api_key" class="x_form-control" style="width:100%;max-width:480px;" value="<!--@if($config->solapi_api_key)-->{$config->solapi_api_key}<!--@end-->" autocomplete="off" /></td>
+				</tr>
+				<tr>
+					<th scope="row">API Secret</th>
+					<td><input type="password" name="solapi_api_secret" class="x_form-control" style="width:100%;max-width:480px;" placeholder="변경 시에만 입력" autocomplete="new-password" /></td>
+				</tr>
+			</tbody>
+		</table>
+
+		<!--@if($wkn_solapi_test_done)-->
+		<div class="x_alert <!--@if($wkn_solapi_test_ok)-->x_alert-success<!--@else-->x_alert-danger<!--@end-->" style="margin-top:12px;">
+			<p><strong>연결 테스트 결과</strong></p>
+			<p style="white-space:pre-wrap;">{$wkn_solapi_test_msg}</p>
+			<p class="x_help-block" style="margin-bottom:0;">
+				<!--@if($wkn_solapi_test_http_status > 0)-->
+				HTTP 응답 코드: {$wkn_solapi_test_http_status}
+				<!--@else-->
+				HTTP 응답 코드: 없음 (요청이 SOLAPI까지 가지 않았거나, 저장된 API Key·Secret이 비어 있습니다.)
+				<!--@end-->
+			</p>
+		</div>
+		<!--@end-->
+
+		<p class="x_help-block" style="margin-top:12px;">저장된 API Key·Secret으로 SOLAPI 메시지 목록 API를 호출해 연결을 확인합니다. 변경 후에는 먼저 저장하세요.</p>
+		<p style="margin-top:8px;"><a href="{$wkn_solapi_test_get_url}" class="x_btn">SOLAPI 인증 테스트</a></p>
+	</section>
+
+	<section class="section">
+		<h2>카카오 / 발신</h2>
+		<table class="x_table x_table-striped x_table-bordered">
+			<tbody>
+				<tr>
+					<th scope="row" style="width:220px;">pfId (알림톡 발송)</th>
+					<td>
+						<input type="text" name="solapi_pf_id" class="x_form-control" style="width:100%;max-width:480px;" value="<!--@if($config->solapi_pf_id)-->{$config->solapi_pf_id}<!--@end-->" />
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">channelId (템플릿 API)</th>
+					<td>
+						<input type="text" name="solapi_channel_id" id="wkn_solapi_channel_id_input" class="x_form-control" style="width:100%;max-width:480px;" maxlength="64" value="<!--@if($config->solapi_channel_id)-->{$config->solapi_channel_id}<!--@end-->" />
+						<p style="margin-top:8px;"><a href="{$wkn_solapi_channels_get_url}" class="x_btn x_btn-small">연동 채널 목록 조회</a></p>
+						<!--@if($wkn_solapi_channels_done)-->
+						<div class="x_alert <!--@if($wkn_solapi_channels_ok)--><!--@if($wkn_solapi_channel_count)-->x_alert-success<!--@else-->x_alert-warning<!--@end--><!--@else-->x_alert-danger<!--@end-->" style="margin-top:12px;">
+							<p style="white-space:pre-wrap;"><strong>채널 목록 조회</strong><br />{$wkn_solapi_channels_msg}</p>
+							<p class="x_help-block" style="margin-bottom:0;">HTTP 응답 코드: <!--@if($wkn_solapi_channels_http_status > 0)-->{$wkn_solapi_channels_http_status}<!--@else-->없음<!--@end--></p>
+						</div>
+						<!--@if($wkn_solapi_channels_ok && $wkn_solapi_channel_count)-->
+						<table class="x_table x_table-striped x_table-bordered" style="margin-top:10px;width:100%;max-width:960px;">
+							<thead>
+								<tr>
+									<th>channelId</th>
+									<th>채널명</th>
+									<th>searchId</th>
+									<th>전화번호</th>
+									<th style="width:120px;">선택</th>
+								</tr>
+							</thead>
+							<tbody>
+								<!--@foreach($wkn_solapi_channel_list as $wkn_ch)-->
+								<tr>
+									<td><code style="word-break:break-all;">{$wkn_ch->channelId}</code></td>
+									<td><!--@if($wkn_ch->channelName)-->{$wkn_ch->channelName}<!--@else-->-<!--@end--></td>
+									<td><!--@if($wkn_ch->searchId)-->{$wkn_ch->searchId}<!--@else-->-<!--@end--></td>
+									<td><!--@if($wkn_ch->phoneNumber)-->{$wkn_ch->phoneNumber}<!--@else-->-<!--@end--></td>
+									<td><button type="button" class="x_btn x_btn-mini" data-wkn-cid="{$wkn_ch->channelId}" onclick="wknSetSolapiChannelId(this.getAttribute('data-wkn-cid'))">입력란에 넣기</button></td>
+								</tr>
+								<!--@end-->
+							</tbody>
+						</table>
+						<!--@if($wkn_solapi_channels_next_url)-->
+						<p style="margin-top:8px;"><a href="{$wkn_solapi_channels_next_url}" class="x_btn x_btn-small">다음 페이지</a></p>
+						<!--@end-->
+						<!--@end-->
+						<!--@end-->
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">발신번호 (SMS 대체 시)</th>
+					<td><input type="text" name="solapi_from" class="x_form-control" style="width:100%;max-width:240px;" value="<!--@if($config->solapi_from)-->{$config->solapi_from}<!--@end-->" /></td>
+				</tr>
+			</tbody>
+		</table>
+	</section>
+
+	<section class="section">
+		<h2>동작</h2>
+		<table class="x_table x_table-striped x_table-bordered">
+			<tbody>
+				<tr>
+					<th scope="row" style="width:220px;">알림톡 발송 사용</th>
+					<td>
+						<label><input type="checkbox" name="alimtalk_enabled" value="Y" checked|cond="$config->alimtalk_enabled == 'Y'" /> 사용</label>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">알림톡 실패 시 SMS 대체</th>
+					<td>
+						<label><input type="checkbox" name="sms_fallback_enabled" value="Y" checked|cond="$config->sms_fallback_enabled == 'Y'" /> 사용 (발신번호 필수)</label>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">수신 번호 출처</th>
+					<td>
+						<label><input type="radio" name="phone_source" value="member" checked|cond="$config->phone_source != 'direct'" /> 회원정보 phone_number</label>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</section>
+
+	<div class="x_clearfix btnArea">
+		<span class="x_pull-right"><button type="submit" class="x_btn x_btn-primary">저장</button></span>
+	</div>
+	<script>
+	(function() {
+		window.wknSetSolapiChannelId = function(v) {
+			var el = document.getElementById('wkn_solapi_channel_id_input');
+			if(el) {
+				el.value = v || '';
+				el.focus();
+			}
+		};
+	})();
+	</script>
+</form>
+
+<hr />
+
+<section class="section">
+	<h3>발송 테스트 (SMS 대체 안 함)</h3>
+	<form action="./" method="post">
+		<input type="hidden" name="module" value="admin" />
+		<include target="_admin_mid.html" />
+		<input type="hidden" name="act" value="procWp_kakao_notiAdminTestSend" />
+		<table class="x_table x_table-striped x_table-bordered" style="width:100%;">
+			<tbody>
+				<tr>
+					<th scope="row" style="width:220px;">수신 번호</th>
+					<td><input type="text" name="test_to" class="x_form-control" style="width:100%;max-width:480px;" required="required" placeholder="01012345678" /></td>
+				</tr>
+				<tr>
+					<th scope="row">templateId</th>
+					<td><input type="text" name="test_template_id" class="x_form-control" style="width:100%;max-width:480px;" required="required" /></td>
+				</tr>
+				<tr>
+					<th scope="row">variables (JSON)</th>
+					<td><textarea name="test_variables" class="x_form-control" style="width:100%;max-width:480px;" rows="4" placeholder="&#123;&quot;#&#123;이름&#125;&quot;:&quot;홍길동&quot;&#125;"></textarea></td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="x_clearfix btnArea">
+			<span class="x_pull-right"><button type="submit" class="x_btn x_btn-primary">테스트 발송</button></span>
+		</div>
+	</form>
+</section>

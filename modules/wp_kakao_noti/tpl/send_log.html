@@ -1,0 +1,77 @@
+<include target="_header.html" />
+
+<!--@if($XE_VALIDATOR_MESSAGE)-->
+<div class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
+	<p>{$XE_VALIDATOR_MESSAGE}</p>
+</div>
+<!--@end-->
+
+<h2>발송 로그</h2>
+
+<form action="./" method="get" no-error-return-url="true">
+	<input type="hidden" name="module" value="admin" />
+	<include target="_admin_mid.html" />
+	<input type="hidden" name="act" value="dispWp_kakao_notiAdminSendLog" />
+	<div style="display:flex;align-items:center;flex-wrap:wrap;gap:10px;">
+		<label style="margin:0;display:inline-flex;align-items:center;gap:6px;">상태
+			<select name="filter_status" class="x_form-control" style="width:140px;margin:0;">
+				<option value="" selected|cond="$filter_status==''">전체</option>
+				<option value="sent" selected|cond="$filter_status=='sent'">sent</option>
+				<option value="failed" selected|cond="$filter_status=='failed'">failed</option>
+				<option value="pending" selected|cond="$filter_status=='pending'">pending</option>
+			</select>
+		</label>
+		<button type="submit" class="x_btn">조회</button>
+	</div>
+</form>
+
+<table class="x_table x_table-striped x_table-bordered" style="margin-top:15px;">
+	<thead>
+		<tr>
+			<th>log_srl</th>
+			<th>regdate</th>
+			<th>상태</th>
+			<th>templateId</th>
+			<th>수신</th>
+			<th>member_srl</th>
+			<th>호출</th>
+			<th>메시지ID</th>
+			<th>작업</th>
+		</tr>
+	</thead>
+	<tbody>
+		<!--@foreach($log_list as $log)-->
+		<tr>
+			<td>{$log->log_srl}</td>
+			<td>{$log->regdate}</td>
+			<td>{$log->status}</td>
+			<td>{$log->template_id}</td>
+			<td>{$log->to_phone}</td>
+			<td>{$log->member_srl}</td>
+			<td>{$log->caller_module}</td>
+			<td>{$log->solapi_message_id}</td>
+			<td>
+				<form action="./" method="post" style="display:inline;">
+					<input type="hidden" name="module" value="admin" />
+					<include target="_admin_mid.html" />
+					<input type="hidden" name="act" value="procWp_kakao_notiAdminResendFromLog" />
+					<input type="hidden" name="log_srl" value="{$log->log_srl}" />
+					<button type="submit" class="x_btn x_btn-small">재발송</button>
+				</form>
+			</td>
+		</tr>
+		<!--@end-->
+	</tbody>
+</table>
+
+<!--@if($page_navigation)-->
+<div class="x_pagination" style="text-align:center;margin-top:15px;">
+	<ul>
+		<li class="x_disabled"|cond="$page == 1"><a href="{getUrl('page', '')}">&laquo; 처음</a></li>
+		<!--@while($page_no = $page_navigation->getNextPage())-->
+		<li class="x_active"|cond="$page_no == $page"><a href="{getUrl('page', $page_no)}">{$page_no}</a></li>
+		<!--@end-->
+		<li class="x_disabled"|cond="$page == $total_page"><a href="{getUrl('page', $total_page)}">마지막 &raquo;</a></li>
+	</ul>
+</div>
+<!--@end-->

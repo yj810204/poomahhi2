@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module version="0.2">
+	<title xml:lang="ko">카카오 알림톡(SOLAPI)</title>
+	<title xml:lang="en">Kakao Alimtalk (SOLAPI)</title>
+	<description xml:lang="ko">SOLAPI 연동 카카오 알림톡 발송 및 템플릿 관리</description>
+	<description xml:lang="en">Kakao Alimtalk via SOLAPI with template management</description>
+	<version>1.0.0</version>
+	<date>2026-05-13</date>
+	<category>service</category>
+	<author>
+		<name xml:lang="ko">WP</name>
+		<name xml:lang="en">WP</name>
+	</author>
+</module>

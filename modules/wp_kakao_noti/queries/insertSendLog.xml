@@ -1,0 +1,18 @@
+<query id="insertSendLog" action="insert">
+	<tables>
+		<table name="wp_kakao_noti_log" />
+	</tables>
+	<columns>
+		<column name="log_srl" var="log_srl" />
+		<column name="template_id" var="template_id" />
+		<column name="to_phone" var="to_phone" />
+		<column name="member_srl" var="member_srl" />
+		<column name="variables" var="variables" />
+		<column name="status" var="status" />
+		<column name="solapi_message_id" var="solapi_message_id" />
+		<column name="solapi_status" var="solapi_status" />
+		<column name="error_message" var="error_message" />
+		<column name="caller_module" var="caller_module" />
+		<column name="regdate" var="regdate" />
+	</columns>
+</query>

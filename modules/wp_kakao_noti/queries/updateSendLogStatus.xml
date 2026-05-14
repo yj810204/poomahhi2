@@ -1,0 +1,14 @@
+<query id="updateSendLogStatus" action="update">
+	<tables>
+		<table name="wp_kakao_noti_log" />
+	</tables>
+	<columns>
+		<column name="status" var="status" />
+		<column name="solapi_message_id" var="solapi_message_id" />
+		<column name="solapi_status" var="solapi_status" />
+		<column name="error_message" var="error_message" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="log_srl" var="log_srl" pipe="AND" />
+	</conditions>
+</query>

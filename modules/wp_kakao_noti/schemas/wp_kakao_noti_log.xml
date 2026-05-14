@@ -1,0 +1,13 @@
+<table name="wp_kakao_noti_log">
+	<column name="log_srl" type="number" size="11" notnull="notnull" primary_key="primary_key" index="idx_log_srl" />
+	<column name="template_id" type="varchar" size="100" index="idx_template_id" />
+	<column name="to_phone" type="varchar" size="20" index="idx_to_phone" />
+	<column name="member_srl" type="number" size="11" default="0" index="idx_member_srl" />
+	<column name="variables" type="text" />
+	<column name="status" type="varchar" size="20" default="pending" index="idx_status" />
+	<column name="solapi_message_id" type="varchar" size="100" />
+	<column name="solapi_status" type="varchar" size="50" />
+	<column name="error_message" type="text" />
+	<column name="caller_module" type="varchar" size="100" />
+	<column name="regdate" type="varchar" size="14" index="idx_regdate" />
+</table>

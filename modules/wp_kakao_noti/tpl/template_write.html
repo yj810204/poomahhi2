@@ -1,0 +1,73 @@
+<include target="_header.html" />
+
+<h2><!--@if($template_id)-->템플릿 수정<!--@else-->템플릿 등록<!--@end--></h2>
+
+<!--@if($XE_VALIDATOR_MESSAGE)-->
+<div class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
+	<p>{$XE_VALIDATOR_MESSAGE}</p>
+</div>
+<!--@end-->
+
+<!--@if($wkn_tpl_write_blocked)-->
+<p class="x_alert x_alert-warning">이 템플릿은 <strong>검수 중</strong>이라 내용을 수정할 수 없습니다. 검수가 완료되거나 <a href="{getUrl('','module','admin','mid',$wkn_mid,'act','dispWp_kakao_notiAdminTemplateDetail','template_id',$template_id)}">상세</a>에서 검수 요청을 취소한 뒤 다시 시도하세요.</p>
+<p><a href="{getUrl('','module','admin','mid',$wkn_mid,'act','dispWp_kakao_notiAdminTemplateDetail','template_id',$template_id)}" class="x_btn">상세로 돌아가기</a>
+<a href="{getUrl('','module','admin','mid',$wkn_mid,'act','dispWp_kakao_notiAdminTemplateList')}" class="x_btn">목록</a></p>
+<!--@else-->
+
+<form action="./" method="post">
+	<input type="hidden" name="module" value="admin" />
+	<include target="_admin_mid.html" />
+	<input type="hidden" name="act" value="procWp_kakao_notiAdminSaveTemplate" />
+	<!--@if($template_id)-->
+	<input type="hidden" name="template_id" value="{$template_id}" />
+	<!--@end-->
+
+	<table class="x_table x_table-bordered">
+		<tbody>
+			<tr>
+				<th scope="row" style="width:180px;">이름</th>
+				<td><input type="text" name="tpl_name" class="x_form-control" required="required" value="{$tpl_name_forform}" /></td>
+			</tr>
+			<tr>
+				<th scope="row">categoryCode</th>
+				<td>
+					<input type="text" name="category_code" class="x_form-control" style="max-width:200px;" required="required" value="{$tpl_category_forform}" placeholder="003001" />
+					<p class="x_help-block">카테고리 목록은 관리자 메뉴에서 SOLAPI categories API로 확인하거나 솔라피 콘솔에서 확인하세요.</p>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">messageType</th>
+				<td>
+					<select name="message_type" class="x_form-control" style="max-width:120px;">
+						<option value="BA" selected|cond="!$tpl_row || $tpl_row->messageType == 'BA'">BA</option>
+						<option value="EX" selected|cond="$tpl_row && $tpl_row->messageType == 'EX'">EX</option>
+						<option value="AD" selected|cond="$tpl_row && $tpl_row->messageType == 'AD'">AD</option>
+						<option value="MI" selected|cond="$tpl_row && $tpl_row->messageType == 'MI'">MI</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">emphasizeType</th>
+				<td>
+					<select name="emphasize_type" class="x_form-control" style="max-width:160px;">
+						<option value="NONE" selected|cond="!$tpl_row || $tpl_row->emphasizeType == 'NONE'">NONE</option>
+						<option value="TEXT" selected|cond="$tpl_row && $tpl_row->emphasizeType == 'TEXT'">TEXT</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">내용 (content)</th>
+				<td><textarea name="tpl_content" class="x_form-control" rows="10" style="width:100%;" required="required">{$tpl_content_forform}</textarea></td>
+			</tr>
+			<tr>
+				<th scope="row">buttons (JSON 배열)</th>
+				<td><textarea name="buttons_json" class="x_form-control" rows="6" style="width:100%;" placeholder="&#91;&#123;&quot;buttonType&quot;:&quot;WL&quot;,&quot;buttonName&quot;:&quot;바로가기&quot;,&quot;linkMo&quot;:&quot;https://...&quot;,&quot;linkPc&quot;:&quot;https://...&quot;&#125;&#93;">{$buttons_json_disp}</textarea></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<button type="submit" class="x_btn x_btn-primary">저장</button>
+	<a href="{getUrl('','module','admin','mid',$wkn_mid,'act','dispWp_kakao_notiAdminTemplateList')}" class="x_btn">목록</a>
+</form>
+
+<!--@end-->

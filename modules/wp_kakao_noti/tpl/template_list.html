@@ -1,0 +1,38 @@
+<include target="_header.html" />
+
+<h2>알림톡 템플릿</h2>
+<!--@if(!$config->solapi_channel_id)-->
+<p class="x_alert x_alert-warning">설정에 <strong>channelId</strong>를 입력하세요.</p>
+<!--@end-->
+
+<p><a href="{getUrl('','module','admin','mid',$wkn_mid,'act','dispWp_kakao_notiAdminTemplateWrite')}" class="x_btn x_btn-primary">새 템플릿</a></p>
+
+<table class="x_table x_table-striped x_table-bordered">
+	<thead>
+		<tr>
+			<th>templateId</th>
+			<th>이름</th>
+			<th>상태</th>
+			<th>messageType</th>
+			<th>관리</th>
+		</tr>
+	</thead>
+	<tbody>
+		<!--@foreach($template_list as $t)-->
+		<tr>
+			<td>{$t->templateId}</td>
+			<td>{$t->name}</td>
+			<td>{$t->wkn_status_label_ko}<!--@if($t->status)--> <span style="color:#888;font-size:12px;">({$t->status})</span><!--@end--></td>
+			<td>{$t->messageType}</td>
+			<td>
+				<a href="{getUrl('','module','admin','mid',$wkn_mid,'act','dispWp_kakao_notiAdminTemplateDetail','template_id',$t->templateId)}" class="x_btn x_btn-small">상세</a>
+				<!--@if(!$t->wkn_tpl_inspecting)-->
+				<a href="{getUrl('','module','admin','mid',$wkn_mid,'act','dispWp_kakao_notiAdminTemplateWrite','template_id',$t->templateId)}" class="x_btn x_btn-small">수정</a>
+				<!--@else-->
+				<span class="x_help-inline">수정 불가(검수 중)</span>
+				<!--@end-->
+			</td>
+		</tr>
+		<!--@end-->
+	</tbody>
+</table>

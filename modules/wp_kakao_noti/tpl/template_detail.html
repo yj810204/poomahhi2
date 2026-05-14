@@ -1,0 +1,107 @@
+<include target="_header.html" />
+
+<!--@if($XE_VALIDATOR_MESSAGE)-->
+<div class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
+	<p>{$XE_VALIDATOR_MESSAGE}</p>
+</div>
+<!--@end-->
+
+<!--@if(!$template_id)-->
+<h2>템플릿 상세</h2>
+<p class="x_alert x_alert-danger">template_id가 없습니다.</p>
+<!--@elseif(!$tpl_row)-->
+<h2>템플릿 상세</h2>
+<p class="x_alert x_alert-danger">SOLAPI에서 템플릿을 불러오지 못했습니다.</p>
+<pre style="white-space:pre-wrap;">{$tpl_raw}</pre>
+<!--@else-->
+
+<!--@if($wkn_tpl_inspecting)-->
+<p class="x_alert x_alert-info" style="margin-bottom:12px;">이 템플릿은 <strong>검수 중</strong>입니다. 카카오 검수가 완료될 때까지 발송에 사용할 수 없습니다.</p>
+<!--@end-->
+
+<div class="x_clearfix" style="margin-bottom:12px;">
+	<h2 class="x_pull-left" style="margin-top:0;margin-bottom:0;">템플릿 상세</h2>
+	<div class="x_pull-right" style="padding-top:4px;">
+		<!--@if(!$wkn_tpl_inspecting)-->
+		<a href="{getUrl('','module','admin','mid',$wkn_mid,'act','dispWp_kakao_notiAdminTemplateWrite','template_id',$template_id)}" class="x_btn">수정</a>
+		<!--@else-->
+		<span class="x_help-inline" style="padding-top:4px;display:inline-block;">검수 중에는 수정할 수 없습니다.</span>
+		<!--@end-->
+		<a href="{getUrl('','module','admin','mid',$wkn_mid,'act','dispWp_kakao_notiAdminTemplateList')}" class="x_btn">목록</a>
+		<form action="./" method="post" style="display:inline;" onsubmit="return confirm('이 템플릿을 삭제하시겠습니까?');">
+			<input type="hidden" name="module" value="admin" />
+			<include target="_admin_mid.html" />
+			<input type="hidden" name="act" value="procWp_kakao_notiAdminDeleteTemplate" />
+			<input type="hidden" name="template_id" value="{$template_id}" />
+			<button type="submit" class="x_btn x_btn-danger">삭제</button>
+		</form>
+	</div>
+</div>
+
+<table class="x_table x_table-striped x_table-bordered" style="width:100%;table-layout:fixed;">
+	<tbody>
+		<tr>
+			<th scope="row" style="width:200px;">templateId</th>
+			<td><code style="word-break:break-all;">{$tpl_row->templateId}</code></td>
+		</tr>
+		<tr>
+			<th scope="row">name</th>
+			<td style="word-break:break-word;"><!--@if($tpl_row->name)-->{$tpl_row->name}<!--@else-->-<!--@end--></td>
+		</tr>
+		<tr>
+			<th scope="row">상태</th>
+			<td>{$tpl_status_label_ko}<!--@if($tpl_row->status)--> <span class="x_help-inline" style="color:#888;">({$tpl_row->status})</span><!--@end--></td>
+		</tr>
+		<tr>
+			<th scope="row">categoryCode</th>
+			<td><!--@if($tpl_row->categoryCode)-->{$tpl_row->categoryCode}<!--@else-->-<!--@end--></td>
+		</tr>
+		<tr>
+			<th scope="row">messageType</th>
+			<td><!--@if($tpl_row->messageType)-->{$tpl_row->messageType}<!--@else-->-<!--@end--></td>
+		</tr>
+		<tr>
+			<th scope="row">content</th>
+			<td><pre style="white-space:pre-wrap;margin:0;font-family:inherit;word-break:break-word;">{$tpl_content_display}</pre></td>
+		</tr>
+	</tbody>
+</table>
+
+<section class="section" style="margin-top:24px;padding:16px;border:1px solid #ddd;background:#fafafa;border-radius:4px;">
+	<h3 style="margin-top:0;">검수 요청</h3>
+	<form action="./" method="post" style="margin-bottom:12px;">
+		<input type="hidden" name="module" value="admin" />
+		<include target="_admin_mid.html" />
+		<input type="hidden" name="act" value="procWp_kakao_notiAdminRequestInspection" />
+		<input type="hidden" name="template_id" value="{$template_id}" />
+		<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+			<input type="text" name="inspection_comment" class="x_form-control" style="flex:1;min-width:200px;max-width:560px;margin-bottom:0;" placeholder="검수 요청 메모" />
+			<button type="submit" class="x_btn x_btn-primary">검수 요청</button>
+		</div>
+	</form>
+	<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+		<form action="./" method="post" style="display:inline;">
+			<input type="hidden" name="module" value="admin" />
+			<include target="_admin_mid.html" />
+			<input type="hidden" name="act" value="procWp_kakao_notiAdminCancelInspection" />
+			<input type="hidden" name="template_id" value="{$template_id}" />
+			<button type="submit" class="x_btn">검수 요청 취소</button>
+		</form>
+		<!--@if($wkn_tpl_release_dormant_allowed)-->
+		<form action="./" method="post" style="display:inline;">
+			<input type="hidden" name="module" value="admin" />
+			<include target="_admin_mid.html" />
+			<input type="hidden" name="act" value="procWp_kakao_notiAdminReleaseDormant" />
+			<input type="hidden" name="template_id" value="{$template_id}" />
+			<button type="submit" class="x_btn" onclick="return confirm('휴면 해제를 요청하시겠습니까? (승인 완료 템플릿만 가능)');">휴면 해제 요청</button>
+		</form>
+		<!--@else-->
+		<span class="x_help-inline">휴면 해제는 <strong>승인 완료</strong> 상태에서만 요청할 수 있습니다.</span>
+		<!--@end-->
+	</div>
+</section>
+
+<h3 style="margin-top:24px;">원본 JSON</h3>
+<pre style="white-space:pre-wrap;max-height:400px;overflow:auto;">{$tpl_raw}</pre>
+
+<!--@end-->
