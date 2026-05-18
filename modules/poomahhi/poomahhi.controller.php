@@ -990,6 +990,64 @@ class poomahhiController extends poomahhi
 	}
 
 	/**
+	 * 신청 삭제 전: 참여 인증·회원평가·댓글·신고·임시저장 등 연관 행 정리 (고아 리뷰 방지)
+	 */
+	function _purgePoomahhiApplicationDependencies($application_srl)
+	{
+		$application_srl = (int)$application_srl;
+		if(!$application_srl) return;
+
+		$oModel = getModel('poomahhi');
+		$app_arg = new stdClass();
+		$app_arg->application_srl = $application_srl;
+
+		$mr = $oModel->getMemberReviewByApplication($application_srl);
+		if($mr && !empty((int)$mr->review_srl))
+		{
+			$rp = new stdClass();
+			$rp->review_srl = (int)$mr->review_srl;
+			$rp->review_type = 'member_review';
+			executeQuery('poomahhi.deleteReviewReportByReviewSrlAndType', $rp);
+		}
+		executeQuery('poomahhi.deleteMemberReviewByApplication', $app_arg);
+
+		$review = $oModel->getReviewByApplication($application_srl);
+		if($review && !empty((int)$review->review_srl))
+		{
+			$rp = new stdClass();
+			$rp->review_srl = (int)$review->review_srl;
+			$rp->review_type = 'review';
+			executeQuery('poomahhi.deleteReviewReportByReviewSrlAndType', $rp);
+
+			$rr = new stdClass();
+			$rr->review_srl = (int)$review->review_srl;
+			executeQuery('poomahhi.deleteReviewReplyByReviewSrl', $rr);
+
+			$this->_deleteRemovedReviewFiles($review, array('certification' => '', 'purchase' => ''));
+
+			$legacy = isset($review->attachment_paths) ? trim((string)$review->attachment_paths) : '';
+			if($legacy !== '')
+			{
+				$base = rtrim(\RX_BASEDIR, '/') . '/';
+				foreach(array_map('trim', explode(',', $legacy)) as $path)
+				{
+					if($path === '') continue;
+					$norm = preg_replace('#^.*?files/attach/#', 'files/attach/', $path);
+					$full = $base . ltrim($norm, '/');
+					if(!is_file($full)) continue;
+					$real = realpath($full);
+					$base_real = realpath(\RX_BASEDIR);
+					if($real && $base_real && strpos($real, $base_real) === 0) @unlink($full);
+				}
+			}
+		}
+		executeQuery('poomahhi.deleteReviewByApplication', $app_arg);
+
+		executeQuery('poomahhi.deleteReviewDraftByApplication', $app_arg);
+		$this->_deleteReviewDraftFolder($application_srl);
+	}
+
+	/**
 	 * @brief 신청 내역 완전 삭제 (DB 삭제)
 	 * - 반려/취소된 건: 신청자 본인 또는 관리자
 	 * - 그 외: 해당 품앗이 개설자 또는 관리자
@@ -1024,6 +1082,8 @@ class poomahhiController extends poomahhi
 		{
 			$oModel->addUnfulfilledExtra($application->member_srl);
 		}
+
+		$this->_purgePoomahhiApplicationDependencies($application_srl);
 
 		$args = new stdClass();
 		$args->application_srl = $application_srl;
@@ -1322,7 +1382,18 @@ class poomahhiController extends poomahhi
 		$review = $oModel->getReview($review_srl);
 		if(!$review) return new BaseObject(-1, '잘못된 요청입니다.');
 
-		if($review->member_srl != $logged_info->member_srl)
+		$is_reviewer = ((int)$review->member_srl === (int)$logged_info->member_srl);
+		$is_product_owner = false;
+		if($review->product_srl)
+		{
+			$product = $oModel->getProduct($review->product_srl);
+			if($product && (int)$product->member_srl === (int)$logged_info->member_srl)
+			{
+				$is_product_owner = true;
+			}
+		}
+
+		if(!$is_reviewer && !$is_product_owner && !$this->_isAdmin($logged_info))
 		{
 			return new BaseObject(-1, '권한이 없습니다.');
 		}
@@ -1337,8 +1408,71 @@ class poomahhiController extends poomahhi
 		if(!$output->toBool()) return $output;
 
 		$this->setMessage('등록되었습니다.');
-		$returnUrl = getNotEncodedUrl('', 'mid', $this->mid, 'act', 'dispPoomahhiMyReviews');
+		$returnUrl = Context::get('success_return_url');
+		if(!$returnUrl) $returnUrl = getNotEncodedUrl('', 'mid', $this->mid, 'act', 'dispPoomahhiMyReviews');
 		$this->setRedirectUrl($returnUrl);
+		return new BaseObject();
+	}
+
+	/**
+	 * @brief 대댓글 수정 (작성자 본인만)
+	 */
+	function procPoomahhiUpdateReviewReply()
+	{
+		$logged_info = Context::get('logged_info');
+		if(!$logged_info) return new BaseObject(-1, '로그인이 필요합니다.');
+
+		$reply_srl = (int)Context::get('reply_srl');
+		$content = trim(Context::get('content'));
+		if(!$reply_srl || !$content) return new BaseObject(-1, '잘못된 요청입니다.');
+
+		$oModel = getModel('poomahhi');
+		$reply = $oModel->getReviewReply($reply_srl);
+		if(!$reply) return new BaseObject(-1, '잘못된 요청입니다.');
+
+		if((int)$reply->member_srl !== (int)$logged_info->member_srl && !$this->_isAdmin($logged_info))
+		{
+			return new BaseObject(-1, '권한이 없습니다.');
+		}
+
+		$args = new stdClass();
+		$args->reply_srl = $reply_srl;
+		$args->content = $content;
+		$output = executeQuery('poomahhi.updateReviewReply', $args);
+		if(!$output->toBool()) return $output;
+
+		$this->add('content', $content);
+		$this->setMessage('수정되었습니다.');
+		return new BaseObject();
+	}
+
+	/**
+	 * @brief 대댓글 삭제 (작성자 본인만)
+	 */
+	function procPoomahhiDeleteReviewReply()
+	{
+		$logged_info = Context::get('logged_info');
+		if(!$logged_info) return new BaseObject(-1, '로그인이 필요합니다.');
+
+		$reply_srl = (int)Context::get('reply_srl');
+		if(!$reply_srl) return new BaseObject(-1, '잘못된 요청입니다.');
+
+		$oModel = getModel('poomahhi');
+		$reply = $oModel->getReviewReply($reply_srl);
+		if(!$reply) return new BaseObject(-1, '잘못된 요청입니다.');
+
+		if((int)$reply->member_srl !== (int)$logged_info->member_srl && !$this->_isAdmin($logged_info))
+		{
+			return new BaseObject(-1, '권한이 없습니다.');
+		}
+
+		$args = new stdClass();
+		$args->reply_srl = $reply_srl;
+		$output = executeQuery('poomahhi.deleteReviewReply', $args);
+		if(!$output->toBool()) return $output;
+
+		$this->setMessage('삭제되었습니다.');
+		return new BaseObject();
 	}
 
 	/**
@@ -1436,10 +1570,151 @@ class poomahhiController extends poomahhi
 		$output = executeQuery('poomahhi.updateMemberReview', $args);
 		if(!$output->toBool()) return $output;
 
-		$this->setMessage('수정되었습니다.');
+		$this->setMessage('poomahhi.msg_member_review_updated');
+		$is_ajax = (Context::get('ajax_request') === 'Y');
+		if($is_ajax)
+		{
+			$this->add('content', $content);
+			return new BaseObject();
+		}
+
 		$returnUrl = Context::get('success_return_url');
 		if(!$returnUrl) $returnUrl = getNotEncodedUrl('', 'mid', $this->mid, 'act', 'dispPoomahhiMyMemberReviews');
 		$this->setRedirectUrl($returnUrl);
+		return new BaseObject();
+	}
+
+	/**
+	 * @brief 등록자 회원 평가 삭제
+	 */
+	function procPoomahhiDeleteMemberReview()
+	{
+		$logged_info = Context::get('logged_info');
+		if(!$logged_info) return new BaseObject(-1, '로그인이 필요합니다.');
+
+		$review_srl = (int)Context::get('review_srl');
+		if(!$review_srl) return new BaseObject(-1, '잘못된 요청입니다.');
+
+		$oModel = getModel('poomahhi');
+		$mr = $oModel->getMemberReview($review_srl);
+		if(!$mr) return new BaseObject(-1, '평가를 찾을 수 없습니다.');
+
+		if($mr->reviewer_member_srl != $logged_info->member_srl && !$this->_isAdmin($logged_info))
+		{
+			return new BaseObject(-1, '권한이 없습니다.');
+		}
+
+		$args = new stdClass();
+		$args->review_srl = $review_srl;
+		$output = executeQuery('poomahhi.deleteMemberReview', $args);
+		if(!$output->toBool()) return $output;
+
+		$status_args = new stdClass();
+		$status_args->application_srl = $mr->application_srl;
+		$status_args->status = 'under_review';
+		$status_args->last_update = date('YmdHis');
+		executeQuery('poomahhi.updateApplicationStatusLite', $status_args);
+
+		$this->setMessage('poomahhi.msg_member_review_deleted');
+		$is_ajax = (Context::get('ajax_request') === 'Y');
+		if($is_ajax)
+		{
+			return new BaseObject();
+		}
+
+		$returnUrl = Context::get('success_return_url');
+		if(!$returnUrl) $returnUrl = getNotEncodedUrl('', 'mid', $this->mid, 'act', 'dispPoomahhiMyMemberReviews');
+		$this->setRedirectUrl($returnUrl);
+		return new BaseObject();
+	}
+
+	/**
+	 * @brief 참여 인증 리뷰 또는 회원 평가 신고
+	 */
+	function procPoomahhiReportReview()
+	{
+		$logged_info = Context::get('logged_info');
+		if(!$logged_info) return new BaseObject(-1, '로그인이 필요합니다.');
+
+		$review_srl = (int)Context::get('review_srl');
+		$review_type = trim((string)Context::get('review_type'));
+		if(!$review_srl || !in_array($review_type, array('review', 'member_review', 'review_reply'), true))
+		{
+			return new BaseObject(-1, '잘못된 요청입니다.');
+		}
+
+		$reason = trim((string)Context::get('reason'));
+		if(function_exists('mb_strlen') && mb_strlen($reason, 'UTF-8') > 250)
+		{
+			$reason = mb_substr($reason, 0, 250, 'UTF-8');
+		}
+		elseif(strlen($reason) > 250)
+		{
+			$reason = substr($reason, 0, 250);
+		}
+
+		$oModel = getModel('poomahhi');
+
+		$dup_args = new stdClass();
+		$dup_args->review_srl = $review_srl;
+		$dup_args->review_type = $review_type;
+		$dup_args->reporter_member_srl = $logged_info->member_srl;
+		$dup_out = executeQuery('poomahhi.getReviewReport', $dup_args);
+		if(!$dup_out->toBool()) return $dup_out;
+		$dup_data = $dup_out->data;
+		$has_duplicate = false;
+		if($dup_data)
+		{
+			if(is_array($dup_data)) $has_duplicate = count($dup_data) > 0;
+			else $has_duplicate = true;
+		}
+		if($has_duplicate)
+		{
+			return new BaseObject(-1, lang('poomahhi.msg_report_duplicate'));
+		}
+
+		$allowed = false;
+		if($review_type === 'review')
+		{
+			$review = $oModel->getReview($review_srl);
+			if(!$review) return new BaseObject(-1, '리뷰를 찾을 수 없습니다.');
+			$product = $oModel->getProduct($review->product_srl);
+			if($product && (int)$product->member_srl === (int)$logged_info->member_srl) $allowed = true;
+			if((int)$review->member_srl === (int)$logged_info->member_srl) $allowed = true;
+			if($this->_isAdmin($logged_info)) $allowed = true;
+		}
+		elseif($review_type === 'review_reply')
+		{
+			$allowed = true;
+			if($this->_isAdmin($logged_info)) $allowed = true;
+		}
+		else
+		{
+			$mr = $oModel->getMemberReview($review_srl);
+			if(!$mr) return new BaseObject(-1, '평가를 찾을 수 없습니다.');
+			if((int)$mr->target_member_srl === (int)$logged_info->member_srl) $allowed = true;
+			if((int)$mr->reviewer_member_srl === (int)$logged_info->member_srl) $allowed = true;
+			if($this->_isAdmin($logged_info)) $allowed = true;
+		}
+
+		if(!$allowed)
+		{
+			return new BaseObject(-1, '권한이 없습니다.');
+		}
+
+		$ins = new stdClass();
+		$ins->report_srl = getNextSequence();
+		$ins->review_srl = $review_srl;
+		$ins->review_type = $review_type;
+		$ins->reporter_member_srl = $logged_info->member_srl;
+		$ins->reason = $reason;
+		$ins->regdate = date('YmdHis');
+
+		$output = executeQuery('poomahhi.insertReviewReport', $ins);
+		if(!$output->toBool()) return $output;
+
+		$this->setMessage('poomahhi.msg_report_submitted');
+		return new BaseObject();
 	}
 
 	/**

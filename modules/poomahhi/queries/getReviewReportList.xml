@@ -1,0 +1,17 @@
+<query id="getReviewReportList" action="select">
+	<tables>
+		<table name="poomahhi_review_report" alias="rr" />
+	</tables>
+	<columns>
+		<column name="*" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="rr.review_type" var="review_type" pipe="AND" />
+	</conditions>
+	<navigation>
+		<index var="sort_index" default="report_srl" order="desc" />
+		<list_count var="list_count" default="20" />
+		<page_count var="page_count" default="10" />
+		<page var="page" default="1" />
+	</navigation>
+</query>

@@ -1,0 +1,77 @@
+<include target="_header.html" />
+
+<h2>신고 관리</h2>
+
+<div style="margin-bottom:15px;">
+	<a href="{getUrl('','module','admin','act','dispPoomahhiAdminReportList')}" class="x_btn x_btn-default <!--@if(!$current_review_type)-->x_active<!--@end-->">전체</a>
+	<a href="{getUrl('','module','admin','act','dispPoomahhiAdminReportList','review_type','member_review')}" class="x_btn x_btn-default <!--@if($current_review_type == 'member_review')-->x_active<!--@end-->">회원평가</a>
+	<a href="{getUrl('','module','admin','act','dispPoomahhiAdminReportList','review_type','review')}" class="x_btn x_btn-default <!--@if($current_review_type == 'review')-->x_active<!--@end-->">참여 리뷰</a>
+	<a href="{getUrl('','module','admin','act','dispPoomahhiAdminReportList','review_type','review_reply')}" class="x_btn x_btn-default <!--@if($current_review_type == 'review_reply')-->x_active<!--@end-->">대댓글</a>
+</div>
+
+<!--@if($report_list && count($report_list))-->
+<table class="x_table">
+	<thead>
+		<tr>
+			<th>번호</th>
+			<th>신고일시</th>
+			<th>유형</th>
+			<th>신고자</th>
+			<th>피신고 작성자</th>
+			<th>신고 사유</th>
+			<th>신고된 내용</th>
+			<th>처리</th>
+		</tr>
+	</thead>
+	<tbody>
+		<!--@foreach($report_list as $report)-->
+		<tr>
+			<td>{$report->report_srl}</td>
+			<td>{zdate($report->regdate, 'Y-m-d H:i')}</td>
+			<td><!--@if($report->review_type == 'member_review')-->회원평가<!--@elseif($report->review_type == 'review_reply')-->대댓글<!--@else-->참여 리뷰<!--@end--></td>
+			<td><!--@if($report->reporter_info)-->{$report->reporter_info->nick_name}<!--@else-->탈퇴회원<!--@end--></td>
+			<td><!--@if($report->reviewed_member_info)-->{$report->reviewed_member_info->nick_name}<!--@else-->-<!--@end--></td>
+			<td><!--@if($report->reason)-->{$report->reason}<!--@else-->-<!--@end--></td>
+			<td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><!--@if($report->review_content)-->{$report->review_content}<!--@else-->삭제됨<!--@end--></td>
+			<td>
+				<form action="./" method="post" style="display:inline;">
+					<input type="hidden" name="module" value="admin" />
+					<input type="hidden" name="act" value="procPoomahhiAdminDeleteReport" />
+					<input type="hidden" name="report_srl" value="{$report->report_srl}" />
+					<input type="hidden" name="success_return_url" value="{getUrl('','module','admin','act','dispPoomahhiAdminReportList','review_type',$current_review_type)}" />
+					<button type="submit" class="x_btn x_btn-default x_btn-xs" onclick="return confirm('이 신고를 무시(삭제)하시겠습니까?');">무시</button>
+				</form>
+				<!--@if($report->review_content)-->
+				<form action="./" method="post" style="display:inline;">
+					<input type="hidden" name="module" value="admin" />
+					<input type="hidden" name="act" value="procPoomahhiAdminDeleteReportedReview" />
+					<input type="hidden" name="report_srl" value="{$report->report_srl}" />
+					<input type="hidden" name="review_srl" value="{$report->review_srl}" />
+					<input type="hidden" name="review_type" value="{$report->review_type}" />
+					<input type="hidden" name="success_return_url" value="{getUrl('','module','admin','act','dispPoomahhiAdminReportList','review_type',$current_review_type)}" />
+					<!--@if($report->review_type == 'review_reply')-->
+					<button type="submit" class="x_btn x_btn-danger x_btn-xs" onclick="return confirm('신고된 대댓글을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.');">대댓글 삭제</button>
+					<!--@else-->
+					<button type="submit" class="x_btn x_btn-danger x_btn-xs" onclick="return confirm('신고된 리뷰를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.');">리뷰 삭제</button>
+					<!--@end-->
+				</form>
+				<!--@end-->
+			</td>
+		</tr>
+		<!--@end-->
+	</tbody>
+</table>
+
+<!--@if($page_navigation)-->
+<div class="x_pagination">
+	<ul>
+		<!--@while($page_no = $page_navigation->getNextPage())-->
+		<li class="x_active"|cond="$page_no == $page_navigation->cur_page"><a href="{getUrl('page', $page_no)}">{$page_no}</a></li>
+		<!--@end-->
+	</ul>
+</div>
+<!--@end-->
+
+<!--@else-->
+<p class="x_well">신고 내역이 없습니다.</p>
+<!--@end-->

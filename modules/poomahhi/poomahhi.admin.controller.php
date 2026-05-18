@@ -521,4 +521,85 @@ class poomahhiAdminController extends poomahhi
 		$this->setRedirectUrl(getNotEncodedUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminBusinessBroadcast'));
 		return new BaseObject();
 	}
+
+	/**
+	 * @brief 신고 건 삭제 (무시 처리)
+	 */
+	function procPoomahhiAdminDeleteReport()
+	{
+		$report_srl = (int)Context::get('report_srl');
+		if(!$report_srl) return new BaseObject(-1, '잘못된 요청입니다.');
+
+		$args = new stdClass();
+		$args->report_srl = $report_srl;
+		$output = executeQuery('poomahhi.deleteReviewReport', $args);
+		if(!$output->toBool()) return $output;
+
+		$this->setMessage('삭제되었습니다.');
+		$returnUrl = Context::get('success_return_url');
+		if(!$returnUrl) $returnUrl = getNotEncodedUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminReportList');
+		$this->setRedirectUrl($returnUrl);
+		return new BaseObject();
+	}
+
+	/**
+	 * @brief 신고된 리뷰 삭제 + 신고 건 함께 삭제
+	 */
+	function procPoomahhiAdminDeleteReportedReview()
+	{
+		$report_srl = (int)Context::get('report_srl');
+		$review_srl = (int)Context::get('review_srl');
+		$review_type = trim((string)Context::get('review_type'));
+		if(!$report_srl || !$review_srl) return new BaseObject(-1, '잘못된 요청입니다.');
+
+		$oModel = getModel('poomahhi');
+
+		if($review_type === 'member_review')
+		{
+			$mr = $oModel->getMemberReview($review_srl);
+			if($mr)
+			{
+				$del_args = new stdClass();
+				$del_args->review_srl = $review_srl;
+				executeQuery('poomahhi.deleteMemberReview', $del_args);
+
+				$status_args = new stdClass();
+				$status_args->application_srl = $mr->application_srl;
+				$status_args->status = 'under_review';
+				$status_args->last_update = date('YmdHis');
+				executeQuery('poomahhi.updateApplicationStatusLite', $status_args);
+			}
+		}
+		elseif($review_type === 'review_reply')
+		{
+			$del_args = new stdClass();
+			$del_args->reply_srl = $review_srl;
+			executeQuery('poomahhi.deleteReviewReply', $del_args);
+		}
+		else
+		{
+			$review = $oModel->getReview($review_srl);
+			if($review)
+			{
+				$del_args = new stdClass();
+				$del_args->review_srl = $review_srl;
+				executeQuery('poomahhi.deleteReviewReplyByReviewSrl', $del_args);
+
+				$del_args2 = new stdClass();
+				$del_args2->application_srl = $review->application_srl;
+				executeQuery('poomahhi.deleteReviewByApplication', $del_args2);
+			}
+		}
+
+		$rpt_del = new stdClass();
+		$rpt_del->review_srl = $review_srl;
+		$rpt_del->review_type = $review_type;
+		executeQuery('poomahhi.deleteReviewReportByReviewSrlAndType', $rpt_del);
+
+		$this->setMessage('삭제되었습니다.');
+		$returnUrl = Context::get('success_return_url');
+		if(!$returnUrl) $returnUrl = getNotEncodedUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminReportList');
+		$this->setRedirectUrl($returnUrl);
+		return new BaseObject();
+	}
 }

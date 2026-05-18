@@ -2222,6 +2222,7 @@ class poomahhiView extends poomahhi
 		$args->page = Context::get('page') ?: 1;
 		$args->list_count = $this->config->default_list_count;
 		$review_output = $oModel->getReviewListByMemberWithProduct($args);
+		$oController = getController('poomahhi');
 
 		if($review_output->data)
 		{
@@ -2251,7 +2252,14 @@ class poomahhiView extends poomahhi
 					$review->dday = ($diff > 0) ? 'D-' . $diff : (($diff == 0) ? 'D-Day' : '마감');
 				}
 
+				$review->has_application = false;
+				if(!empty($review->application_srl))
+				{
+					$review->has_application = (bool)$oModel->getApplication((int)$review->application_srl);
+				}
+
 				$review->member_review = $oModel->getMemberReviewByApplication($review->application_srl);
+				$review->can_edit_member_review = false;
 				if($review->member_review)
 				{
 					$mr_member = $oMemberModel->getMemberInfoByMemberSrl($review->member_review->reviewer_member_srl);
@@ -2261,9 +2269,40 @@ class poomahhiView extends poomahhi
 					{
 						$review->member_review->reviewer_profile_image = $mr_member->profile_image->src;
 					}
+					$review->can_edit_member_review = ((int)$review->member_review->reviewer_member_srl === (int)$logged_info->member_srl) || $oController->_isAdmin($logged_info);
+
+					$mr_rpt_args = new stdClass();
+					$mr_rpt_args->review_srl = (int)$review->member_review->review_srl;
+					$mr_rpt_args->review_type = 'member_review';
+					$mr_rpt_args->reporter_member_srl = (int)$logged_info->member_srl;
+					$mr_rpt_out = executeQuery('poomahhi.getReviewReport', $mr_rpt_args);
+					$review->member_review->is_reported = ($mr_rpt_out->toBool() && $mr_rpt_out->data) ? true : false;
 				}
 				$review->is_product_owner = ($logged_info->member_srl == $review->product_owner_srl);
 				$review->member_review_validator_id = 'modules/poomahhi/member_review_' . $review->application_srl;
+
+				$replies = $oModel->getReviewReplies($review->review_srl);
+				if($replies)
+				{
+					foreach($replies as &$rp)
+					{
+						$rp_member = $oMemberModel->getMemberInfoByMemberSrl($rp->member_srl);
+						$rp->nick_name = $rp_member ? $rp_member->nick_name : '';
+						$rp->profile_image = null;
+						if($rp_member && !empty($rp_member->profile_image) && !empty($rp_member->profile_image->src))
+						{
+							$rp->profile_image = $rp_member->profile_image->src;
+						}
+						$rp_rpt_args = new stdClass();
+						$rp_rpt_args->review_srl = (int)$rp->reply_srl;
+						$rp_rpt_args->review_type = 'review_reply';
+						$rp_rpt_args->reporter_member_srl = (int)$logged_info->member_srl;
+						$rp_rpt_out = executeQuery('poomahhi.getReviewReport', $rp_rpt_args);
+						$rp->is_reported = ($rp_rpt_out->toBool() && $rp_rpt_out->data) ? true : false;
+					}
+					unset($rp);
+				}
+				$review->review_replies = $replies;
 			}
 		}
 
@@ -2278,7 +2317,20 @@ class poomahhiView extends poomahhi
 		Context::set('page', (int)$args->page);
 		Context::set('page_navigation', $review_output->page_navigation);
 
-		$oController = getController('poomahhi');
+		Context::set('pmh_my_reviews_lang_report_prompt', htmlspecialchars(lang('poomahhi.my_reviews_report_reason_prompt'), ENT_QUOTES, 'UTF-8'));
+		Context::set('pmh_my_reviews_lang_delete_confirm', htmlspecialchars(lang('poomahhi.my_reviews_comment_delete_confirm'), ENT_QUOTES, 'UTF-8'));
+		Context::set('pmh_my_reviews_lang_edit_empty', htmlspecialchars(lang('poomahhi.my_reviews_comment_edit_empty'), ENT_QUOTES, 'UTF-8'));
+		Context::set('pmh_my_reviews_mid_esc', htmlspecialchars((string)$this->mid, ENT_QUOTES, 'UTF-8'));
+		$mod_srl = isset($this->module_info->module_srl) ? (int)$this->module_info->module_srl : (int)$this->module_srl;
+		if($mod_srl > 0)
+		{
+			Context::set('pmh_my_reviews_post_action', htmlspecialchars(getNotEncodedUrl('', 'mid', $this->mid, 'module_srl', $mod_srl), ENT_QUOTES, 'UTF-8'));
+		}
+		else
+		{
+			Context::set('pmh_my_reviews_post_action', htmlspecialchars(getNotEncodedUrl('', 'mid', $this->mid), ENT_QUOTES, 'UTF-8'));
+		}
+
 		if($oController->_isBusinessMember($logged_info))
 		{
 			Context::set('use_business_layout', true);
@@ -2583,6 +2635,34 @@ class poomahhiView extends poomahhi
 				}
 				$participant_review = $oModel->getReviewByApplication($row->application_srl);
 				$row->cert_date = $participant_review ? $participant_review->regdate : null;
+				$row->participant_review_srl = $participant_review ? (int)$participant_review->review_srl : 0;
+
+				$row->review_replies = array();
+				if($participant_review)
+				{
+					$replies = $oModel->getReviewReplies($participant_review->review_srl);
+					if($replies)
+					{
+						foreach($replies as &$rp)
+						{
+							$rp_member = $oMemberModel->getMemberInfoByMemberSrl($rp->member_srl);
+							$rp->nick_name = $rp_member ? $rp_member->nick_name : '';
+							$rp->profile_image = null;
+							if($rp_member && !empty($rp_member->profile_image) && !empty($rp_member->profile_image->src))
+							{
+								$rp->profile_image = $rp_member->profile_image->src;
+							}
+							$rp_rpt_args = new stdClass();
+							$rp_rpt_args->review_srl = (int)$rp->reply_srl;
+							$rp_rpt_args->review_type = 'review_reply';
+							$rp_rpt_args->reporter_member_srl = (int)$logged_info->member_srl;
+							$rp_rpt_out = executeQuery('poomahhi.getReviewReport', $rp_rpt_args);
+							$rp->is_reported = ($rp_rpt_out->toBool() && $rp_rpt_out->data) ? true : false;
+						}
+						unset($rp);
+						$row->review_replies = $replies;
+					}
+				}
 
 				if(isset($row->gender))
 				{
@@ -2609,6 +2689,10 @@ class poomahhiView extends poomahhi
 		Context::set('total_page', $review_output->total_page);
 		Context::set('page', (int)$args->page);
 		Context::set('page_navigation', $review_output->page_navigation);
+
+		Context::set('pmh_mm_reviews_lang_delete_confirm', htmlspecialchars(lang('poomahhi.my_reviews_comment_delete_confirm'), ENT_QUOTES, 'UTF-8'));
+		Context::set('pmh_mm_reviews_lang_edit_empty', htmlspecialchars(lang('poomahhi.my_reviews_comment_edit_empty'), ENT_QUOTES, 'UTF-8'));
+		Context::set('pmh_mm_reviews_mid_esc', htmlspecialchars((string)$this->mid, ENT_QUOTES, 'UTF-8'));
 
 		$oController = getController('poomahhi');
 		if($oController->_isBusinessMember($logged_info))

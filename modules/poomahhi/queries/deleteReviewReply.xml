@@ -1,0 +1,8 @@
+<query id="deleteReviewReply" action="delete">
+	<tables>
+		<table name="poomahhi_review_reply" />
+	</tables>
+	<conditions>
+		<condition operation="equal" column="reply_srl" var="reply_srl" notnull="notnull" />
+	</conditions>
+</query>

@@ -1,0 +1,9 @@
+<query id="deleteReviewReportByReviewSrlAndType" action="delete">
+	<tables>
+		<table name="poomahhi_review_report" />
+	</tables>
+	<conditions>
+		<condition operation="equal" column="review_srl" var="review_srl" notnull="notnull" pipe="AND" />
+		<condition operation="equal" column="review_type" var="review_type" notnull="notnull" />
+	</conditions>
+</query>

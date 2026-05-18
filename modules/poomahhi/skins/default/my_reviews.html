@@ -104,30 +104,42 @@
 			<div class="pmh-mr-card">
 				<div class="pmh-mr-card-head">
 					<div class="pmh-mr-card-author">
-						<!--@if($review->reviewer_profile_image)-->
-						<img src="{$review->reviewer_profile_image}" alt="" class="pmh-mr-card-avatar" />
+						<!--@if($review->member_review->reviewer_profile_image)-->
+						<img src="{$review->member_review->reviewer_profile_image}" alt="" class="pmh-mr-card-avatar" />
 						<!--@else-->
-						<img src="img/noimage.png" alt="" class="pmh-mr-card-avatar" />
+						<img src="/assets/images/icon/profile.png" alt="" class="pmh-mr-card-avatar" />
 						<!--@end-->
-						<span class="pmh-mr-card-name-time">{$review->reviewer_nickname} • {zdate($review->regdate, 'Y-m-d H:i')}</span>
+						<span class="pmh-mr-card-name-time">{$review->member_review->reviewer_nickname} • <!--@if($review->member_review->regdate)-->{zdate($review->member_review->regdate, 'Y-m-d H:i')}<!--@end--></span>
 					</div>
 					<div class="more">
 						<i class="ri-more-2-line more_btn"></i>
+						<!--@if($review->has_application)-->
 						<ul class="more_content">
 							<li>
-								<a href="#">
+								<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationDetail', 'application_srl', $review->application_srl)}">
 									리뷰보기
 								</a>
 							</li>
+							<!--@if($review->member_review)-->
 							<li>
-								<a href="#">
+								<!--@if($review->member_review->is_reported)-->
+								<span class="pmh-reported-badge">신고됨</span>
+								<!--@else-->
+								<a href="#" class="_reportReview" data-review-srl="{$review->member_review->review_srl}" data-review-type="member_review">
 									신고하기
 								</a>
+								<!--@end-->
 							</li>
+							<!--@end-->
 						</ul>
+						<!--@else-->
+						<ul class="more_content more_content--missing">
+							<li><a href="javascript:void(0);">{$lang->my_reviews_application_missing}</a></li>
+						</ul>
+						<!--@end-->
 					</div>
 				</div>
-				<div class="pmh-mr-card-content"><!--@if($review->content)-->{$review->content}<!--@else-->-<!--@end--></div>
+				<div class="pmh-mr-card-content"><!--@if($review->member_review->content)-->{$review->member_review->content}<!--@else-->-<!--@end--></div>
 
 				<!-- 품앗이 소개 카드 -->
 				<div class="pmh-mr-product">
@@ -172,63 +184,53 @@
 					</div>
 				</div>
 
-				<!-- 회원평가(개설자 답변) 표시 - 작성된 경우에만 표시 -->
+				<!-- 대댓글 영역 (member_review가 있을 때만 표시) -->
 				<!--@if($review->member_review)-->
 				<div class="pmh-mr-reply-form pmh-mr-thread">
 					<div class="comment line">
 						<i class="ri-chat-3-line"></i><span>댓글</span>
 					</div>
-					<div class="pmh-mr-member-review-box">
-						<div class="pmh-mr-member-review-head">
-							<div class="pmh-mr-member-review-author">
-								<!--@if($review->member_review->reviewer_profile_image)-->
-								<img src="{$review->member_review->reviewer_profile_image}" alt="" class="pmh-mr-card-avatar" />
-								<!--@else-->
-								<img src="/assets/images/icon/profile.png" alt="" class="pmh-mr-card-avatar" />
-								<!--@end-->
-								<span class="pmh-mr-card-name">{$review->member_review->reviewer_nickname}</span>
-								<span class="pl-5 pr-5 bh_color_gray_300">•</span>
-								<span class="pmh-mr-card-time"><!--@if($review->member_review->regdate)-->{zdate($review->member_review->regdate, 'Y-m-d H:i')}<!--@end--></span>
-							</div>
-							<div class="more">
-								<i class="ri-more-2-line more_btn"></i>
+
+					<!--@if($review->review_replies)-->
+					<!--@foreach($review->review_replies as $reply)-->
+					<div class="pmh-mr-reply-item" data-reply-srl="{$reply->reply_srl}">
+						<div class="pmh-mr-reply-item-head">
+							<!--@if($reply->profile_image)-->
+							<img src="{$reply->profile_image}" alt="" class="pmh-mr-card-avatar" />
+							<!--@else-->
+							<img src="/assets/images/icon/profile.png" alt="" class="pmh-mr-card-avatar" />
+							<!--@end-->
+							<span class="pmh-mr-card-name"><!--@if($reply->nick_name)-->{$reply->nick_name}<!--@else-->회원<!--@end--></span>
+							<span class="pl-5 pr-5 bh_color_gray_300">•</span>
+							<span class="pmh-mr-card-time"><!--@if($reply->regdate)-->{zdate($reply->regdate, 'Y-m-d H:i')}<!--@end--></span>
+							<!--@if($reply->is_reported)-->
+							<span class="pmh-reported-badge" style="margin-left:auto;">신고됨</span>
+							<!--@end-->
+							<!--@if($reply->member_srl == $logged_info->member_srl)-->
+							<div class="more" style="<!--@if(!$reply->is_reported)-->margin-left:auto;<!--@end-->">
+								<i class="ri-more-2-line more_btn" style="font-size:18px;"></i>
 								<ul class="more_content">
-									<li>
-										<a href="#" class="_commentModify" data-review-srl="{$review->member_review->review_srl}">
-											댓글 수정
-										</a>
-									</li>
-									<li>
-										<a href="#" class="_commentDelete" data-review-srl="{$review->member_review->review_srl}">
-											댓글 삭제
-										</a>
-									</li>
+									<li><a href="#" class="_replyModify" data-reply-srl="{$reply->reply_srl}">댓글 수정</a></li>
+									<li><a href="#" class="_replyDelete" data-reply-srl="{$reply->reply_srl}">댓글 삭제</a></li>
 								</ul>
 							</div>
+							<!--@end-->
 						</div>
-						<div class="pmh-mr-member-review-content"><!--@if($review->member_review->content)-->{$review->member_review->content}<!--@else-->-<!--@end--></div>
-					</div>
-				</div>
-				<!--@elseif($review->is_product_owner)-->
-				<div class="pmh-mr-reply-form">
-					<div class="comment">
-						<i class="ri-chat-3-line"></i><span>댓글</span>
-					</div>
-					<!--@if($XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == $review->member_review_validator_id)-->
-					<div class="pmh-mr-reply-message {$XE_VALIDATOR_MESSAGE_TYPE}">
-						<p>{$XE_VALIDATOR_MESSAGE}</p>
+						<div class="pmh-mr-reply-item-content js-reply-content"><!--@if($reply->content)-->{$reply->content}<!--@else-->-<!--@end--></div>
 					</div>
 					<!--@end-->
-					<form action="./" method="post">
-						<input type="hidden" name="act" value="procPoomahhiInsertMemberReview" />
-						<input type="hidden" name="mid" value="{$mid}" />
-						<input type="hidden" name="application_srl" value="{$review->application_srl}" />
-						<input type="hidden" name="success_return_url" value="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiMyReviews', 'page', $page)}" />
-						<input type="hidden" name="xe_validator_id" value="{$review->member_review_validator_id}" />
-						<input type="hidden" name="score" value="5" />
-						<textarea name="content" rows="2" placeholder="답변을 입력해 주세요."></textarea>
-						<button type="submit" class="pmh-mr-reply-btn">등록하기</button>
-					</form>
+					<!--@end-->
+
+					<div class="pmh-mr-reply-write">
+						<form action="{$pmh_my_reviews_post_action}" method="post">
+							<input type="hidden" name="act" value="procPoomahhiInsertReviewReply" />
+							<input type="hidden" name="mid" value="{$mid}" />
+							<input type="hidden" name="review_srl" value="{$review->review_srl}" />
+							<input type="hidden" name="success_return_url" value="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiMyReviews', 'page', $page)}" />
+							<textarea name="content" rows="2" placeholder="대댓글을 입력해 주세요."></textarea>
+							<button type="submit" class="pmh-mr-reply-btn">등록하기</button>
+						</form>
+					</div>
 				</div>
 				<!--@end-->
 			</div>
@@ -281,29 +283,264 @@
 <!--@end-->
 
 <include target="../../../member/skins/poomahhi/common_footer.html" />
+
+<!-- 신고 모달 -->
+<div class="pmh-report-modal-overlay" id="pmhReportModal" style="display:none;">
+	<div class="pmh-report-modal">
+		<div class="pmh-report-modal-header">
+			<h3>신고하기</h3>
+			<button type="button" class="pmh-report-modal-close" id="pmhReportModalClose"><i class="ri-close-line"></i></button>
+		</div>
+		<div class="pmh-report-modal-body">
+			<p class="pmh-report-modal-desc">신고 사유를 선택해 주세요.</p>
+			<div class="pmh-report-reasons">
+				<label class="pmh-report-reason-item">
+					<input type="radio" name="report_reason" value="부적절한 내용" checked="checked" />
+					<span>부적절한 내용</span>
+				</label>
+				<label class="pmh-report-reason-item">
+					<input type="radio" name="report_reason" value="허위/거짓 평가" />
+					<span>허위/거짓 평가</span>
+				</label>
+				<label class="pmh-report-reason-item">
+					<input type="radio" name="report_reason" value="욕설/비방" />
+					<span>욕설/비방</span>
+				</label>
+				<label class="pmh-report-reason-item">
+					<input type="radio" name="report_reason" value="기타" />
+					<span>기타</span>
+				</label>
+			</div>
+			<textarea id="pmhReportReasonText" class="pmh-report-reason-text" rows="3" placeholder="상세 사유를 입력해 주세요. (선택)" style="display:none;"></textarea>
+		</div>
+		<div class="pmh-report-modal-footer">
+			<button type="button" class="pmh-report-modal-btn pmh-report-modal-btn--cancel" id="pmhReportModalCancel">취소</button>
+			<button type="button" class="pmh-report-modal-btn pmh-report-modal-btn--submit" id="pmhReportModalSubmit">신고하기</button>
+		</div>
+	</div>
+</div>
+
 <script>
 jQuery(function($){
 
-	// 메뉴 열기
+	var PMH_MR_LANG = {
+		deleteConfirm: "{$pmh_my_reviews_lang_delete_confirm}",
+		editEmpty: "{$pmh_my_reviews_lang_edit_empty}"
+	};
+	var pmhMid = "{$pmh_my_reviews_mid_esc}";
+
+	var _reportReviewSrl = 0;
+	var _reportReviewType = '';
+
 	$(document).on('click', '.more_btn', function(e){
 		e.preventDefault();
 		e.stopPropagation();
-
 		const $menu = $(this).siblings('.more_content');
-
 		$('.more_content').not($menu).removeClass('active');
-
 		$menu.toggleClass('active');
 	});
 
-	// 바깥 클릭 시 닫기
 	$(document).on('click', function(){
 		$('.more_content').removeClass('active');
 	});
 
-	// 메뉴 클릭 시 닫힘 방지
 	$(document).on('click', '.more_content', function(e){
 		e.stopPropagation();
+	});
+
+	// 신고 모달 - 기타 선택 시 textarea 토글
+	$(document).on('change', 'input[name="report_reason"]', function(){
+		if($(this).val() === '기타') {
+			$('#pmhReportReasonText').show();
+		} else {
+			$('#pmhReportReasonText').hide().val('');
+		}
+	});
+
+	// 신고 모달 열기
+	$(document).on('click', '._reportReview', function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		var $a = $(this);
+		_reportReviewSrl = parseInt($a.data('review-srl'), 10);
+		_reportReviewType = $a.data('review-type') || 'member_review';
+		if(!_reportReviewSrl) return;
+		$('.more_content').removeClass('active');
+		$('#pmhReportModal').find('input[name="report_reason"][value="부적절한 내용"]').prop('checked', true);
+		$('#pmhReportReasonText').hide().val('');
+		$('#pmhReportModal').fadeIn(200);
+	});
+
+	// 신고 모달 닫기
+	$('#pmhReportModalClose, #pmhReportModalCancel').on('click', function(){
+		$('#pmhReportModal').fadeOut(200);
+		_reportReviewSrl = 0;
+		_reportReviewType = '';
+	});
+
+	$('#pmhReportModal').on('click', function(e){
+		if($(e.target).is('.pmh-report-modal-overlay')) {
+			$('#pmhReportModal').fadeOut(200);
+			_reportReviewSrl = 0;
+			_reportReviewType = '';
+		}
+	});
+
+	// 신고 제출
+	$('#pmhReportModalSubmit').on('click', function(){
+		if(!_reportReviewSrl) return;
+		var selectedReason = $('input[name="report_reason"]:checked').val();
+		var reason = selectedReason;
+		if(selectedReason === '기타') {
+			var customText = $('#pmhReportReasonText').val().trim();
+			reason = customText ? customText : '기타';
+		}
+		$.exec_json('poomahhi.procPoomahhiReportReview', {
+			mid: pmhMid,
+			review_srl: _reportReviewSrl,
+			review_type: _reportReviewType,
+			reason: reason
+		}, function(ret){
+			if(ret.error != 0) {
+				alert(ret.message);
+				return;
+			}
+			$('#pmhReportModal').fadeOut(200);
+			// 신고된 버튼을 '신고됨' 뱃지로 교체
+			var $btn = $('a._reportReview[data-review-srl="' + _reportReviewSrl + '"][data-review-type="' + _reportReviewType + '"]');
+			if($btn.length) {
+				$btn.closest('li').html('<span class="pmh-reported-badge">신고됨</span>');
+			}
+			_reportReviewSrl = 0;
+			_reportReviewType = '';
+			alert('신고가 완료되었습니다.');
+		});
+	});
+
+	$(document).on('click', '._commentModify', function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		var $a = $(this);
+		var review_srl = parseInt($a.data('review-srl'), 10);
+		if(!review_srl) return;
+		var $box = $a.closest('.pmh-mr-member-review-box');
+		var $content = $box.find('.js-member-review-content');
+		if($content.data('editing')) return;
+		var orig = $content.text();
+		if($content.find('textarea').length) return;
+		$content.data('editing', 1);
+		$content.data('orig-html', $content.html());
+		var $ta = $('<textarea class="pmh-mr-member-review-edit-ta" rows="3"></textarea>').val(orig.replace(/\s+$/,''));
+		var $actions = $('<div class="pmh-mr-member-review-edit-actions"></div>');
+		var $btnSave = $('<button type="button" class="pmh-mr-reply-btn">저장</button>');
+		var $btnCancel = $('<button type="button" class="pmh-mr-reply-btn">취소</button>');
+		$content.empty().append($ta).append($actions.append($btnSave).append($btnCancel));
+		$('.more_content').removeClass('active');
+
+		$btnCancel.on('click', function(){
+			$content.html($content.data('orig-html'));
+			$content.removeData('editing').removeData('orig-html');
+		});
+		$btnSave.on('click', function(){
+			var text = $ta.val().trim();
+			if(!text) {
+				alert(PMH_MR_LANG.editEmpty);
+				return;
+			}
+			$.exec_json('poomahhi.procPoomahhiUpdateMemberReview', {
+				mid: pmhMid,
+				review_srl: review_srl,
+				content: text,
+				ajax_request: 'Y'
+			}, function(ret){
+				if(ret.error != 0) {
+					alert(ret.message);
+					return;
+				}
+				var out = (typeof ret.content !== 'undefined' && ret.content !== null) ? String(ret.content) : text;
+				$content.removeData('editing').removeData('orig-html');
+				$content.empty().text(out);
+			});
+		});
+	});
+
+	$(document).on('click', '._commentDelete', function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		var $a = $(this);
+		var review_srl = parseInt($a.data('review-srl'), 10);
+		if(!review_srl) return;
+		if(!window.confirm(PMH_MR_LANG.deleteConfirm)) return;
+		$.exec_json('poomahhi.procPoomahhiDeleteMemberReview', {
+			mid: pmhMid,
+			review_srl: review_srl,
+			ajax_request: 'Y'
+		}, function(ret){
+			if(ret.error != 0) {
+				alert(ret.message);
+				return;
+			}
+			window.location.reload();
+		});
+	});
+
+	// 대댓글 수정
+	$(document).on('click', '._replyModify', function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		var $a = $(this);
+		var reply_srl = parseInt($a.data('reply-srl'), 10);
+		if(!reply_srl) return;
+		var $item = $a.closest('.pmh-mr-reply-item');
+		var $content = $item.find('.js-reply-content');
+		if($content.data('editing')) return;
+		var orig = $content.text();
+		$content.data('editing', 1);
+		$content.data('orig-html', $content.html());
+		var $ta = $('<textarea class="pmh-mr-member-review-edit-ta" rows="2"></textarea>').val(orig.replace(/\s+$/,''));
+		var $actions = $('<div class="pmh-mr-member-review-edit-actions"></div>');
+		var $btnSave = $('<button type="button" class="pmh-mr-reply-btn">저장</button>');
+		var $btnCancel = $('<button type="button" class="pmh-mr-reply-btn">취소</button>');
+		$content.empty().append($ta).append($actions.append($btnSave).append($btnCancel));
+		$('.more_content').removeClass('active');
+
+		$btnCancel.on('click', function(){
+			$content.html($content.data('orig-html'));
+			$content.removeData('editing').removeData('orig-html');
+		});
+		$btnSave.on('click', function(){
+			var text = $ta.val().trim();
+			if(!text) { alert(PMH_MR_LANG.editEmpty); return; }
+			$.exec_json('poomahhi.procPoomahhiUpdateReviewReply', {
+				mid: pmhMid,
+				reply_srl: reply_srl,
+				content: text,
+				ajax_request: 'Y'
+			}, function(ret){
+				if(ret.error != 0) { alert(ret.message); return; }
+				var out = (typeof ret.content !== 'undefined' && ret.content !== null) ? String(ret.content) : text;
+				$content.removeData('editing').removeData('orig-html');
+				$content.empty().text(out);
+			});
+		});
+	});
+
+	// 대댓글 삭제
+	$(document).on('click', '._replyDelete', function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		var $a = $(this);
+		var reply_srl = parseInt($a.data('reply-srl'), 10);
+		if(!reply_srl) return;
+		if(!window.confirm(PMH_MR_LANG.deleteConfirm)) return;
+		$.exec_json('poomahhi.procPoomahhiDeleteReviewReply', {
+			mid: pmhMid,
+			reply_srl: reply_srl,
+			ajax_request: 'Y'
+		}, function(ret){
+			if(ret.error != 0) { alert(ret.message); return; }
+			window.location.reload();
+		});
 	});
 
 });

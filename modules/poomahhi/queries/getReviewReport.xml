@@ -1,0 +1,13 @@
+<query id="getReviewReport" action="select">
+	<tables>
+		<table name="poomahhi_review_report" />
+	</tables>
+	<columns>
+		<column name="*" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="review_srl" var="review_srl" notnull="notnull" pipe="AND" />
+		<condition operation="equal" column="review_type" var="review_type" notnull="notnull" pipe="AND" />
+		<condition operation="equal" column="reporter_member_srl" var="reporter_member_srl" notnull="notnull" />
+	</conditions>
+</query>

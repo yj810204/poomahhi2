@@ -26,6 +26,9 @@
 		<permission action="dispPoomahhiAdminSettlement" target="manager" />
 		<permission action="dispPoomahhiAdminBusinessBroadcast" target="manager" />
 		<permission action="procPoomahhiAdminSendBusinessBroadcast" target="manager" />
+		<permission action="dispPoomahhiAdminReportList" target="manager" />
+		<permission action="procPoomahhiAdminDeleteReport" target="manager" />
+		<permission action="procPoomahhiAdminDeleteReportedReview" target="manager" />
 		<permission action="procPoomahhiAdminSaveConfig" target="manager" />
 		<permission action="procPoomahhiAdminSaveChannel" target="manager" />
 		<permission action="procPoomahhiAdminDeleteChannel" target="manager" />
@@ -85,8 +88,12 @@
 		<action name="procPoomahhiSaveReviewDraft" type="controller" />
 		<action name="procPoomahhiToggleWishlist" type="controller" />
 		<action name="procPoomahhiInsertReviewReply" type="controller" />
+		<action name="procPoomahhiUpdateReviewReply" type="controller" />
+		<action name="procPoomahhiDeleteReviewReply" type="controller" />
 		<action name="procPoomahhiInsertMemberReview" type="controller" />
 		<action name="procPoomahhiUpdateMemberReview" type="controller" />
+		<action name="procPoomahhiDeleteMemberReview" type="controller" />
+		<action name="procPoomahhiReportReview" type="controller" />
 		<action name="procPoomahhiGetExtraDefsByTemplate" type="controller" />
 		<action name="procPoomahhiDeductPointForView" type="controller" />
 		<action name="procPoomahhiGetRegionWidgetContent" type="controller" />
@@ -102,6 +109,7 @@
 		<action name="dispPoomahhiAdminApplicationList" type="view" />
 		<action name="dispPoomahhiAdminSettlement" type="view" />
 		<action name="dispPoomahhiAdminBusinessBroadcast" type="view" />
+		<action name="dispPoomahhiAdminReportList" type="view" />
 
 		<action name="dispPoomahhiAdminRegionList" type="view" />
 
@@ -120,6 +128,8 @@
 		<action name="procPoomahhiAdminSaveRegion" type="controller" />
 		<action name="procPoomahhiAdminDeleteRegion" type="controller" />
 		<action name="procPoomahhiAdminSortRegions" type="controller" />
+		<action name="procPoomahhiAdminDeleteReport" type="controller" />
+		<action name="procPoomahhiAdminDeleteReportedReview" type="controller" />
 	</actions>
 
 	<menus>

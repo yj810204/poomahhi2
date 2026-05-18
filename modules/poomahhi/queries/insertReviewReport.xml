@@ -1,0 +1,13 @@
+<query id="insertReviewReport" action="insert">
+	<tables>
+		<table name="poomahhi_review_report" />
+	</tables>
+	<columns>
+		<column name="report_srl" var="report_srl" />
+		<column name="review_srl" var="review_srl" />
+		<column name="review_type" var="review_type" />
+		<column name="reporter_member_srl" var="reporter_member_srl" />
+		<column name="reason" var="reason" />
+		<column name="regdate" var="regdate" />
+	</columns>
+</query>

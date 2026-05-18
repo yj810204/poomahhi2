@@ -745,6 +745,18 @@ class poomahhiModel extends poomahhi
 	}
 
 	/**
+	 * @brief 리뷰 답변 단일 조회
+	 */
+	function getReviewReply($reply_srl)
+	{
+		$args = new stdClass();
+		$args->reply_srl = $reply_srl;
+		$output = executeQuery('poomahhi.getReviewReply', $args);
+		if(!$output->toBool() || !$output->data) return null;
+		return $output->data;
+	}
+
+	/**
 	 * @brief 회원 리뷰(받은 리뷰) 단일 조회
 	 */
 	function getMemberReview($review_srl)

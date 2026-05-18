@@ -305,4 +305,68 @@ class poomahhiAdminView extends poomahhi
 
 		$this->setTemplateFile('settlement');
 	}
+
+	/**
+	 * @brief 신고 관리
+	 */
+	function dispPoomahhiAdminReportList()
+	{
+		$oModel = getModel('poomahhi');
+		$oMemberModel = getModel('member');
+
+		$args = new stdClass();
+		$args->page = Context::get('page') ?: 1;
+		$args->list_count = 20;
+
+		$review_type = Context::get('review_type');
+		if($review_type) $args->review_type = $review_type;
+
+		$output = executeQueryArray('poomahhi.getReviewReportList', $args);
+
+		if($output->data)
+		{
+			foreach($output->data as &$report)
+			{
+				$report->reporter_info = $oMemberModel->getMemberInfoByMemberSrl($report->reporter_member_srl);
+
+				$report->review_content = '';
+				$report->reviewed_member_info = null;
+				if($report->review_type === 'member_review')
+				{
+					$mr = $oModel->getMemberReview($report->review_srl);
+					if($mr)
+					{
+						$report->review_content = $mr->content;
+						$report->reviewed_member_info = $oMemberModel->getMemberInfoByMemberSrl($mr->reviewer_member_srl);
+					}
+				}
+				elseif($report->review_type === 'review_reply')
+				{
+					$reply = $oModel->getReviewReply($report->review_srl);
+					if($reply)
+					{
+						$report->review_content = $reply->content;
+						$report->reviewed_member_info = $oMemberModel->getMemberInfoByMemberSrl($reply->member_srl);
+					}
+				}
+				else
+				{
+					$review = $oModel->getReview($report->review_srl);
+					if($review)
+					{
+						$report->review_content = $review->content;
+						$report->reviewed_member_info = $oMemberModel->getMemberInfoByMemberSrl($review->member_srl);
+					}
+				}
+			}
+			unset($report);
+		}
+
+		Context::set('report_list', $output->data ?: array());
+		Context::set('page_navigation', $output->page_navigation);
+		Context::set('total_count', $output->total_count);
+		Context::set('current_review_type', $review_type);
+
+		$this->setTemplateFile('report_list');
+	}
 }

@@ -1,0 +1,8 @@
+<query id="deleteReviewByApplication" action="delete">
+	<tables>
+		<table name="poomahhi_review" />
+	</tables>
+	<conditions>
+		<condition operation="equal" column="application_srl" var="application_srl" notnull="notnull" />
+	</conditions>
+</query>

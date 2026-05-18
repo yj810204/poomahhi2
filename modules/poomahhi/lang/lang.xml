@@ -12,4 +12,40 @@
 		<value xml:lang="ko">이 회원이 받은 개설자 평가 보기</value>
 		<value xml:lang="en">View this member's ratings from organizers</value>
 	</item>
+	<item name="msg_member_review_updated">
+		<value xml:lang="ko">수정되었습니다.</value>
+		<value xml:lang="en">Updated.</value>
+	</item>
+	<item name="msg_member_review_deleted">
+		<value xml:lang="ko">삭제되었습니다.</value>
+		<value xml:lang="en">Deleted.</value>
+	</item>
+	<item name="msg_report_submitted">
+		<value xml:lang="ko">신고가 접수되었습니다.</value>
+		<value xml:lang="en">Your report has been submitted.</value>
+	</item>
+	<item name="msg_report_duplicate">
+		<value xml:lang="ko">이미 신고한 내역입니다.</value>
+		<value xml:lang="en">You have already reported this.</value>
+	</item>
+	<item name="my_reviews_report_reason_prompt">
+		<value xml:lang="ko">신고 사유를 입력해 주세요.</value>
+		<value xml:lang="en">Please enter a reason for the report.</value>
+	</item>
+	<item name="my_reviews_comment_delete_confirm">
+		<value xml:lang="ko">댓글을 삭제하시겠습니까?</value>
+		<value xml:lang="en">Delete this comment?</value>
+	</item>
+	<item name="my_reviews_comment_edit_empty">
+		<value xml:lang="ko">내용을 입력해 주세요.</value>
+		<value xml:lang="en">Please enter content.</value>
+	</item>
+	<item name="my_reviews_application_missing">
+		<value xml:lang="ko">연결된 신청 내역이 없어 상세 보기·신고·댓글 관련 기능을 사용할 수 없습니다.</value>
+		<value xml:lang="en">The linked application is missing, so detail view, report, and comment actions are unavailable.</value>
+	</item>
+	<item name="my_reviews_reply_blocked_no_application">
+		<value xml:lang="ko">신청 내역이 없어 댓글을 등록할 수 없습니다.</value>
+		<value xml:lang="en">You cannot post a comment because the application record is missing.</value>
+	</item>
 </lang>

@@ -1,0 +1,8 @@
+<query id="deleteReviewReport" action="delete">
+	<tables>
+		<table name="poomahhi_review_report" />
+	</tables>
+	<conditions>
+		<condition operation="equal" column="report_srl" var="report_srl" notnull="notnull" />
+	</conditions>
+</query>
