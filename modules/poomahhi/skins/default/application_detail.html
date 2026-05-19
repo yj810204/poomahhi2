@@ -279,10 +279,10 @@
 								<h3>만족도</h3>
 								<div class="star">
 									<!--@for($i = 1; $i <= 5; $i++)-->
-										<!--@if($i <= $review->score)-->
-										<i class="ri-star-fill" style="color:var(--bh_color_main);"></i>
+										<!--@if($i <= (6 - intval($review->score)))-->
+											<i class="ri-star-fill" style="color:var(--bh_color_main);"></i>
 										<!--@else-->
-										<i class="ri-star-fill" style="color:var(--bh_color_gray_300);"></i>
+											<i class="ri-star-fill" style="color:var(--bh_color_gray_300);"></i>
 										<!--@end-->
 									<!--@end-->
 								</div>
@@ -437,9 +437,7 @@
 								<input type="hidden" name="application_srl" value="{$application->application_srl}" />
 								<input type="hidden" name="success_return_url" value="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationList')}" />
 								<input type="hidden" name="xe_validator_id" value="modules/poomahhi/application_detail_delete" />
-								<button type="submit" class="pmh-btn-outline danger" onclick="return confirm('이 신청 내역을 DB에서 완전히 삭제합니다. 복구할 수 없습니다. 계속하시겠습니까?');">
-									<i class="bi bi-trash"></i> 완전 삭제
-								</button>
+								<button type="submit" class="pmh-btn-outline danger" onclick="return confirm('이 신청 내역을 DB에서 완전히 삭제합니다. 복구할 수 없습니다. 계속하시겠습니까?');">완전 삭제</button>
 							</form>
 							<!--@end-->
 

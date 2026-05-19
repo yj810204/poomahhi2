@@ -4,6 +4,7 @@
 	</tables>
 	<columns>
 		<column name="content" var="content" />
+		<column name="regdate" var="regdate" />
 	</columns>
 	<conditions>
 		<condition operation="equal" column="reply_srl" var="reply_srl" notnull="notnull" />

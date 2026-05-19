@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lang>
 	<item name="member_received_reviews_title_suffix">
-		<value xml:lang="ko">님이 받은 개설자 평가</value>
-		<value xml:lang="en">'s ratings from organizers</value>
+		<value xml:lang="ko">님이 받은 평가</value>
+		<value xml:lang="en">'s ratings</value>
 	</item>
 	<item name="member_received_reviews_empty">
-		<value xml:lang="ko">받은 개설자 평가가 없습니다.</value>
-		<value xml:lang="en">No ratings from organizers yet.</value>
+		<value xml:lang="ko">받은 평가가 없습니다.</value>
+		<value xml:lang="en">No ratings yet.</value>
 	</item>
 	<item name="member_received_reviews_avatar_link_title">
-		<value xml:lang="ko">이 회원이 받은 개설자 평가 보기</value>
-		<value xml:lang="en">View this member's ratings from organizers</value>
+		<value xml:lang="ko">이 회원이 받은 평가 보기</value>
+		<value xml:lang="en">View this member's ratings</value>
 	</item>
 	<item name="msg_member_review_updated">
 		<value xml:lang="ko">수정되었습니다.</value>

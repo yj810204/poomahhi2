@@ -77,7 +77,7 @@
 		{
 		    if($this->config->point_status == 'N')
 			{
-				return new BaseObject(-1, 'msg_invalid_request');
+				return new Object(-1, 'msg_invalid_request');
 			}
 			
 			// 전체 포인트
@@ -103,7 +103,7 @@
 		{
 		    if($this->config->point_status == 'N')
 			{
-				return new BaseObject(-1, 'msg_invalid_request');
+				return new Object(-1, 'msg_invalid_request');
 			}
 			
             // 검색 옵션

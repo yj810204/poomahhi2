@@ -19,7 +19,7 @@
 		<div>
 		<!--@if($review_list)-->
 		<!--@foreach($review_list as $review)-->
-		<div class="pmh-mr-card">
+		<div class="pmh-mr-card" data-review-srl="{$review->review_srl}" data-score="<!--@if($review->score)-->{$review->score}<!--@else-->0<!--@end-->" data-has-replies="<!--@if($review->has_replies)-->1<!--@else-->0<!--@end-->" data-participant-review-srl="<!--@if($review->participant_review_srl)-->{$review->participant_review_srl}<!--@else-->0<!--@end-->">
 			<div class="pmh-mr-card-head">
 				<div class="pmh-mr-card-author">
 					<!--@if($logged_info->profile_image)-->
@@ -30,7 +30,7 @@
 					<span class="pmh-mr-card-name-time">
 						{$logged_info->nick_name}
 						• <!--@if($review->regdate)-->{zdate($review->regdate, 'Y-m-d H:i')}<!--@end-->
-						• {$review->score}점
+						• <span class="js-member-review-score"><!--@if($review->score)-->{$review->score}<!--@else-->0<!--@end--></span>점
 					</span>
 				</div>
 				<div class="more">
@@ -38,49 +38,22 @@
 					<ul class="more_content">
 						<li>
 							<a href="#" class="_mmrCommentModify" data-review-srl="{$review->review_srl}">
-								댓글 수정
+								평가 수정
 							</a>
 						</li>
+						<!--@if(!$review->has_replies)-->
 						<li>
 							<a href="#" class="_mmrCommentDelete" data-review-srl="{$review->review_srl}">
-								댓글 삭제
+								평가 삭제
 							</a>
 						</li>
+						<!--@end-->
 					</ul>
 				</div>
 			</div>
 			<div class="pmh-mr-member-review-box">
 				<div class="pmh-mr-card-content js-member-review-content"><!--@if($review->content)-->{$review->content}<!--@else-->-<!--@end--></div>
 			</div>
-
-			<!-- 대댓글 목록 -->
-			<!--@if($review->review_replies && count($review->review_replies))-->
-			<div class="pmh-mr-reply-form pmh-mr-thread">
-				<div class="comment line">
-					<i class="ri-chat-3-line"></i><span>대댓글</span>
-				</div>
-				<!--@foreach($review->review_replies as $reply)-->
-				<div class="pmh-mr-reply-item">
-					<div class="pmh-mr-reply-item-head">
-						<!--@if($reply->profile_image)-->
-						<img src="{$reply->profile_image}" alt="" class="pmh-mr-card-avatar" />
-						<!--@else-->
-						<img src="/assets/images/icon/profile.png" alt="" class="pmh-mr-card-avatar" />
-						<!--@end-->
-						<span class="pmh-mr-card-name"><!--@if($reply->nick_name)-->{$reply->nick_name}<!--@else-->회원<!--@end--></span>
-						<span class="pl-5 pr-5 bh_color_gray_300">•</span>
-						<span class="pmh-mr-card-time"><!--@if($reply->regdate)-->{zdate($reply->regdate, 'Y-m-d H:i')}<!--@end--></span>
-						<!--@if($reply->is_reported)-->
-						<span class="pmh-reported-badge" style="margin-left:8px;">신고됨</span>
-						<!--@else-->
-						<a href="#" class="_reportReply" data-reply-srl="{$reply->reply_srl}" title="신고"><i class="ri-alarm-warning-line" style="color:var(--bh_color_gray_500);margin-left:8px;font-size:16px;"></i></a>
-						<!--@end-->
-					</div>
-					<div class="pmh-mr-reply-item-content"><!--@if($reply->content)-->{$reply->content}<!--@else-->-<!--@end--></div>
-				</div>
-				<!--@end-->
-			</div>
-			<!--@end-->
 
 			<!-- 신청자 카드 -->
 			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationManageDetail', 'application_srl', $review->application_srl)}" class="pmh-mr-product">
@@ -90,6 +63,36 @@
 					<!--@end-->
 				</div>
 				<div class="pmh-mr-product-info">
+					<!--@if(($review->product_type == 'local' && $review->region_title) || $review->shopping_channel || $review->dday)-->
+					<div class="pmh-mr-product-badges tag">
+						<!--@if($review->product_type == 'local' && $review->region_title)-->
+						<span class="pmh-mr-badge area 
+							<!--@if($review->region_title == '수도권')-->seoul<!--@end-->
+							<!--@if($review->region_title == '충청권')-->chungcheong<!--@end-->
+							<!--@if($review->region_title == '호남권')-->honam<!--@end-->
+							<!--@if($review->region_title == '영남권')-->yeongnam<!--@end-->
+							">
+						{$review->region_title}</span>
+						<!--@end-->
+						<!--@if($review->shopping_channel)-->
+						<span class="channel 
+							<!--@if($review->shopping_channel == '올리브영')-->oliveyoung<!--@end-->
+							<!--@if($review->shopping_channel == '쿠팡')-->coupang<!--@end-->
+							<!--@if($review->shopping_channel == 'G마켓')-->gmarket<!--@end-->
+							<!--@if($review->shopping_channel == '11번가')-->11st<!--@end-->
+							<!--@if($review->shopping_channel == '자사몰')-->mall<!--@end-->
+							<!--@if($review->shopping_channel == '마켓컬리')-->marketcurly<!--@end-->
+							<!--@if($review->shopping_channel == '카카오선물하기')-->kakaogift<!--@end-->
+							<!--@if($review->shopping_channel == '네이버 스마트스토어')-->smartstore<!--@end-->
+							<!--@if($review->shopping_channel == '무신사')-->musinsa<!--@end-->
+							<!--@if($review->shopping_channel == '옥션')-->auction<!--@end-->
+							<!--@if($review->shopping_channel == '카카오쇼핑')-->kakaoshopping<!--@end-->
+							">
+							{$review->shopping_channel}</span>
+						<!--@end-->
+						<!--@if($review->dday)--><span class="dday">{$review->dday}</span><!--@end-->
+					</div>
+					<!--@end-->
 					<div class="pmh-mr-product-company">
 						<!--@if($review->company_name)-->{$review->company_name}<!--@end-->
 						<!--@if($review->product_title)-->[{$review->product_title}]<!--@end-->
@@ -112,6 +115,47 @@
 					</div>
 				</div>
 			</a>
+
+			<!-- 대댓글 목록 -->
+			<!--@if($review->review_replies && count($review->review_replies))-->
+			<div class="pmh-mr-reply-form pmh-mr-thread">
+				<div class="comment mb-10">
+					<i class="ri-chat-3-line"></i><span>댓글</span>
+				</div>
+				<!--@foreach($review->review_replies as $reply)-->
+				<div class="pmh-mr-reply-item">
+					<div class="pmh-mr-reply-item-head">
+						<div class="ds-f ai-c jc-b w-100">
+							<div>
+								<!--@if($reply->profile_image)-->
+								<img src="{$reply->profile_image}" alt="" class="pmh-mr-card-avatar" />
+								<!--@else-->
+								<img src="/assets/images/icon/profile.png" alt="" class="pmh-mr-card-avatar" />
+								<!--@end-->
+								<span class="pmh-mr-card-name"><!--@if($reply->nick_name)-->{$reply->nick_name}<!--@else-->회원<!--@end--></span>
+								<span class="pl-5 pr-5 bh_color_gray_300">•</span>
+								<span class="pmh-mr-card-time"><!--@if($reply->regdate)-->{zdate($reply->regdate, 'Y-m-d H:i')}<!--@end--></span>
+							</div>
+							<!--@if($reply->is_reported)-->
+							<span class="pmh-reported-badge" style="margin-left:8px;">신고됨</span>
+							<!--@else-->
+							<div class="more">
+								<i class="ri-more-2-line more_btn"></i>
+								<ul class="more_content">
+									<li>
+										<a href="#" class="_reportReply" data-reply-srl="{$reply->reply_srl}" title="신고">신고하기</a>
+									</li>
+								</ul>
+							</div>
+							<!--@end-->
+						</div>
+					</div>
+					<div class="pmh-mr-reply-item-content"><!--@if($reply->content)-->{$reply->content}<!--@else-->-<!--@end--></div>
+				</div>
+				<!--@end-->
+			</div>
+			<!--@end-->
+
 		</div>
 		<!--@end-->
 		</div>
@@ -207,24 +251,79 @@ jQuery(function($){
 		e.stopPropagation();
 	});
 
+	function pmhBuildStarSelector(currentScore) {
+		var $wrap = $('<div class="pmh-star-selector"></div>');
+
+		for(var s = 1; s <= 5; s++) {
+			var active = s <= currentScore ? 'ri-star-fill active' : 'ri-star-line';
+
+			var $star = $(
+				'<span class="pmh-star-item" data-val="' + s + '">' +
+					'<i class="' + active + '"></i>' +
+				'</span>'
+			);
+
+			$wrap.append($star);
+		}
+
+		$wrap
+		.on('mouseover', '.pmh-star-item', function(){
+			var v = parseInt($(this).data('val'));
+
+			$wrap.find('.pmh-star-item').each(function(i){
+				$(this).find('i')
+					.attr('class', i < v ? 'ri-star-fill active' : 'ri-star-line');
+			});
+		})
+		.on('mouseout', function(){
+			var sel = parseInt($wrap.data('selected')) || currentScore;
+
+			$wrap.find('.pmh-star-item').each(function(i){
+				$(this).find('i')
+					.attr('class', i < sel ? 'ri-star-fill active' : 'ri-star-line');
+			});
+		})
+		.on('click', '.pmh-star-item', function(){
+			var v = parseInt($(this).data('val'));
+
+			$wrap.data('selected', v);
+
+			$wrap.find('.pmh-star-item').each(function(i){
+				$(this).find('i')
+					.attr('class', i < v ? 'ri-star-fill active' : 'ri-star-line');
+			});
+		});
+
+		$wrap.data('selected', currentScore);
+
+		return $wrap;
+	}
+
 	$(document).on('click', '._mmrCommentModify', function(e){
 		e.preventDefault();
 		e.stopPropagation();
 		var $a = $(this);
 		var review_srl = parseInt($a.data('review-srl'), 10);
 		if(!review_srl) return;
-		var $box = $a.closest('.pmh-mr-card').find('.pmh-mr-member-review-box').first();
+		var $card = $a.closest('.pmh-mr-card');
+		var currentScore = parseInt($card.data('score')) || 0;
+		var $box = $card.find('.pmh-mr-member-review-box').first();
 		var $content = $box.find('.js-member-review-content');
 		if($content.data('editing')) return;
 		var orig = $content.text();
 		if($content.find('textarea').length) return;
 		$content.data('editing', 1);
 		$content.data('orig-html', $content.html());
+
+		var $starSel = pmhBuildStarSelector(currentScore);
 		var $ta = $('<textarea class="pmh-mr-member-review-edit-ta" rows="3"></textarea>').val(orig.replace(/\s+$/,''));
 		var $actions = $('<div class="pmh-mr-member-review-edit-actions"></div>');
 		var $btnSave = $('<button type="button" class="pmh-mr-reply-btn">저장</button>');
 		var $btnCancel = $('<button type="button" class="pmh-mr-reply-btn">취소</button>');
-		$content.empty().append($ta).append($actions.append($btnSave).append($btnCancel));
+		$content.empty()
+			.append($starSel)
+			.append($ta)
+			.append($actions.append($btnSave).append($btnCancel));
 		$('.more_content').removeClass('active');
 
 		$btnCancel.on('click', function(){
@@ -237,10 +336,12 @@ jQuery(function($){
 				alert(PMH_MMR_LANG.editEmpty);
 				return;
 			}
+			var newScore = parseInt($starSel.data('selected')) || currentScore;
 			$.exec_json('poomahhi.procPoomahhiUpdateMemberReview', {
 				mid: pmhMid,
 				review_srl: review_srl,
 				content: text,
+				score: newScore,
 				ajax_request: 'Y'
 			}, function(ret){
 				if(ret.error != 0) {
@@ -248,8 +349,11 @@ jQuery(function($){
 					return;
 				}
 				var out = (typeof ret.content !== 'undefined' && ret.content !== null) ? String(ret.content) : text;
+				var savedScore = (typeof ret.score !== 'undefined') ? parseInt(ret.score) : newScore;
 				$content.removeData('editing').removeData('orig-html');
 				$content.empty().text(out);
+				$card.data('score', savedScore);
+				$card.find('.js-member-review-score').text(savedScore);
 			});
 		});
 	});
@@ -260,10 +364,22 @@ jQuery(function($){
 		var $a = $(this);
 		var review_srl = parseInt($a.data('review-srl'), 10);
 		if(!review_srl) return;
+		var $card = $a.closest('.pmh-mr-card');
+		var hasReplies = parseInt($card.data('has-replies')) === 1;
+		var deleteReplies = 'N';
+
 		if(!window.confirm(PMH_MMR_LANG.deleteConfirm)) return;
+
+		if(hasReplies) {
+			if(window.confirm('이 댓글에 달린 대댓글도 함께 삭제하시겠습니까?\n\n[확인] 대댓글 포함 삭제\n[취소] 댓글만 삭제')) {
+				deleteReplies = 'Y';
+			}
+		}
+
 		$.exec_json('poomahhi.procPoomahhiDeleteMemberReview', {
 			mid: pmhMid,
 			review_srl: review_srl,
+			delete_replies: deleteReplies,
 			ajax_request: 'Y'
 		}, function(ret){
 			if(ret.error != 0) {

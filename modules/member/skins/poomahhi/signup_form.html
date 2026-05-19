@@ -3,7 +3,11 @@
 <!--%load_js_plugin("ui")-->
 <!--%load_js_plugin("ui.datepicker")-->
 <include target="./common_header.html" />
-    <h1 class="pmh-page-title">{$lang->cmd_signup}</h1>
+	<!--@if(Context::get('social') == 'kakao')-->
+    <h1 class="pmh-page-title">추가 정보</h1>
+	<!--@else-->
+	<h1 class="pmh-page-title">{$lang->cmd_signup}</h1>
+	<!--@end-->
 	<div cond="$XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/member/skins'" class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
 		<p>{$XE_VALIDATOR_MESSAGE}</p>
 	</div>
@@ -13,6 +17,24 @@
 		<input type="hidden" name="success_return_url" value="" />
 		<input type="hidden" name="member_type" value="{$member_type}" cond="$member_type" />
 		
+		<!--@if(Context::get('social') == 'kakao')-->
+		<div class="control-group" loop="$formTags=>$formTag" cond="$formTag->name == 'address'">
+
+			<label for="{$formTag->name}" class="control-label">
+				{$formTag->title}
+			</label>
+
+			<div class="controls">
+				{$formTag->inputTag}
+			</div>
+
+			<script>
+				$('input[class="krzip-postcode"]').attr('placeholder', '우편번호');
+				$('input[class="krzip-roadAddress"]').attr('placeholder', '주소');
+				$('input[class="krzip-detailAddress"]').attr('placeholder', '상세주소');
+			</script>
+		</div>
+		<!--@else-->
 		<div class="control-group" cond="$identifierForm->name !== 'phone_number'">
 			<label for="{$identifierForm->name}" class="control-label"><em>*</em> {$identifierForm->title}</label>
 			<div class="controls">
@@ -100,6 +122,7 @@
 			<div class="control-label">{$lang->captcha}</div>
 			<div class="controls">{$captcha}</div>
 		</div>
+		<!--@end-->
 		<div class="agreement" loop="$member_config->agreements => $i, $agreement" cond="$agreement->type !== 'disabled'">
 			<div class="confirm">
 				<label for="accept_agreement_{$i}">
@@ -122,7 +145,11 @@
 			</div>
 		</div>
 		<div class="btnArea">
-			<input type="submit" value="가입하기" class="btn-inverse pull-right" />
+			<!--@if(Context::get('social') == 'kakao')-->
+			<a href="{\Rhymix\Modules\Sociallogin\Models\Config::getInstance()->getAuthUrl('kakao', 'login')}" class="ds-b submit_btn">가입하기</a>
+			<!--@else-->
+			<input type="submit" value="가입하기" class="submit_btn" />
+			<!--@end-->
 			<a href="{getUrl('act','','member_srl','')}" class="pull-left">{$lang->cmd_cancel}</a>
 		</div>
 	</form>

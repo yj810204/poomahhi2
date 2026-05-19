@@ -23,6 +23,9 @@
 		<column name="p.product_image" />
 		<column name="p.product_type" />
 		<column name="p.region_srl" />
+		<column name="p.deadline_date" />
+		<column name="p.apply_end_date" />
+		<column name="p.shopping_channel" />
 	</columns>
 	<conditions>
 		<condition operation="equal" column="mr.reviewer_member_srl" var="reviewer_member_srl" notnull="notnull" />

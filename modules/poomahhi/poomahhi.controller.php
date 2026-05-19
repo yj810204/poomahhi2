@@ -1403,6 +1403,7 @@ class poomahhiController extends poomahhi
 		$args->review_srl = $review_srl;
 		$args->member_srl = $logged_info->member_srl;
 		$args->content = $content;
+		$args->regdate = date('YmdHis');
 
 		$output = executeQuery('poomahhi.insertReviewReply', $args);
 		if(!$output->toBool()) return $output;
@@ -1411,6 +1412,45 @@ class poomahhiController extends poomahhi
 		$returnUrl = Context::get('success_return_url');
 		if(!$returnUrl) $returnUrl = getNotEncodedUrl('', 'mid', $this->mid, 'act', 'dispPoomahhiMyReviews');
 		$this->setRedirectUrl($returnUrl);
+		return new BaseObject();
+	}
+
+	/**
+	 * @brief 참여자 본인의 참여 인증 리뷰 삭제 (member_review 없는 경우에만)
+	 */
+	function procPoomahhiDeleteMyReview()
+	{
+		$logged_info = Context::get('logged_info');
+		if(!$logged_info) return new BaseObject(-1, '로그인이 필요합니다.');
+
+		$review_srl = (int)Context::get('review_srl');
+		if(!$review_srl) return new BaseObject(-1, '잘못된 요청입니다.');
+
+		$oModel = getModel('poomahhi');
+		$review = $oModel->getReview($review_srl);
+		if(!$review) return new BaseObject(-1, '리뷰를 찾을 수 없습니다.');
+
+		if((int)$review->member_srl !== (int)$logged_info->member_srl)
+		{
+			return new BaseObject(-1, '권한이 없습니다.');
+		}
+
+		$mr = $oModel->getMemberReviewByApplication($review->application_srl);
+		if($mr)
+		{
+			return new BaseObject(-1, '개설자의 회원평가가 있는 경우 삭제할 수 없습니다.');
+		}
+
+		$del_reply = new stdClass();
+		$del_reply->review_srl = $review_srl;
+		executeQuery('poomahhi.deleteReviewReplyByReviewSrl', $del_reply);
+
+		$del = new stdClass();
+		$del->review_srl = $review_srl;
+		$output = executeQuery('poomahhi.deleteReview', $del);
+		if(!$output->toBool()) return $output;
+
+		$this->setMessage('삭제되었습니다.');
 		return new BaseObject();
 	}
 
@@ -1438,10 +1478,12 @@ class poomahhiController extends poomahhi
 		$args = new stdClass();
 		$args->reply_srl = $reply_srl;
 		$args->content = $content;
+		$args->regdate = date('YmdHis');
 		$output = executeQuery('poomahhi.updateReviewReply', $args);
 		if(!$output->toBool()) return $output;
 
 		$this->add('content', $content);
+		$this->add('regdate', $args->regdate);
 		$this->setMessage('수정되었습니다.');
 		return new BaseObject();
 	}
@@ -1561,10 +1603,13 @@ class poomahhiController extends poomahhi
 		}
 
 		$content = trim((string)Context::get('content'));
+		$score = (int)Context::get('score');
+		if($score < 1 || $score > 5) $score = (int)$mr->score;
 
 		$args = new stdClass();
 		$args->review_srl = $review_srl;
 		$args->content = $content;
+		$args->score = $score;
 		$args->last_update = date('YmdHis');
 
 		$output = executeQuery('poomahhi.updateMemberReview', $args);
@@ -1575,6 +1620,7 @@ class poomahhiController extends poomahhi
 		if($is_ajax)
 		{
 			$this->add('content', $content);
+			$this->add('score', $score);
 			return new BaseObject();
 		}
 
@@ -1602,6 +1648,19 @@ class poomahhiController extends poomahhi
 		if($mr->reviewer_member_srl != $logged_info->member_srl && !$this->_isAdmin($logged_info))
 		{
 			return new BaseObject(-1, '권한이 없습니다.');
+		}
+
+		$delete_replies = (Context::get('delete_replies') === 'Y');
+		if($delete_replies)
+		{
+			$oModel = getModel('poomahhi');
+			$participant_review = $oModel->getReviewByApplication($mr->application_srl);
+			if($participant_review)
+			{
+				$del_rep = new stdClass();
+				$del_rep->review_srl = (int)$participant_review->review_srl;
+				executeQuery('poomahhi.deleteReviewReplyByReviewSrl', $del_rep);
+			}
 		}
 
 		$args = new stdClass();

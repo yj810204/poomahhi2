@@ -216,15 +216,15 @@
 				<div class="info-wrap">
 					<div class="text-title">상품 만족도</div>
 					<div class="score-wrap">
-						<!--@if($review->score == 1)-->
+						<!--@if($review->score == 5)-->
 						<i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i>
-						<!--@elseif($review->score == 2)-->
+						<!--@elseif($review->score == 4)-->
 						<i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i>
 						<!--@elseif($review->score == 3)-->
 						<i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i>
-						<!--@elseif($review->score == 4)-->
+						<!--@elseif($review->score == 2)-->
 						<i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill"></i>
-						<!--@elseif($review->score == 5)-->
+						<!--@elseif($review->score == 1)-->
 						<i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill bh_color_main"></i><i class="ri-star-fill bh_color_main"></i>
 						<!--@end-->
 					</div>
@@ -327,7 +327,7 @@
 					<!--@if($existing_member_review->content)-->
 					<div class="info-wrap">
 						<div class="text-title">내용</div>
-						<div class="pmh-app-section-body">{$existing_member_review->content}</div>
+						<div class="info-input">{$existing_member_review->content}</div>
 					</div>
 					<!--@end-->
 
@@ -336,7 +336,6 @@
 						<!--@if($existing_member_review->regdate)-->{zdate($existing_member_review->regdate, 'Y-m-d H:i')}<!--@else-->-<!--@end-->
 					</div>
 				</div>
-				<p class="pmh-app-notice mt-30">이미 평가를 작성했습니다.</p>
 				<!--@elseif($application->status == 'under_review' || $application->status == 'completed')-->
 				<!--@if($XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/poomahhi/member_review')-->
 				<div class="pmh-app-message {$XE_VALIDATOR_MESSAGE_TYPE}">

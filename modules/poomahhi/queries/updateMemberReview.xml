@@ -4,6 +4,7 @@
 	</tables>
 	<columns>
 		<column name="content" var="content" />
+		<column name="score" var="score" />
 		<column name="last_update" var="last_update" />
 	</columns>
 	<conditions>

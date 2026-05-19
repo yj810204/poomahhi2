@@ -17,8 +17,8 @@
 			</div>
 			<div class="pmh-mr-nickname"><!--@if($target_member)-->{$target_member->nick_name}<!--@else-->회원<!--@end--></div>
 			<div class="pmh-mr-level-badge"><span class="pmh-mr-level-num">{$member_level}</span><span class="pmh-mr-level-text">레벨</span></div>
-			<div class="pmh-mr-ranking">품앗이 랭킹 <!--@if($ranking->position)-->{$ranking->position}<!--@else-->-<!--@end-->위</div>
-			<div class="pmh-mr-percentile">상위 백분율 <!--@if($ranking->percentile)-->{$ranking->percentile}<!--@else-->-<!--@end-->%</div>
+			<div class="pmh-mr-ranking">품앗이 랭킹 <!--@if(!$ranking->no_review)-->{$ranking->position}<!--@else-->-<!--@end-->위</div>
+			<div class="pmh-mr-percentile">상위 백분율 <!--@if(!$ranking->no_review)-->{$ranking->percentile}<!--@else-->-<!--@end-->%</div>
 		</div>
 
 		<!-- 중앙: 별점 평균 + 5단계 분포 -->

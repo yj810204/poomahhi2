@@ -25,13 +25,19 @@
 
 				<div class="profile-upload-section">
 					<div class="profile_upload_wrap" onclick="jQuery('#profile_image').click(); return false;">
-						<img src="{$logged_info->profile_image->src}" alt="{$logged_info->nick_name}" class="profile_img" cond="$logged_info->profile_image" />
-						<img src="img/noimage.png" alt="{$logged_info->nick_name}" class="profile_img" cond="!$logged_info->profile_image" />
+
+						<img 
+							src="{$logged_info->profile_image ? $logged_info->profile_image->src : 'img/noimage.png'}?{time()}" 
+							alt="{$logged_info->nick_name}" 
+							class="profile_img"
+							id="profile_preview"
+						/>
+
 						<div class="upload-icon-overlay">
 							<i class="ri-camera-fill"></i>
 						</div>
 					</div>
-					<input type="file" name="profile_image" id="profile_image" accept="image/*" class="ds-n" value="" />
+					<input type="file" name="profile_image" id="profile_image" accept="image/*" class="ds-n" />
 				</div>
 					
 				<div class="control-group" cond="$identifierForm->name !== 'phone_number'">
@@ -108,5 +114,23 @@ jQuery(function($){
 			return false;});
 	});
 })(jQuery);
+
+jQuery(function($){
+
+	$(document).on('change', '#profile_image', function(){
+
+		const file = this.files[0];
+		if(!file) return;
+
+		const reader = new FileReader();
+
+		reader.onload = function(e){
+			$('#profile_preview').attr('src', e.target.result);
+		};
+
+		reader.readAsDataURL(file);
+	});
+
+});
 </script>
 <include target="./common_footer.html" />

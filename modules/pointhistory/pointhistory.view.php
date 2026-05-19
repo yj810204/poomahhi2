@@ -33,12 +33,12 @@
 		{
 		    if(!Context::get('is_logged'))
 			{
-				return new BaseObject(-1, 'msg_not_logged');
+				return new Object(-1, 'msg_not_logged');
 			}
 			
 		    if($this->isUpgrade())
 			{
-				return new BaseObject(-1, 'msg_invalid_request');
+				return new Object(-1, 'msg_invalid_request');
 			}
 			
 			$args = new stdClass;

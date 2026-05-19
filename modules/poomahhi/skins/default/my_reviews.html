@@ -29,11 +29,11 @@
 					<div class="pmh-mr-count">
 						<div class="pmh-mr-ranking">
 							<span><i class="ri-medal-line"></i>품앗이 랭킹</span>
-							<span><b><!--@if($ranking->position)-->{$ranking->position}<!--@else-->-<!--@end--></b>위</span>
+							<span><b><!--@if(!$ranking->no_review)-->{$ranking->position}<!--@else-->-<!--@end--></b>위</span>
 						</div>
 						<div class="pmh-mr-percentile">
 							<span><i class="ri-line-chart-fill"></i>상위 백분율</span>
-							<span><b><!--@if($ranking->percentile)-->{$ranking->percentile}<!--@else-->-<!--@end--></b>%</span>
+							<span><b><!--@if(!$ranking->no_review)-->{$ranking->percentile}<!--@else-->-<!--@end--></b>%</span>
 						</div>
 					</div>
 				</div>
@@ -102,6 +102,7 @@
 			<!--@if($review_list)-->
 			<!--@foreach($review_list as $review)-->
 			<div class="pmh-mr-card">
+				<!--@if($review->member_review)-->
 				<div class="pmh-mr-card-head">
 					<div class="pmh-mr-card-author">
 						<!--@if($review->member_review->reviewer_profile_image)-->
@@ -120,7 +121,6 @@
 									리뷰보기
 								</a>
 							</li>
-							<!--@if($review->member_review)-->
 							<li>
 								<!--@if($review->member_review->is_reported)-->
 								<span class="pmh-reported-badge">신고됨</span>
@@ -130,7 +130,6 @@
 								</a>
 								<!--@end-->
 							</li>
-							<!--@end-->
 						</ul>
 						<!--@else-->
 						<ul class="more_content more_content--missing">
@@ -139,7 +138,32 @@
 						<!--@end-->
 					</div>
 				</div>
-				<div class="pmh-mr-card-content"><!--@if($review->member_review->content)-->{$review->member_review->content}<!--@else-->-<!--@end--></div>
+				<div class="pmh-mr-card-content">{$review->member_review->content}</div>
+				<!--@else-->
+				<div class="pmh-mr-card-head">
+					<div class="pmh-mr-card-no-review">
+						<i class="ri-chat-off-line"></i>
+						<span>개설자의 회원평가가 아직 작성되지 않았습니다.</span>
+					</div>
+					<div class="more">
+						<i class="ri-more-2-line more_btn"></i>
+						<ul class="more_content">
+							<!--@if($review->has_application)-->
+							<li>
+								<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiApplicationDetail', 'application_srl', $review->application_srl)}">
+									리뷰보기
+								</a>
+							</li>
+							<!--@end-->
+							<li>
+								<a href="#" class="_deleteMyReview" data-review-srl="{$review->review_srl}" style="color:#e53935;">
+									목록에서 삭제
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<!--@end-->
 
 				<!-- 품앗이 소개 카드 -->
 				<div class="pmh-mr-product">
@@ -187,7 +211,7 @@
 				<!-- 대댓글 영역 (member_review가 있을 때만 표시) -->
 				<!--@if($review->member_review)-->
 				<div class="pmh-mr-reply-form pmh-mr-thread">
-					<div class="comment line">
+					<div class="comment mb-10">
 						<i class="ri-chat-3-line"></i><span>댓글</span>
 					</div>
 
@@ -221,16 +245,18 @@
 					<!--@end-->
 					<!--@end-->
 
+					<!--@if(!$review->review_replies)-->
 					<div class="pmh-mr-reply-write">
 						<form action="{$pmh_my_reviews_post_action}" method="post">
 							<input type="hidden" name="act" value="procPoomahhiInsertReviewReply" />
 							<input type="hidden" name="mid" value="{$mid}" />
 							<input type="hidden" name="review_srl" value="{$review->review_srl}" />
 							<input type="hidden" name="success_return_url" value="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiMyReviews', 'page', $page)}" />
-							<textarea name="content" rows="2" placeholder="대댓글을 입력해 주세요."></textarea>
+							<textarea name="content" rows="2" placeholder="댓글을 입력해 주세요."></textarea>
 							<button type="submit" class="pmh-mr-reply-btn">등록하기</button>
 						</form>
 					</div>
+					<!--@end-->
 				</div>
 				<!--@end-->
 			</div>
@@ -521,7 +547,33 @@ jQuery(function($){
 				var out = (typeof ret.content !== 'undefined' && ret.content !== null) ? String(ret.content) : text;
 				$content.removeData('editing').removeData('orig-html');
 				$content.empty().text(out);
+				if(ret.regdate) {
+					var s = String(ret.regdate).replace(/\D/g, '');
+					var fmt = '';
+					if(s.length >= 8) {
+						fmt = s.substr(0, 4) + '-' + s.substr(4, 2) + '-' + s.substr(6, 2);
+						if(s.length >= 12) fmt += ' ' + s.substr(8, 2) + ':' + s.substr(10, 2);
+					}
+					if(fmt) $item.find('.pmh-mr-card-time').text(fmt);
+				}
 			});
+		});
+	});
+
+	// 내 리뷰 목록에서 삭제 (member_review 없는 경우)
+	$(document).on('click', '._deleteMyReview', function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		if(!window.confirm('이 항목을 목록에서 삭제하시겠습니까?\n\n참여 인증 기록이 삭제됩니다.')) return;
+		var review_srl = parseInt($(this).data('review-srl'), 10);
+		if(!review_srl) return;
+		$.exec_json('poomahhi.procPoomahhiDeleteMyReview', {
+			mid: pmhMid,
+			review_srl: review_srl,
+			ajax_request: 'Y'
+		}, function(ret){
+			if(ret.error != 0) { alert(ret.message); return; }
+			window.location.reload();
 		});
 	});
 

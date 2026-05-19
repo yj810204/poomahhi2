@@ -559,6 +559,19 @@ class poomahhiAdminController extends poomahhi
 			$mr = $oModel->getMemberReview($review_srl);
 			if($mr)
 			{
+				$delete_related = (trim((string)Context::get('delete_related')) === 'Y');
+
+				if($delete_related)
+				{
+					$participant_review = $oModel->getReviewByApplication($mr->application_srl);
+					if($participant_review)
+					{
+						$del_reply = new stdClass();
+						$del_reply->review_srl = (int)$participant_review->review_srl;
+						executeQuery('poomahhi.deleteReviewReplyByReviewSrl', $del_reply);
+					}
+				}
+
 				$del_args = new stdClass();
 				$del_args->review_srl = $review_srl;
 				executeQuery('poomahhi.deleteMemberReview', $del_args);
@@ -581,9 +594,18 @@ class poomahhiAdminController extends poomahhi
 			$review = $oModel->getReview($review_srl);
 			if($review)
 			{
-				$del_args = new stdClass();
-				$del_args->review_srl = $review_srl;
-				executeQuery('poomahhi.deleteReviewReplyByReviewSrl', $del_args);
+				$delete_related = (trim((string)Context::get('delete_related')) === 'Y');
+
+				if($delete_related)
+				{
+					$del_reply = new stdClass();
+					$del_reply->review_srl = $review_srl;
+					executeQuery('poomahhi.deleteReviewReplyByReviewSrl', $del_reply);
+
+					$del_mr = new stdClass();
+					$del_mr->application_srl = $review->application_srl;
+					executeQuery('poomahhi.deleteMemberReviewByApplication', $del_mr);
+				}
 
 				$del_args2 = new stdClass();
 				$del_args2->application_srl = $review->application_srl;

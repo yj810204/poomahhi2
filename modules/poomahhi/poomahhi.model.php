@@ -537,19 +537,19 @@ class poomahhiModel extends poomahhi
 	 */
 	function getReviewRanking($member_srl)
 	{
-		$result = (object)array('position' => 0, 'total' => 0, 'percentile' => 0);
+		$result = (object)array('position' => 0, 'total' => 0, 'percentile' => 0, 'no_review' => false);
 
 		$total_output = executeQuery('poomahhi.getReviewRankingTotal');
-		if(!$total_output->toBool() || !$total_output->data) return $result;
+		if(!$total_output->toBool() || !$total_output->data) { $result->no_review = true; return $result; }
 		$result->total = (int)$total_output->data->total_count;
-		if($result->total == 0) return $result;
+		if($result->total == 0) { $result->no_review = true; return $result; }
 
 		$stats = $this->getReviewStats($member_srl);
 		$my_avg = (float)$stats->avg_score;
-		if($my_avg == 0) { $result->position = $result->total; $result->percentile = 100; return $result; }
+		if($my_avg == 0) { $result->position = 0; $result->percentile = 0; $result->no_review = true; return $result; }
 
 		$above_output = executeQueryArray('poomahhi.getReviewAvgByMember');
-		if(!$above_output->toBool() || !$above_output->data) { $result->position = $result->total; $result->percentile = 100; return $result; }
+		if(!$above_output->toBool() || !$above_output->data) { $result->position = $result->total; $result->percentile = 0; $result->no_review = true; return $result; }
 
 		$above_count = 0;
 		foreach($above_output->data as $row)
@@ -558,7 +558,8 @@ class poomahhiModel extends poomahhi
 		}
 
 		$result->position = $above_count + 1;
-		$result->percentile = round(($result->position / $result->total) * 100, 2);
+		$raw_percentile = round(($result->position / $result->total) * 100, 2);
+		$result->percentile = round(100 - $raw_percentile, 2);
 		return $result;
 	}
 
@@ -707,19 +708,19 @@ class poomahhiModel extends poomahhi
 	 */
 	function getMemberReviewRanking($member_srl)
 	{
-		$result = (object)array('position' => 0, 'total' => 0, 'percentile' => 0);
+		$result = (object)array('position' => 0, 'total' => 0, 'percentile' => 0, 'no_review' => false);
 
 		$total_output = executeQuery('poomahhi.getMemberReviewRankingTotal');
-		if(!$total_output->toBool() || !$total_output->data) return $result;
+		if(!$total_output->toBool() || !$total_output->data) { $result->no_review = true; return $result; }
 		$result->total = (int)$total_output->data->total_count;
-		if($result->total == 0) return $result;
+		if($result->total == 0) { $result->no_review = true; return $result; }
 
 		$stats = $this->getMemberReviewStats($member_srl);
 		$my_avg = (float)$stats->avg_score;
-		if($my_avg == 0) { $result->position = $result->total; $result->percentile = 100; return $result; }
+		if($my_avg == 0) { $result->position = 0; $result->percentile = 0; $result->no_review = true; return $result; }
 
 		$above_output = executeQueryArray('poomahhi.getMemberReviewAvgByTarget');
-		if(!$above_output->toBool() || !$above_output->data) { $result->position = $result->total; $result->percentile = 100; return $result; }
+		if(!$above_output->toBool() || !$above_output->data) { $result->position = $result->total; $result->percentile = 0; $result->no_review = true; return $result; }
 
 		$above_count = 0;
 		foreach($above_output->data as $row)
@@ -728,7 +729,8 @@ class poomahhiModel extends poomahhi
 		}
 
 		$result->position = $above_count + 1;
-		$result->percentile = round(($result->position / $result->total) * 100, 2);
+		$raw_percentile = round(($result->position / $result->total) * 100, 2);
+		$result->percentile = round(100 - $raw_percentile, 2);
 		return $result;
 	}
 

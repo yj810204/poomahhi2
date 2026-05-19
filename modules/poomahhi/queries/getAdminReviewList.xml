@@ -1,4 +1,4 @@
-<query id="getReviewListByMemberWithProduct" action="select">
+<query id="getAdminReviewList" action="select">
 	<tables>
 		<table name="poomahhi_review" alias="r" />
 		<table name="poomahhi_product" alias="p" type="left join">
@@ -13,18 +13,14 @@
 		<column name="p.title" alias="product_title" />
 		<column name="p.company_name" />
 		<column name="p.product_image" />
-		<column name="p.short_description" alias="product_description" />
-		<column name="p.product_type" />
-		<column name="p.region_srl" />
-		<column name="p.shopping_channel" />
-		<column name="p.deadline_date" />
-		<column name="p.apply_end_date" />
 	</columns>
 	<conditions>
-		<condition operation="equal" column="r.member_srl" var="member_srl" notnull="notnull" />
+		<condition operation="equal" column="r.application_srl" var="application_srl" />
+		<condition operation="equal" column="r.product_srl" var="product_srl" />
+		<condition operation="like" column="r.content" var="keyword" pipe="OR" />
 	</conditions>
 	<navigation>
-		<index var="sort_index" default="review_srl" order="desc" />
+		<index var="sort_index" default="r.review_srl" order="desc" />
 		<list_count var="list_count" default="20" />
 		<page_count var="page_count" default="10" />
 		<page var="page" default="1" />

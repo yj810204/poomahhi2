@@ -1,5 +1,28 @@
 <include target="_header.html" />
 
+<script>
+function pmhAdminDeleteMemberReview(formId) {
+	if(!confirm('신고된 회원평가(댓글)를 삭제하시겠습니까?')) return false;
+	var deleteRelated = confirm(
+		'참여자가 남긴 대댓글도 함께 삭제하시겠습니까?\n\n' +
+		'[확인]  회원평가(댓글) + 대댓글 모두 삭제\n' +
+		'[취소]  회원평가(댓글)만 삭제\n' +
+		'        (대댓글은 유지됩니다.)'
+	);
+	var form = document.getElementById(formId);
+	form.querySelector('[name="delete_related"]').value = deleteRelated ? 'Y' : 'N';
+	form.submit();
+	return false;
+}
+function pmhAdminDeleteReview(formId) {
+	if(!confirm('신고된 참여 리뷰를 삭제하시겠습니까?')) return false;
+	var form = document.getElementById(formId);
+	form.querySelector('[name="delete_related"]').value = 'N';
+	form.submit();
+	return false;
+}
+</script>
+
 <h2>신고 관리</h2>
 
 <div style="margin-bottom:15px;">
@@ -19,7 +42,7 @@
 			<th>신고자</th>
 			<th>피신고 작성자</th>
 			<th>신고 사유</th>
-			<th>신고된 내용</th>
+			<th>신고된 내용 / 품앗이 연결</th>
 			<th>처리</th>
 		</tr>
 	</thead>
@@ -32,7 +55,22 @@
 			<td><!--@if($report->reporter_info)-->{$report->reporter_info->nick_name}<!--@else-->탈퇴회원<!--@end--></td>
 			<td><!--@if($report->reviewed_member_info)-->{$report->reviewed_member_info->nick_name}<!--@else-->-<!--@end--></td>
 			<td><!--@if($report->reason)-->{$report->reason}<!--@else-->-<!--@end--></td>
-			<td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><!--@if($report->review_content)-->{$report->review_content}<!--@else-->삭제됨<!--@end--></td>
+			<td style="max-width:320px;">
+				<div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:6px;" title="<!--@if($report->review_content)-->{$report->review_content}<!--@end-->">
+					<!--@if($report->review_content)-->{$report->review_content}<!--@else--><span style="color:#aaa;">삭제됨</span><!--@end-->
+				</div>
+				<!--@if($report->application_srl)-->
+				<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;">
+					<!--@if($report->product_title)-->
+					<span style="font-size:11px;color:#555;background:#f0f0f0;padding:2px 6px;border-radius:3px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="{$report->product_title}">{$report->product_title}</span>
+					<!--@end-->
+					<a href="{getUrl('','module','admin','act','dispPoomahhiAdminReviewList','application_srl',$report->application_srl)}" style="font-size:11px;color:#fff;background:#5c6bc0;padding:2px 8px;border-radius:3px;text-decoration:none;white-space:nowrap;" title="해당 신청의 리뷰·평가·대댓글 전체 스레드 보기">스레드 보기</a>
+					<!--@if($pmh_front_mid)-->
+					<a href="/?mid={$pmh_front_mid}&amp;act=dispPoomahhiApplicationDetail&amp;application_srl={$report->application_srl}" target="_blank" style="font-size:11px;color:#1a73e8;text-decoration:underline;white-space:nowrap;" title="참여자 리뷰 페이지">리뷰보기</a>
+					<!--@end-->
+				</div>
+				<!--@end-->
+			</td>
 			<td>
 				<form action="./" method="post" style="display:inline;">
 					<input type="hidden" name="module" value="admin" />
@@ -42,6 +80,7 @@
 					<button type="submit" class="x_btn x_btn-default x_btn-xs" onclick="return confirm('이 신고를 무시(삭제)하시겠습니까?');">무시</button>
 				</form>
 				<!--@if($report->review_content)-->
+				<!--@if($report->review_type == 'review_reply')-->
 				<form action="./" method="post" style="display:inline;">
 					<input type="hidden" name="module" value="admin" />
 					<input type="hidden" name="act" value="procPoomahhiAdminDeleteReportedReview" />
@@ -49,12 +88,31 @@
 					<input type="hidden" name="review_srl" value="{$report->review_srl}" />
 					<input type="hidden" name="review_type" value="{$report->review_type}" />
 					<input type="hidden" name="success_return_url" value="{getUrl('','module','admin','act','dispPoomahhiAdminReportList','review_type',$current_review_type)}" />
-					<!--@if($report->review_type == 'review_reply')-->
-					<button type="submit" class="x_btn x_btn-danger x_btn-xs" onclick="return confirm('신고된 대댓글을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.');">대댓글 삭제</button>
-					<!--@else-->
-					<button type="submit" class="x_btn x_btn-danger x_btn-xs" onclick="return confirm('신고된 리뷰를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.');">리뷰 삭제</button>
-					<!--@end-->
+					<button type="submit" class="x_btn x_btn-danger x_btn-xs" onclick="return confirm('신고된 대댓글을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.');">대댓글 삭제</button>
 				</form>
+				<!--@elseif($report->review_type == 'member_review')-->
+				<form id="pmhDelMR{$report->report_srl}" action="./" method="post" style="display:inline;">
+					<input type="hidden" name="module" value="admin" />
+					<input type="hidden" name="act" value="procPoomahhiAdminDeleteReportedReview" />
+					<input type="hidden" name="report_srl" value="{$report->report_srl}" />
+					<input type="hidden" name="review_srl" value="{$report->review_srl}" />
+					<input type="hidden" name="review_type" value="{$report->review_type}" />
+					<input type="hidden" name="delete_related" value="N" />
+					<input type="hidden" name="success_return_url" value="{getUrl('','module','admin','act','dispPoomahhiAdminReportList','review_type',$current_review_type)}" />
+					<button type="button" class="x_btn x_btn-danger x_btn-xs" onclick="pmhAdminDeleteMemberReview('pmhDelMR{$report->report_srl}');">댓글 삭제</button>
+				</form>
+				<!--@else-->
+				<form id="pmhDelReview{$report->report_srl}" action="./" method="post" style="display:inline;">
+					<input type="hidden" name="module" value="admin" />
+					<input type="hidden" name="act" value="procPoomahhiAdminDeleteReportedReview" />
+					<input type="hidden" name="report_srl" value="{$report->report_srl}" />
+					<input type="hidden" name="review_srl" value="{$report->review_srl}" />
+					<input type="hidden" name="review_type" value="{$report->review_type}" />
+					<input type="hidden" name="delete_related" value="N" />
+					<input type="hidden" name="success_return_url" value="{getUrl('','module','admin','act','dispPoomahhiAdminReportList','review_type',$current_review_type)}" />
+					<button type="button" class="x_btn x_btn-danger x_btn-xs" onclick="pmhAdminDeleteReview('pmhDelReview{$report->report_srl}');">리뷰 삭제</button>
+				</form>
+				<!--@end-->
 				<!--@end-->
 			</td>
 		</tr>

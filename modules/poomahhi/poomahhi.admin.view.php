@@ -331,6 +331,10 @@ class poomahhiAdminView extends poomahhi
 
 				$report->review_content = '';
 				$report->reviewed_member_info = null;
+				$report->application_srl = 0;
+				$report->product_srl = 0;
+				$report->product_title = '';
+
 				if($report->review_type === 'member_review')
 				{
 					$mr = $oModel->getMemberReview($report->review_srl);
@@ -338,6 +342,8 @@ class poomahhiAdminView extends poomahhi
 					{
 						$report->review_content = $mr->content;
 						$report->reviewed_member_info = $oMemberModel->getMemberInfoByMemberSrl($mr->reviewer_member_srl);
+						$report->application_srl = (int)$mr->application_srl;
+						$report->product_srl = (int)$mr->product_srl;
 					}
 				}
 				elseif($report->review_type === 'review_reply')
@@ -347,6 +353,12 @@ class poomahhiAdminView extends poomahhi
 					{
 						$report->review_content = $reply->content;
 						$report->reviewed_member_info = $oMemberModel->getMemberInfoByMemberSrl($reply->member_srl);
+						$participant_review = $oModel->getReview($reply->review_srl);
+						if($participant_review)
+						{
+							$report->application_srl = (int)$participant_review->application_srl;
+							$report->product_srl = (int)$participant_review->product_srl;
+						}
 					}
 				}
 				else
@@ -356,11 +368,25 @@ class poomahhiAdminView extends poomahhi
 					{
 						$report->review_content = $review->content;
 						$report->reviewed_member_info = $oMemberModel->getMemberInfoByMemberSrl($review->member_srl);
+						$report->application_srl = (int)$review->application_srl;
+						$report->product_srl = (int)$review->product_srl;
+					}
+				}
+
+				if($report->product_srl)
+				{
+					$product = $oModel->getProduct($report->product_srl);
+					if($product)
+					{
+						$report->product_title = $product->title;
 					}
 				}
 			}
 			unset($report);
 		}
+
+		$pmh_front_mid = $this->module_info ? $this->module_info->mid : '';
+		Context::set('pmh_front_mid', $pmh_front_mid);
 
 		Context::set('report_list', $output->data ?: array());
 		Context::set('page_navigation', $output->page_navigation);
@@ -368,5 +394,89 @@ class poomahhiAdminView extends poomahhi
 		Context::set('current_review_type', $review_type);
 
 		$this->setTemplateFile('report_list');
+	}
+
+	/**
+	 * @brief 리뷰/평가/대댓글 통합 조회 페이지
+	 */
+	function dispPoomahhiAdminReviewList()
+	{
+		$oModel = getModel('poomahhi');
+		$oMemberModel = getModel('member');
+
+		$args = new stdClass();
+		$args->page = (int)(Context::get('page') ?: 1);
+		$args->list_count = 15;
+
+		$application_srl = (int)Context::get('application_srl');
+		if($application_srl) $args->application_srl = $application_srl;
+
+		$product_srl = (int)Context::get('product_srl');
+		if($product_srl) $args->product_srl = $product_srl;
+
+		$keyword = trim((string)Context::get('keyword'));
+		if($keyword) $args->keyword = '%' . $keyword . '%';
+
+		$output = executeQueryArray('poomahhi.getAdminReviewList', $args);
+
+		$member_cache = array();
+		$get_member = function($member_srl) use ($oMemberModel, &$member_cache) {
+			if(!$member_srl) return null;
+			$srl = (int)$member_srl;
+			if(!isset($member_cache[$srl]))
+			{
+				$member_cache[$srl] = $oMemberModel->getMemberInfoByMemberSrl($srl);
+			}
+			return $member_cache[$srl];
+		};
+
+		if($output->data)
+		{
+			foreach($output->data as &$row)
+			{
+				$m = $get_member($row->member_srl);
+				$row->participant_nick = $m ? $m->nick_name : '탈퇴회원';
+				$row->participant_profile = ($m && !empty($m->profile_image->src)) ? $m->profile_image->src : '';
+
+				$mr = $oModel->getMemberReviewByApplication($row->application_srl);
+				if($mr)
+				{
+					$reviewer = $get_member($mr->reviewer_member_srl);
+					$mr->reviewer_nick = $reviewer ? $reviewer->nick_name : '탈퇴회원';
+					$row->member_review = $mr;
+				}
+				else
+				{
+					$row->member_review = null;
+				}
+
+				$replies = $oModel->getReviewReplies($row->review_srl);
+				if($replies)
+				{
+					foreach($replies as &$rp)
+					{
+						$rp_m = $get_member($rp->member_srl);
+						$rp->nick_name = $rp_m ? $rp_m->nick_name : '탈퇴회원';
+						$rp->profile_image = ($rp_m && !empty($rp_m->profile_image->src)) ? $rp_m->profile_image->src : '';
+					}
+					unset($rp);
+				}
+				$row->review_replies = $replies ?: array();
+			}
+			unset($row);
+		}
+
+		$pmh_front_mid = $this->module_info ? $this->module_info->mid : '';
+
+		Context::set('review_list', $output->data ?: array());
+		Context::set('page_navigation', $output->page_navigation);
+		Context::set('total_count', $output->total_count ?: 0);
+		Context::set('page', $args->page);
+		Context::set('pmh_front_mid', $pmh_front_mid);
+		Context::set('filter_application_srl', $application_srl);
+		Context::set('filter_product_srl', $product_srl);
+		Context::set('filter_keyword', $keyword);
+
+		$this->setTemplateFile('admin_review_list');
 	}
 }

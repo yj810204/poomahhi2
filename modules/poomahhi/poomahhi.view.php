@@ -2185,22 +2185,22 @@ class poomahhiView extends poomahhi
 		$oModel = getModel('poomahhi');
 		$oMemberModel = getModel('member');
 
-		$review_stats = $oModel->getReviewStats($member_srl);
+		$review_stats = $oModel->getMemberReviewStats($member_srl);
 		$review_stats->avg_score = $review_stats->avg_score ? round($review_stats->avg_score, 1) : 0;
 
-		$score_dist = $oModel->getReviewScoreDistribution($member_srl);
+		$score_dist = $oModel->getMemberReviewScoreDistribution($member_srl);
 		$total_reviews = (int)$review_stats->review_count;
 		$score_distribution = new stdClass();
 		for($i = 5; $i >= 1; $i--)
 		{
 			$count_key = 'score_' . $i . '_count';
 			$percent_key = 'score_' . $i . '_percent';
-			$count = (int)$score_dist->$count_key;
+			$count = isset($score_dist->$count_key) ? (int)$score_dist->$count_key : 0;
 			$score_distribution->$count_key = $count;
 			$score_distribution->$percent_key = $total_reviews > 0 ? round(($count / $total_reviews) * 100) : 0;
 		}
 
-		$ranking = $oModel->getReviewRanking($member_srl);
+		$ranking = $oModel->getMemberReviewRanking($member_srl);
 
 		$level = 1;
 		$avg = (float)$review_stats->avg_score;
@@ -2241,12 +2241,13 @@ class poomahhiView extends poomahhi
 					$review->region_title = $region ? $region->title : '';
 				}
 
-				if($review->deadline_date)
+				$dday_src = !empty($review->apply_end_date) ? $review->apply_end_date : $review->deadline_date;
+				if(!empty($dday_src))
 				{
 					$deadline_ts = strtotime(
-						substr($review->deadline_date, 0, 4) . '-' .
-						substr($review->deadline_date, 4, 2) . '-' .
-						substr($review->deadline_date, 6, 2)
+						substr($dday_src, 0, 4) . '-' .
+						substr($dday_src, 4, 2) . '-' .
+						substr($dday_src, 6, 2)
 					);
 					$diff = ceil(($deadline_ts - strtotime(date('Y-m-d'))) / 86400);
 					$review->dday = ($diff > 0) ? 'D-' . $diff : (($diff == 0) ? 'D-Day' : '마감');
@@ -2417,10 +2418,10 @@ class poomahhiView extends poomahhi
 		$logged_info = Context::get('logged_info');
 		$oModel = getModel('poomahhi');
 
-		$review_stats = $oModel->getReviewStats($target_member_srl);
+		$review_stats = $oModel->getMemberReviewStats($target_member_srl);
 		$review_stats->avg_score = $review_stats->avg_score ? round($review_stats->avg_score, 1) : 0;
 
-		$score_dist = $oModel->getReviewScoreDistribution($target_member_srl);
+		$score_dist = $oModel->getMemberReviewScoreDistribution($target_member_srl);
 		$total_reviews = (int)$review_stats->review_count;
 		$score_distribution = new stdClass();
 		for($i = 5; $i >= 1; $i--)
@@ -2432,7 +2433,7 @@ class poomahhiView extends poomahhi
 			$score_distribution->$percent_key = $total_reviews > 0 ? round(($count / $total_reviews) * 100) : 0;
 		}
 
-		$ranking = $oModel->getReviewRanking($target_member_srl);
+		$ranking = $oModel->getMemberReviewRanking($target_member_srl);
 		$avg = (float)$review_stats->avg_score;
 		$level = 1;
 		if($avg >= 4.5) $level = 5;
@@ -2511,7 +2512,7 @@ class poomahhiView extends poomahhi
 	}
 
 	/**
-	 * @brief 특정 회원이 받은 개설자 평가(회원평가) 목록 (공개)
+	 * @brief 특정 회원이 받은 평가(회원평가) 목록 (공개)
 	 */
 	function dispPoomahhiMemberReceivedReviews()
 	{
@@ -2550,6 +2551,16 @@ class poomahhiView extends poomahhi
 		elseif($avg >= 2.5) $level = 3;
 		elseif($avg >= 1.5) $level = 2;
 
+		$fulfillment_stats = $oModel->getFulfillmentStats($target_member_srl);
+		$fulfilled = (int)$fulfillment_stats->fulfilled_count;
+		$unfulfilled = (int)$fulfillment_stats->unfulfilled_count;
+		$fulfillment_total = $fulfilled + $unfulfilled;
+		$fulfillment_stats->total_count = $fulfillment_total;
+		$fulfillment_stats->fulfilled_percent = $fulfillment_total > 0 ? round(($fulfilled / $fulfillment_total) * 100) : 0;
+		$fulfillment_stats->unfulfilled_percent = $fulfillment_total > 0 ? round(($unfulfilled / $fulfillment_total) * 100) : 0;
+
+		$logged_info = Context::get('logged_info');
+
 		$args = new stdClass();
 		$args->target_member_srl = $target_member_srl;
 		$args->page = Context::get('page') ?: 1;
@@ -2558,6 +2569,7 @@ class poomahhiView extends poomahhi
 
 		if($review_output->data)
 		{
+			$oController = getController('poomahhi');
 			foreach($review_output->data as &$row)
 			{
 				$rev = $oMemberModel->getMemberInfoByMemberSrl($row->reviewer_member_srl);
@@ -2576,15 +2588,69 @@ class poomahhiView extends poomahhi
 				{
 					$row->region_title = '';
 				}
-				if(!empty($row->deadline_date))
+				$dday_src = !empty($row->apply_end_date) ? $row->apply_end_date : $row->deadline_date;
+				if(!empty($dday_src))
 				{
 					$deadline_ts = strtotime(
-						substr($row->deadline_date, 0, 4) . '-' .
-						substr($row->deadline_date, 4, 2) . '-' .
-						substr($row->deadline_date, 6, 2)
+						substr($dday_src, 0, 4) . '-' .
+						substr($dday_src, 4, 2) . '-' .
+						substr($dday_src, 6, 2)
 					);
 					$diff = ceil(($deadline_ts - strtotime(date('Y-m-d'))) / 86400);
 					$row->dday = ($diff > 0) ? 'D-' . $diff : (($diff == 0) ? 'D-Day' : '마감');
+				}
+				$row->has_application = !empty($row->application_srl);
+
+				$mr_reported = false;
+				if($logged_info)
+				{
+					$mr_rpt_args = new stdClass();
+					$mr_rpt_args->review_srl = (int)$row->review_srl;
+					$mr_rpt_args->review_type = 'member_review';
+					$mr_rpt_args->reporter_member_srl = (int)$logged_info->member_srl;
+					$mr_rpt_out = executeQuery('poomahhi.getReviewReport', $mr_rpt_args);
+					$mr_reported = ($mr_rpt_out->toBool() && $mr_rpt_out->data) ? true : false;
+				}
+				$row->member_review = (object)array(
+					'review_srl' => $row->review_srl,
+					'is_reported' => $mr_reported
+				);
+
+				$row->can_edit = ($logged_info && (int)$row->reviewer_member_srl === (int)$logged_info->member_srl) || ($logged_info && $oController->_isAdmin($logged_info));
+				$row->can_reply = ($logged_info && (int)$target_member_srl === (int)$logged_info->member_srl);
+
+				$participant_review = $oModel->getReviewByApplication($row->application_srl);
+				$row->participant_review_srl = $participant_review ? (int)$participant_review->review_srl : 0;
+
+				$row->review_replies = array();
+				if($row->participant_review_srl)
+				{
+					$replies = $oModel->getReviewReplies($row->participant_review_srl);
+					if($replies)
+					{
+						foreach($replies as &$rp)
+						{
+							$rp_member = $oMemberModel->getMemberInfoByMemberSrl($rp->member_srl);
+							$rp->nick_name = $rp_member ? $rp_member->nick_name : '';
+							$rp->profile_image = null;
+							if($rp_member && !empty($rp_member->profile_image) && !empty($rp_member->profile_image->src))
+							{
+								$rp->profile_image = $rp_member->profile_image->src;
+							}
+							$rp->is_reported = false;
+							if($logged_info)
+							{
+								$rp_rpt_args = new stdClass();
+								$rp_rpt_args->review_srl = (int)$rp->reply_srl;
+								$rp_rpt_args->review_type = 'review_reply';
+								$rp_rpt_args->reporter_member_srl = (int)$logged_info->member_srl;
+								$rp_rpt_out = executeQuery('poomahhi.getReviewReport', $rp_rpt_args);
+								$rp->is_reported = ($rp_rpt_out->toBool() && $rp_rpt_out->data) ? true : false;
+							}
+						}
+						unset($rp);
+					}
+					$row->review_replies = $replies ?: array();
 				}
 			}
 			unset($row);
@@ -2595,11 +2661,25 @@ class poomahhiView extends poomahhi
 		Context::set('score_distribution', $score_distribution);
 		Context::set('ranking', $ranking);
 		Context::set('member_level', $level);
+		Context::set('fulfillment_stats', $fulfillment_stats);
 		Context::set('review_list', $review_output->data ?: array());
 		Context::set('total_count', $review_output->total_count);
 		Context::set('total_page', $review_output->total_page);
 		Context::set('page', (int)$args->page);
 		Context::set('page_navigation', $review_output->page_navigation);
+
+		Context::set('pmh_my_reviews_lang_delete_confirm', htmlspecialchars(lang('poomahhi.my_reviews_comment_delete_confirm'), ENT_QUOTES, 'UTF-8'));
+		Context::set('pmh_my_reviews_lang_edit_empty', htmlspecialchars(lang('poomahhi.my_reviews_comment_edit_empty'), ENT_QUOTES, 'UTF-8'));
+		Context::set('pmh_my_reviews_mid_esc', htmlspecialchars((string)$this->mid, ENT_QUOTES, 'UTF-8'));
+		$mod_srl = isset($this->module_info->module_srl) ? (int)$this->module_info->module_srl : (int)$this->module_srl;
+		if($mod_srl > 0)
+		{
+			Context::set('pmh_my_reviews_post_action', htmlspecialchars(getNotEncodedUrl('', 'mid', $this->mid, 'module_srl', $mod_srl), ENT_QUOTES, 'UTF-8'));
+		}
+		else
+		{
+			Context::set('pmh_my_reviews_post_action', htmlspecialchars(getNotEncodedUrl('', 'mid', $this->mid), ENT_QUOTES, 'UTF-8'));
+		}
 
 		$this->_setMemberMenuHeaderContext();
 		$this->setTemplateFile('member_received_reviews');
@@ -2637,12 +2717,14 @@ class poomahhiView extends poomahhi
 				$row->cert_date = $participant_review ? $participant_review->regdate : null;
 				$row->participant_review_srl = $participant_review ? (int)$participant_review->review_srl : 0;
 
+				$row->has_replies = false;
 				$row->review_replies = array();
 				if($participant_review)
 				{
 					$replies = $oModel->getReviewReplies($participant_review->review_srl);
 					if($replies)
 					{
+						$row->has_replies = count($replies) > 0;
 						foreach($replies as &$rp)
 						{
 							$rp_member = $oMemberModel->getMemberInfoByMemberSrl($rp->member_srl);
@@ -2679,6 +2761,28 @@ class poomahhiView extends poomahhi
 				else
 				{
 					$row->birth_display = '';
+				}
+
+				if(isset($row->product_type) && $row->product_type == 'local' && !empty($row->region_srl))
+				{
+					$region = $oModel->getRegion($row->region_srl);
+					$row->region_title = $region ? $region->title : '';
+				}
+				else
+				{
+					$row->region_title = '';
+				}
+
+				$dday_src = !empty($row->apply_end_date) ? $row->apply_end_date : $row->deadline_date;
+				if(!empty($dday_src))
+				{
+					$deadline_ts = strtotime(
+						substr($dday_src, 0, 4) . '-' .
+						substr($dday_src, 4, 2) . '-' .
+						substr($dday_src, 6, 2)
+					);
+					$diff = ceil(($deadline_ts - strtotime(date('Y-m-d'))) / 86400);
+					$row->dday = ($diff > 0) ? 'D-' . $diff : (($diff == 0) ? 'D-Day' : '마감');
 				}
 			}
 			unset($row);

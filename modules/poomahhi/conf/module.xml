@@ -27,6 +27,7 @@
 		<permission action="dispPoomahhiAdminBusinessBroadcast" target="manager" />
 		<permission action="procPoomahhiAdminSendBusinessBroadcast" target="manager" />
 		<permission action="dispPoomahhiAdminReportList" target="manager" />
+		<permission action="dispPoomahhiAdminReviewList" target="manager" />
 		<permission action="procPoomahhiAdminDeleteReport" target="manager" />
 		<permission action="procPoomahhiAdminDeleteReportedReview" target="manager" />
 		<permission action="procPoomahhiAdminSaveConfig" target="manager" />
@@ -87,6 +88,7 @@
 		<action name="procPoomahhiUpdateReview" type="controller" />
 		<action name="procPoomahhiSaveReviewDraft" type="controller" />
 		<action name="procPoomahhiToggleWishlist" type="controller" />
+		<action name="procPoomahhiDeleteMyReview" type="controller" />
 		<action name="procPoomahhiInsertReviewReply" type="controller" />
 		<action name="procPoomahhiUpdateReviewReply" type="controller" />
 		<action name="procPoomahhiDeleteReviewReply" type="controller" />
@@ -110,6 +112,7 @@
 		<action name="dispPoomahhiAdminSettlement" type="view" />
 		<action name="dispPoomahhiAdminBusinessBroadcast" type="view" />
 		<action name="dispPoomahhiAdminReportList" type="view" />
+		<action name="dispPoomahhiAdminReviewList" type="view" />
 
 		<action name="dispPoomahhiAdminRegionList" type="view" />
 

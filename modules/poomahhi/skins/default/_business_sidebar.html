@@ -29,7 +29,7 @@
 	</div>
 	
 	<ul class="mypage_menu">
-		<li class="active"|cond="$business_active_menu == 'home'">
+		<li class="active"|cond="$act == 'dispPoomahhiCreatorDashboard'">
 			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiCreatorDashboard')}">비즈니스 홈</a>
 		</li>
 		<li class="active"|cond="$business_active_menu == 'register'">
@@ -48,12 +48,10 @@
 				-->
 			</a>
 		</li>
-		<!--@if($member_mid)-->
-		<li class="active"|cond="$business_active_menu == 'member'">
+		<li class="active"|cond="$mid == 'member'">
 			<a href="{getUrl('', 'mid', $member_mid, 'act', 'dispMemberInfo')}">회원정보</a>
 		</li>
-		<!--@end-->
-		<li class="active"|cond="$mid == 'board_inquiry'">
+		<li class="active"|cond="$mid == 'board_inquiry' && $act == ''">
 			<a href="/board_inquiry">1:1 문의글</a>
 		</li>
 	</ul>

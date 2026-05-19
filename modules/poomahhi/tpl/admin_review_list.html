@@ -1,0 +1,182 @@
+<include target="_header.html" />
+
+<style>
+.pmh-arl-wrap { max-width: 1100px; }
+.pmh-arl-filter { display:flex; gap:8px; align-items:center; margin-bottom:16px; flex-wrap:wrap; }
+.pmh-arl-filter input[type=text] { padding:4px 8px; border:1px solid #ccc; border-radius:4px; font-size:13px; width:220px; }
+.pmh-arl-card { border:1px solid #e0e0e0; border-radius:6px; margin-bottom:20px; background:#fff; overflow:hidden; }
+.pmh-arl-card-header { display:flex; gap:12px; align-items:flex-start; padding:12px 16px; background:#f9f9f9; border-bottom:1px solid #e8e8e8; }
+.pmh-arl-product-img { width:52px; height:52px; border-radius:4px; object-fit:cover; background:#eee; flex-shrink:0; }
+.pmh-arl-product-img-placeholder { width:52px; height:52px; border-radius:4px; background:#eee; flex-shrink:0; }
+.pmh-arl-product-info { flex:1; min-width:0; }
+.pmh-arl-product-title { font-weight:600; font-size:14px; color:#222; margin-bottom:2px; }
+.pmh-arl-product-meta { font-size:12px; color:#888; }
+.pmh-arl-links { display:flex; gap:6px; align-items:center; flex-shrink:0; }
+.pmh-arl-links a { font-size:12px; color:#1a73e8; text-decoration:underline; white-space:nowrap; }
+
+.pmh-arl-section { padding:12px 16px; border-bottom:1px solid #f0f0f0; }
+.pmh-arl-section:last-child { border-bottom:none; }
+.pmh-arl-section-label { font-size:11px; font-weight:600; color:#fff; background:#607d8b; padding:2px 7px; border-radius:3px; display:inline-block; margin-bottom:8px; }
+.pmh-arl-section-label.label-mr { background:#5c6bc0; }
+.pmh-arl-section-label.label-rr { background:#26a69a; }
+.pmh-arl-section-label.label-none { background:#bdbdbd; }
+
+.pmh-arl-author { display:flex; gap:8px; align-items:center; margin-bottom:6px; }
+.pmh-arl-avatar { width:28px; height:28px; border-radius:50%; object-fit:cover; background:#ddd; flex-shrink:0; }
+.pmh-arl-nick { font-weight:600; font-size:13px; color:#333; }
+.pmh-arl-date { font-size:11px; color:#aaa; }
+.pmh-arl-score { font-size:12px; color:#f5a623; margin-left:4px; }
+.pmh-arl-content { font-size:13px; color:#444; line-height:1.6; white-space:pre-wrap; word-break:break-all; background:#fafafa; padding:8px 10px; border-radius:4px; border:1px solid #efefef; margin-top:4px; }
+.pmh-arl-content.empty { color:#bbb; font-style:italic; background:transparent; border:none; padding:0; }
+
+.pmh-arl-replies { padding:0 16px 12px; }
+.pmh-arl-reply-item { display:flex; gap:8px; align-items:flex-start; padding:8px 0; border-bottom:1px dashed #f0f0f0; }
+.pmh-arl-reply-item:last-child { border-bottom:none; }
+.pmh-arl-reply-body { flex:1; }
+.pmh-arl-reply-meta { font-size:11px; color:#aaa; margin-top:2px; }
+
+.pmh-arl-empty { padding:40px; text-align:center; color:#aaa; font-size:14px; }
+.pmh-arl-count { font-size:13px; color:#666; margin-bottom:12px; }
+</style>
+
+<div class="pmh-arl-wrap">
+<h2>리뷰 통합 조회</h2>
+
+<!--@if($filter_application_srl)-->
+<div style="margin-bottom:12px;padding:8px 12px;background:#fff8e1;border:1px solid #ffe082;border-radius:4px;font-size:13px;display:flex;align-items:center;gap:12px;">
+	<span>신청 #{$filter_application_srl} 에 대한 리뷰 스레드를 조회 중입니다.</span>
+	<a href="{getUrl('','module','admin','act','dispPoomahhiAdminReportList')}" class="x_btn x_btn-default x_btn-xs">&larr; 신고 목록으로</a>
+</div>
+<!--@end-->
+
+<form action="{getUrl('','module','admin','act','dispPoomahhiAdminReviewList')}" method="get" class="pmh-arl-filter" no-error-return-url="true">
+	<input type="hidden" name="module" value="admin" />
+	<input type="hidden" name="act" value="dispPoomahhiAdminReviewList" />
+	<input type="text" name="keyword" style="margin-bottom: 0;" value="<!--@if($filter_keyword)-->{$filter_keyword}<!--@end-->" placeholder="내용 검색..." />
+	<button type="submit" class="x_btn x_btn-default x_btn-sm">검색</button>
+	<!--@if($filter_keyword || $filter_product_srl)-->
+	<a href="{getUrl('','module','admin','act','dispPoomahhiAdminReviewList')}" class="x_btn x_btn-default x_btn-sm">초기화</a>
+	<!--@end-->
+</form>
+
+<div class="pmh-arl-count">총 <b><!--@if($total_count)-->{$total_count}<!--@else-->0<!--@end--></b>건</div>
+
+<!--@if($review_list && count($review_list))-->
+<!--@foreach($review_list as $review)-->
+<div class="pmh-arl-card">
+
+	<!-- 품앗이 헤더 -->
+	<div class="pmh-arl-card-header">
+		<!--@if($review->product_image)-->
+		<img src="{$review->product_image}" alt="" class="pmh-arl-product-img" />
+		<!--@else-->
+		<div class="pmh-arl-product-img-placeholder"></div>
+		<!--@end-->
+		<div class="pmh-arl-product-info">
+			<div class="pmh-arl-product-title"><!--@if($review->product_title)-->{$review->product_title}<!--@else-->(품앗이 정보 없음)<!--@end--></div>
+			<div class="pmh-arl-product-meta">
+				<!--@if($review->company_name)-->{$review->company_name} &middot; <!--@end-->
+				신청 #{$review->application_srl} &middot; 리뷰 #{$review->review_srl}
+			</div>
+		</div>
+		<div class="pmh-arl-links">
+			<!--@if($pmh_front_mid && $review->application_srl)-->
+			<a href="/?mid={$pmh_front_mid}&amp;act=dispPoomahhiApplicationDetail&amp;application_srl={$review->application_srl}" target="_blank">리뷰 상세</a>
+			<!--@end-->
+			<!--@if($review->product_srl)-->
+			<a href="{getUrl('','module','admin','act','dispPoomahhiAdminApplicationList','product_srl',$review->product_srl)}" target="_blank">신청 목록</a>
+			<!--@end-->
+		</div>
+	</div>
+
+	<!-- 참여자 리뷰 -->
+	<div class="pmh-arl-section">
+		<span class="pmh-arl-section-label">참여 인증 리뷰</span>
+		<div class="pmh-arl-author">
+			<!--@if($review->participant_profile)-->
+			<img src="{$review->participant_profile}" alt="" class="pmh-arl-avatar" />
+			<!--@else-->
+			<div class="pmh-arl-avatar" style="background:#e0e0e0;"></div>
+			<!--@end-->
+			<span class="pmh-arl-nick">{$review->participant_nick}</span>
+			<span class="pmh-arl-date">{zdate($review->regdate, 'Y-m-d H:i')}</span>
+			<!--@if($review->score)-->
+			<span class="pmh-arl-score">{$review->score}점</span>
+			<!--@end-->
+		</div>
+		<!--@if($review->content)-->
+		<div class="pmh-arl-content">{$review->content}</div>
+		<!--@else-->
+		<div class="pmh-arl-content empty">(내용 없음)</div>
+		<!--@end-->
+	</div>
+
+	<!-- 개설자 회원평가 -->
+	<div class="pmh-arl-section">
+		<!--@if($review->member_review)-->
+		<span class="pmh-arl-section-label label-mr">개설자 회원평가</span>
+		<div class="pmh-arl-author">
+			<div class="pmh-arl-avatar" style="background:#c5cae9;"></div>
+			<span class="pmh-arl-nick">{$review->member_review->reviewer_nick}</span>
+			<span class="pmh-arl-date">{zdate($review->member_review->regdate, 'Y-m-d H:i')}</span>
+			<!--@if($review->member_review->score)-->
+			<span class="pmh-arl-score">{$review->member_review->score}점</span>
+			<!--@end-->
+		</div>
+		<!--@if($review->member_review->content)-->
+		<div class="pmh-arl-content">{$review->member_review->content}</div>
+		<!--@else-->
+		<div class="pmh-arl-content empty">(내용 없음)</div>
+		<!--@end-->
+		<!--@else-->
+		<span class="pmh-arl-section-label label-none">개설자 회원평가</span>
+		<div style="font-size:12px;color:#bbb;margin-top:4px;">아직 작성되지 않았습니다.</div>
+		<!--@end-->
+	</div>
+
+	<!-- 대댓글 -->
+	<!--@if($review->review_replies && count($review->review_replies))-->
+	{@
+		$pmh_reply_count = count($review->review_replies);
+	}
+	<div class="pmh-arl-section">
+		<span class="pmh-arl-section-label label-rr">대댓글 ({$pmh_reply_count}건)</span>
+	</div>
+	<div class="pmh-arl-replies">
+		<!--@foreach($review->review_replies as $reply)-->
+		<div class="pmh-arl-reply-item">
+			<!--@if($reply->profile_image)-->
+			<img src="{$reply->profile_image}" alt="" class="pmh-arl-avatar" />
+			<!--@else-->
+			<div class="pmh-arl-avatar" style="background:#e0f2f1;"></div>
+			<!--@end-->
+			<div class="pmh-arl-reply-body">
+				<div>
+					<span class="pmh-arl-nick">{$reply->nick_name}</span>
+					<span class="pmh-arl-date" style="margin-left:6px;">{zdate($reply->regdate, 'Y-m-d H:i')}</span>
+				</div>
+				<div class="pmh-arl-content" style="margin-top:4px;"><!--@if($reply->content)-->{$reply->content}<!--@else-->(내용 없음)<!--@end--></div>
+			</div>
+		</div>
+		<!--@end-->
+	</div>
+	<!--@end-->
+
+</div>
+<!--@end-->
+
+<!--@if($page_navigation)-->
+<div class="x_pagination" style="margin-top:20px;">
+	<ul>
+		<!--@while($page_no = $page_navigation->getNextPage())-->
+		<li class="x_active"|cond="$page_no == $page"><a href="{getUrl('page', $page_no, 'keyword', $filter_keyword, 'product_srl', $filter_product_srl)}">{$page_no}</a></li>
+		<!--@end-->
+	</ul>
+</div>
+<!--@end-->
+
+<!--@else-->
+<div class="pmh-arl-empty">조회된 리뷰가 없습니다.</div>
+<!--@end-->
+
+</div>

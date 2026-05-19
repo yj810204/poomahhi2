@@ -1,0 +1,204 @@
+@charset "utf-8";
+.login-header {
+	max-width: 680px;
+	width: 100%;
+	margin: 0 auto;
+	overflow: hidden;
+	margin-bottom: 30px;
+}
+
+.common_login_wrap {
+	max-width: 680px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.1);
+    background-color: var(--bh_color_white);
+    overflow: hidden;
+    &.signin {
+        padding: 0;
+        .nav-tabs {
+            display: flex;
+            li {
+                width: 50%;
+                a {
+                    display: block;
+                    text-align: center;
+                    font-size: 24px;
+                    font-weight: bold;
+                    padding: 15px;
+                    background-color: var(--bh_color_gray_50);
+                }
+                &.active a {
+                    background-color: var(--bh_color_white);
+                }
+            }
+        }
+        .login-body {
+            padding: 30px;
+            .control-group {
+                margin-bottom: 20px;
+            }
+        }
+        .social-login-wrap {
+            > .bh_row {
+                margin: 30px 0;
+            }
+            .line {
+                width: 100%;
+                height: 1px;
+                background-color: var(--bh_color_gray_300);
+            }
+            .social-login-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 5px;
+                line-height: 60px;
+                text-align: center;
+                font-size: 18px;
+                font-weight: bold;
+                border: 1px solid var(--bh_color_gray_300);
+                border-radius: 10px;
+                i {
+                    font-size: 24px;
+                    font-weight: normal;
+                }
+                &.kakao {
+                    background-color: #fedf2a;
+                    border-color: #fedf2a;
+                }
+            }
+        }
+    }
+	.login-body .control-group {
+		margin-bottom: 20px;
+	}
+	label {
+		display: flex;
+		flex-direction: row-reverse;
+		justify-content: flex-end;
+		font-size: 20px;
+		font-weight: 500;
+		margin-bottom: 10px;
+	}
+	input {
+		width: 100%;
+		height: 50px;
+		font-size: 18px;
+		border-radius: 10px;
+		border: 1px solid var(--bh_color_gray_300);
+		padding: 0 15px;
+		outline: 0;
+		&::placeholder {
+			color: var(--bh_color_gray_400);
+		}
+		&:focus {
+			border-color: var(--bh_color_main);
+		}
+	}
+	input[type="checkbox"] {
+        position: relative;
+        appearance: none;
+        width: 14px;
+        height: 14px;
+        border-radius: 3px;
+        border: 1px solid var(--bh_color_gray_300);
+        padding: 0;
+        cursor: pointer;
+        &:checked {
+            &::after {
+                position: absolute;
+                content: '';
+                top: 2px;
+                left: 2px;
+                width: 8px;
+                height: 8px;
+                border-radius: 2px;
+                background-color: var(--bh_color_main);
+            }
+        }
+    }
+	.submit_btn {
+		height: 66px;
+		font-size: 24px;
+		color: var(--bh_color_white);
+		font-weight: bold;
+		background-color: var(--bh_color_main);
+		border-color: var(--bh_color_main);
+		border-radius: 10px;
+		padding: 15px;
+		text-align: center;
+		cursor: pointer;
+		margin-top: 30px;
+		border: 0;
+		outline: 0;
+	}
+}
+@media(max-width:992px) {
+	.common_login_wrap {
+		max-width: 100%;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: none;
+        &.signin {
+            border-radius: 5px;
+            .nav-tabs {
+                li {
+                    a {
+                        font-size: 14px;
+                        padding: 10px;
+                        color: var(--bh_color_gray_600);
+                        border-bottom: 1px solid var(--bh_color_gray_300);
+                        border-radius: 5px 5px 0 0;
+                        background-color: transparent;
+                    }
+                    &.active a {
+                        color: var(--bh_color_gray_900);
+                        border: 1px solid var(--bh_color_main);
+                        border-bottom-color: transparent;
+                    }
+                }
+            }
+            .login-body {
+                padding: 30px 15px 15px 15px;
+                .control-group {
+                    margin-bottom: 15px;
+                }
+            }
+            .social-login-wrap {
+                > .bh_row {
+                    margin: 30px 0 15px 0;
+                }
+                .social-login-btn {
+                    line-height: 40px;
+                    font-size: 14px;
+                    border-radius: 5px;
+                    i {
+                        font-size: 16px;
+                    }
+                }
+            }
+        }
+		label {
+			font-size: 14px;
+			margin-bottom: 5px;
+		}
+		input {
+			height: 40px;
+			font-size: 14px;
+			border-radius: 5px;
+		}
+		.submit_btn {
+			height: 50px;
+			font-size: 14px;
+			border-radius: 5px;
+		}
+		.social-login-wrap .social-login-btn {
+			line-height: 40px;
+			font-size: 14px;
+			border-radius: 5px;
+		}
+	}
+}

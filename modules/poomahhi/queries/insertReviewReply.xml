@@ -7,5 +7,6 @@
 		<column name="review_srl" var="review_srl" />
 		<column name="member_srl" var="member_srl" />
 		<column name="content" var="content" />
+		<column name="regdate" var="regdate" />
 	</columns>
 </query>

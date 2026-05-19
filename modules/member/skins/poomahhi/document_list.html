@@ -10,7 +10,7 @@
 				</div>
 				<ul class="table-header">
 					<li>{$lang->no}</li>
-					<li class="category">분류</li>
+					<li class="category">카테고리</li>
 					<li class="title">{$lang->title}</li>
 					<li>추천</li>
 					<li>댓글</li>
@@ -19,18 +19,22 @@
 				<div class="table-td">
 					<ul loop="$document_list => $no,$oDocument">
 						<li class="number">{$no}</li>
-						<li class="category">{$oDocument->poomahhi_category}</li>
+						{@ $module_info = ModuleModel::getModuleInfoByModuleSrl($oDocument->get('module_srl')); }
+						<li class="category">
+							{$module_info->browser_title}
+						</li>
 						<li class="title">
 							<a href="{getUrl('','document_srl',$oDocument->document_srl)}" target="_blank">{$oDocument->getTitleText()}</a>
 							<!--@if($oDocument->getCommentCount())-->
 								[{$oDocument->getCommentCount()}]
 							<!--@end-->
 						</li>
-						<li>{$oDocument->get('voted_count')}</li>
+						<li class="lg:ds-n ds-b">{$oDocument->getRegdate("Y.m.d")}</li>
 						<span class="lg:ds-n ds-b">• <i class="ri-thumb-up-line"></i></span>
-						<li>{$oDocument->get('comment_count')}</li>
+						<li>{$oDocument->get('voted_count')}</li>
 						<span class="lg:ds-n ds-b">• <i class="ri-chat-1-line"></i></span>
-						<li>{$oDocument->getRegdate("Y.m.d")}</li>
+						<li>{$oDocument->get('comment_count')}</li>
+						<li class="lg:ds-b ds-n">{$oDocument->getRegdate("Y.m.d")}</li>
 					</ul>
 				</div>
 			</div>
