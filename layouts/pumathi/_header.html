@@ -131,6 +131,7 @@
 					<nav class="main_menu2 main_menu menu_wrap">
 						<ul>
 						<!--@foreach($main_right_menu->list as $key1 => $val1)-->
+							<!--@if($val1['link'] != '비즈니스 센터' || $logged_info->member_type === 'business')-->
 							<li class="<!--@if($val1['selected'])--> active<!--@end--><!--@if($val1['list'])--> menu_dropdown<!--@end-->">
 								<a class="hover:bh_color_main active:bh_color_main after:bh_bg_color_main"|cond="!$layout_info->main_menu_text_color" class="bh_color_gray_50 hover:bh_color_white active:bh_color_white after:bh_bg_color_white"|cond="$layout_info->main_menu_text_color" href="{$val1['href']}" target="_blank"|cond="$val1['open_window']=='Y'"><span>{$val1['link']}</span></a>
 								<ul cond="$val1['list']" class="menu_dropdown-content">
@@ -142,6 +143,7 @@
 									</li>
 								</ul>
 							</li>
+							<!--@end-->
 						<!--@endforeach-->
 						</ul>
 					</nav>
@@ -564,6 +566,7 @@
 				<ul>
 					{@$idx=1}
 					<!--@foreach($main_right_menu->list as $key1 => $val1)-->
+					<!--@if($val1['link'] != '비즈니스 센터' || $logged_info->member_type === 'business')-->
 					<li class="active"|cond="$val1['selected']">
 						<a class="bh" href="{$val1['href']}" target="_blank"|cond="$val1['open_window']=='Y'"><i class="{$val1['icon']}" cond="$val1['icon']"></i> {$val1['link']}</a>
 						<ul class="bh_toggle_content" cond="$val1['list']">
@@ -586,6 +589,7 @@
 						</div>
 					{@$idx++}
 					</li>
+					<!--@end-->
 					<!--@endforeach-->
 				
 					<li>

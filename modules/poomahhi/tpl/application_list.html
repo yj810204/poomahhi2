@@ -8,15 +8,14 @@
 </div>
 <!--@end-->
 
-<!-- 상태 필터 -->
-<div style="margin-bottom:15px;">
-	<form action="./" method="get" no-error-return-url="true" style="display:flex; gap:10px; align-items:center;">
+<div class="pmh-admin-filter-form">
+	<form action="./" method="get" no-error-return-url="true" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
 		<input type="hidden" name="module" value="admin" />
 		<input type="hidden" name="act" value="dispPoomahhiAdminApplicationList" />
 		<!--@if(Context::get('product_srl'))-->
 		<input type="hidden" name="product_srl" value="{Context::get('product_srl')}" />
 		<!--@end-->
-		<select name="status" class="form-control" style="min-width:200px; max-width:280px;">
+		<select name="status" class="form-control" style="width:200px;">
 			<option value="">전체 상태</option>
 			<option value="applied" selected|cond="Context::get('status') == 'applied'">신청된 품앗이</option>
 			<option value="selected" selected|cond="Context::get('status') == 'selected'">선정된 품앗이</option>
@@ -26,7 +25,7 @@
 			<option value="rejected" selected|cond="Context::get('status') == 'rejected'">미선정된 품앗이</option>
 			<option value="cancelled" selected|cond="Context::get('status') == 'cancelled'">취소된 품앗이</option>
 		</select>
-		<button type="submit" class="btn btn-default">필터</button>
+		<button type="submit" class="x_btn x_btn-default">필터</button>
 	</form>
 </div>
 
@@ -34,20 +33,19 @@
 <table class="table table-bordered table-hover">
 	<thead>
 		<tr>
-			<th style="width:80px;">SRL</th>
+			<th style="width:60px;">순번</th>
 			<th>상품</th>
 			<th style="width:150px;">신청자</th>
-			<th style="min-width:140px;">현재 상태</th>
+			<th style="width:140px;">현재 상태</th>
 			<th style="width:80px;">리뷰</th>
 			<th style="width:120px;">신청일</th>
-			<th style="min-width:300px;">상태 변경</th>
-			<th style="width:60px;">삭제</th>
+			<th style="width:340px;">관리</th>
 		</tr>
 	</thead>
 	<tbody>
 		<!--@foreach($application_list as $app)-->
 		<tr>
-			<td>{$app->application_srl}</td>
+			<td>{$app->list_no}</td>
 			<td>
 				<!--@if($app->product)-->
 				{$app->product->title}
@@ -89,37 +87,35 @@
 				-
 				<!--@end-->
 			</td>
-			<td>{zdate($app->regdate, 'Y-m-d')}</td>
-			<td>
+			<td><!--@if($app->regdate)-->{zdate($app->regdate, 'Y-m-d')}<!--@else-->-<!--@end--></td>
+			<td class="pmh-admin-actions">
 				<!--@if($module_info && $module_info->mid)-->
-				<a href="{getUrl('', 'mid', $module_info->mid, 'act', 'dispPoomahhiApplicationManageDetail', 'application_srl', $app->application_srl, 'success_return_url', $admin_application_list_url)}" class="btn btn-sm btn-default" target="_blank">상세</a>
+				<a href="{getUrl('', 'mid', $module_info->mid, 'act', 'dispPoomahhiApplicationManageDetail', 'application_srl', $app->application_srl, 'success_return_url', $admin_application_list_url)}" class="x_btn x_btn-mini x_btn-default" target="_blank">상세</a>
 				<!--@end-->
-				<form action="./" method="post" style="display:flex; gap:5px; align-items:center;">
+				<form action="./" method="post" style="display:inline-flex; gap:4px; align-items:center; vertical-align:middle;">
 					<input type="hidden" name="module" value="admin" />
 					<input type="hidden" name="act" value="procPoomahhiUpdateApplicationStatus" />
 					<input type="hidden" name="application_srl" value="{$app->application_srl}" />
 					<input type="hidden" name="success_return_url" value="{getUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminApplicationList')}" />
 					<input type="hidden" name="xe_validator_id" value="modules/poomahhi/admin_application_status" />
-					<select name="status" class="form-control" style="min-width:180px; max-width:220px;">
-						<option value="applied" selected|cond="$app->status == 'applied'">신청된 품앗이</option>
-						<option value="selected" selected|cond="$app->status == 'selected'">선정된 품앗이</option>
-						<option value="under_review" selected|cond="$app->status == 'under_review'">검수중인 품앗이</option>
-						<option value="revision_requested" selected|cond="$app->status == 'revision_requested'">수정요청된 품앗이</option>
-						<option value="completed" selected|cond="$app->status == 'completed'">완료된 품앗이</option>
-						<option value="rejected" selected|cond="$app->status == 'rejected'">미선정된 품앗이</option>
-						<option value="cancelled" selected|cond="$app->status == 'cancelled'">취소된 품앗이</option>
+					<select name="status" class="form-control" style="width:140px; height:26px; padding:2px 6px; font-size:12px; margin-bottom:0;">
+						<option value="applied" selected|cond="$app->status == 'applied'">신청</option>
+						<option value="selected" selected|cond="$app->status == 'selected'">선정</option>
+						<option value="under_review" selected|cond="$app->status == 'under_review'">검수중</option>
+						<option value="revision_requested" selected|cond="$app->status == 'revision_requested'">수정요청</option>
+						<option value="completed" selected|cond="$app->status == 'completed'">완료</option>
+						<option value="rejected" selected|cond="$app->status == 'rejected'">미선정</option>
+						<option value="cancelled" selected|cond="$app->status == 'cancelled'">취소</option>
 					</select>
-					<button type="submit" class="btn btn-sm btn-primary">변경</button>
+					<button type="submit" class="x_btn x_btn-mini x_btn-primary">변경</button>
 				</form>
-			</td>
-			<td>
 				<form action="./" method="post" style="display:inline;">
 					<input type="hidden" name="module" value="admin" />
 					<input type="hidden" name="act" value="procPoomahhiDeleteApplication" />
 					<input type="hidden" name="application_srl" value="{$app->application_srl}" />
 					<input type="hidden" name="success_return_url" value="{getUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminApplicationList')}" />
 					<input type="hidden" name="xe_validator_id" value="modules/poomahhi/admin_application_delete" />
-					<button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('신청 내역을 삭제하시겠습니까? 삭제하면 해당 회원이 재신청할 수 있습니다.');">삭제</button>
+					<button type="submit" class="x_btn x_btn-mini x_btn-danger" onclick="return confirm('신청 내역을 삭제하시겠습니까? 삭제하면 해당 회원이 재신청할 수 있습니다.');">삭제</button>
 				</form>
 			</td>
 		</tr>
@@ -127,14 +123,17 @@
 	</tbody>
 </table>
 
-<!-- 페이지네이션 -->
 <!--@if($page_navigation)-->
-<div class="pagination" style="text-align:center;">
+<div class="pmh-admin-pagination">
 	<!--@for($i = $page_navigation->first_page; $i <= $page_navigation->last_page; $i++)-->
 	<!--@if($i == $page_navigation->cur_page)-->
 	<strong>[{$i}]</strong>
 	<!--@else-->
-	<!--@if($product_srl)--><a href="{getUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminApplicationList', 'product_srl', $product_srl, 'page', $i)}">[{$i}]</a><!--@else--><a href="{getUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminApplicationList', 'page', $i)}">[{$i}]</a><!--@end-->
+	<!--@if($product_srl)-->
+	<a href="{getUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminApplicationList', 'product_srl', $product_srl, 'status', Context::get('status'), 'page', $i)}">[{$i}]</a>
+	<!--@else-->
+	<a href="{getUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminApplicationList', 'status', Context::get('status'), 'page', $i)}">[{$i}]</a>
+	<!--@end-->
 	<!--@end-->
 	<!--@end-->
 </div>
@@ -142,8 +141,6 @@
 <!--@else-->
 <p style="text-align:center; padding:40px 0; color:#999;">신청 내역이 없습니다.</p>
 <!--@end-->
-</div><style>
-.poomahhi-admin-fullwidth { width: 100% !important; max-width: none !important; }
-.poomahhi-admin-fullwidth .x_page-header { width: 100% !important; max-width: none !important; }
-.poomahhi-admin-fullwidth .table { width: 100% !important; max-width: none !important; }
-</style>
+</div>
+
+<include target="_admin_styles.html" />

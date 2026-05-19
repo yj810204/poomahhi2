@@ -96,30 +96,32 @@
 
 <!-- 확장변수 정의 목록 (Drag & Drop 정렬) -->
 <!--@if($extra_def_list)-->
-<table class="table table-bordered table-striped" id="extraDefSortTable" style="width:100%; table-layout:auto;">
+<table class="table table-bordered table-hover pmh-admin-sortable" id="extraDefSortTable" style="width:100%; table-layout:auto;">
 	<thead>
 		<tr>
 			<th style="width:40px;"></th>
+			<th style="width:60px;">순번</th>
 			<th>변수명</th>
 			<th>표시명</th>
 			<th style="width:100px;">타입</th>
 			<th>옵션값</th>
 			<th style="width:60px;">필수</th>
-			<th style="width:150px;">관리</th>
+			<th style="width:180px;">관리</th>
 		</tr>
 	</thead>
 	<tbody id="extraDefSortBody">
 		<!--@foreach($extra_def_list as $key => $def)-->
 		<tr data-extra-def-srl="{$def->extra_def_srl}">
-			<td style="cursor:move; text-align:center; color:#999;">&#9776;</td>
+			<td class="pmh-admin-drag-handle" style="text-align:center; color:#999;">&#9776;</td>
+			<td>{$def->list_no}</td>
 			<td>{$def->var_name}</td>
 			<td>{$def->var_label}</td>
 			<td>{$def->var_type}</td>
 			<td><!--@if($def->var_options)-->{$def->var_options}<!--@else-->-<!--@end--></td>
 			<td><!--@if($def->is_required == 'Y')-->Y<!--@else-->N<!--@end--></td>
-			<td>
-				<a href="{getUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminExtraDef', 'template_srl', $template_srl, 'extra_def_srl', $def->extra_def_srl)}" class="btn btn-sm btn-default">수정</a>
-				<a href="{getUrl('', 'module', 'admin', 'act', 'procPoomahhiAdminDeleteExtraDef', 'template_srl', $template_srl, 'extra_def_srl', $def->extra_def_srl)}" onclick="return confirm('삭제하시겠습니까?');" class="btn btn-sm btn-danger">삭제</a>
+			<td class="pmh-admin-actions">
+				<a href="{getUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminExtraDef', 'template_srl', $template_srl, 'extra_def_srl', $def->extra_def_srl)}" class="x_btn x_btn-mini x_btn-default">수정</a>
+				<a href="{getUrl('', 'module', 'admin', 'act', 'procPoomahhiAdminDeleteExtraDef', 'template_srl', $template_srl, 'extra_def_srl', $def->extra_def_srl)}" onclick="return confirm('삭제하시겠습니까?');" class="x_btn x_btn-mini x_btn-danger">삭제</a>
 			</td>
 		</tr>
 		<!--@end-->
@@ -164,12 +166,7 @@
 	});
 })();
 </script>
-<style>
-.poomahhi-admin-fullwidth { width: 100% !important; max-width: none !important; }
-#extraDefSortTable { width: 100% !important; }
-#extraDefSortBody tr.drag-over { border-top: 2px solid #337ab7; }
-#extraDefSortBody tr[draggable] td:first-child { cursor: move; }
-</style>
+<include target="_admin_styles.html" />
 <!--@else-->
 <p style="text-align:center; padding:30px 0; color:#999;">이 템플릿에 등록된 확장변수가 없습니다. 위에서 추가하세요.</p>
 <!--@end-->

@@ -14,6 +14,7 @@
 		<condition operation="equal" column="p.product_type" var="product_type" pipe="AND" />
 		<condition operation="equal" column="p.region_srl" var="region_srl" pipe="AND" />
 		<condition operation="like" column="p.title" var="search_keyword" pipe="AND" />
+		<condition operation="in" column="p.content_access_type" var="content_access_types" pipe="AND" />
 	</conditions>
 	<navigation>
 		<index var="sort_index" default="product_srl" order="desc" />

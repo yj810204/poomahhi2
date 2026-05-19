@@ -18,7 +18,7 @@
 		<!--@end-->
 
 		<div style="display:flex; gap:10px; align-items:center;">
-			<input type="text" name="title" value="<!--@if($channel)-->{$channel->title}<!--@else--><!--@end-->" class="form-control" style="width:300px;" required="required" placeholder="예: 네이버 스마트스토어" />
+			<input type="text" name="title" value="<!--@if($channel)-->{$channel->title}<!--@else--><!--@end-->" class="form-control" style="width:300px; margin-bottom:0;" required="required" placeholder="예: 네이버 스마트스토어" />
 			<button type="submit" class="btn btn-primary"><!--@if($channel)-->수정<!--@else-->추가<!--@end--></button>
 			<!--@if($channel)-->
 			<a href="{getUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminChannelList')}" class="btn btn-default">취소</a>
@@ -29,22 +29,24 @@
 
 <!-- 쇼핑채널 목록 (Drag & Drop 정렬) -->
 <!--@if($channel_list)-->
-<table class="table table-bordered table-striped" id="channelSortTable" style="width:100%; table-layout:auto;">
+<table class="table table-bordered table-hover pmh-admin-sortable" id="channelSortTable" style="width:100%; table-layout:auto;">
 	<thead>
 		<tr>
 			<th style="width:40px;"></th>
+			<th style="width:60px;">순번</th>
 			<th>쇼핑채널</th>
-			<th style="width:150px;">관리</th>
+			<th style="width:180px;">관리</th>
 		</tr>
 	</thead>
 	<tbody id="channelSortBody">
 		<!--@foreach($channel_list as $c)-->
 		<tr data-channel-srl="{$c->channel_srl}">
-			<td style="cursor:move; text-align:center; color:#999;">&#9776;</td>
+			<td class="pmh-admin-drag-handle" style="text-align:center; color:#999;">&#9776;</td>
+			<td>{$c->list_no}</td>
 			<td>{$c->title}</td>
-			<td>
-				<a href="{getUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminChannelList', 'channel_srl', $c->channel_srl)}" class="btn btn-sm btn-default">수정</a>
-				<a href="{getUrl('', 'module', 'admin', 'act', 'procPoomahhiAdminDeleteChannel', 'channel_srl', $c->channel_srl)}" onclick="return confirm('삭제하시겠습니까?');" class="btn btn-sm btn-danger">삭제</a>
+			<td class="pmh-admin-actions">
+				<a href="{getUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminChannelList', 'channel_srl', $c->channel_srl)}" class="x_btn x_btn-mini x_btn-default">수정</a>
+				<a href="{getUrl('', 'module', 'admin', 'act', 'procPoomahhiAdminDeleteChannel', 'channel_srl', $c->channel_srl)}" onclick="return confirm('삭제하시겠습니까?');" class="x_btn x_btn-mini x_btn-danger">삭제</a>
 			</td>
 		</tr>
 		<!--@end-->
@@ -111,12 +113,7 @@
 	}
 })();
 </script>
-<style>
-.poomahhi-admin-fullwidth { width: 100% !important; max-width: none !important; }
-#channelSortTable { width: 100% !important; }
-#channelSortBody tr.drag-over { border-top: 2px solid #337ab7; }
-#channelSortBody tr[draggable] td:first-child { cursor: move; }
-</style>
+<include target="_admin_styles.html" />
 <!--@else-->
 <p style="text-align:center; padding:30px 0; color:#999;">등록된 쇼핑채널이 없습니다.</p>
 <!--@end-->

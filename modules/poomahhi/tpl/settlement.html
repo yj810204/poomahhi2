@@ -2,24 +2,23 @@
 
 <div class="poomahhi-admin-fullwidth" style="width:100%;">
 
-<!-- 기간 필터 -->
-<div style="margin-bottom:20px;">
-	<form action="./" method="get" no-error-return-url="true" style="display:flex; gap:10px; align-items:center;">
+<div class="pmh-admin-filter-form">
+	<form action="./" method="get" no-error-return-url="true" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
 		<input type="hidden" name="module" value="admin" />
 		<input type="hidden" name="act" value="dispPoomahhiAdminSettlement" />
 		<label>시작일:</label>
 		<input type="date" name="start_date" value="<!--@if($start_date)-->{$start_date}<!--@else--><!--@end-->" class="form-control" style="width:180px;" />
 		<label>종료일:</label>
 		<input type="date" name="end_date" value="<!--@if($end_date)-->{$end_date}<!--@else--><!--@end-->" class="form-control" style="width:180px;" />
-		<button type="submit" class="btn btn-default">조회</button>
+		<button type="submit" class="x_btn x_btn-default">조회</button>
 	</form>
 </div>
 
-<!-- 정산 목록 -->
 <!--@if($settlement_list)-->
 <table class="table table-bordered table-hover">
 	<thead>
 		<tr>
+			<th style="width:60px;">순번</th>
 			<th>비즈니스 회원</th>
 			<th>업체명</th>
 			<th style="width:80px;">상품수</th>
@@ -31,6 +30,7 @@
 	<tbody>
 		<!--@foreach($settlement_list as $item)-->
 		<tr>
+			<td>{$item->list_no}</td>
 			<td>
 				<!--@if($item->member_info)-->
 				{$item->member_info->nick_name}
@@ -55,9 +55,8 @@
 	</tbody>
 </table>
 
-<!-- 페이지네이션 -->
 <!--@if($page_navigation)-->
-<div class="pagination" style="text-align:center;">
+<div class="pmh-admin-pagination">
 	<!--@for($i = $page_navigation->first_page; $i <= $page_navigation->last_page; $i++)-->
 	<!--@if($i == $page_navigation->cur_page)-->
 	<strong>[{$i}]</strong>
@@ -70,8 +69,6 @@
 <!--@else-->
 <p style="text-align:center; padding:40px 0; color:#999;">정산 데이터가 없습니다.</p>
 <!--@end-->
-</div><style>
-.poomahhi-admin-fullwidth { width: 100% !important; max-width: none !important; }
-.poomahhi-admin-fullwidth .x_page-header { width: 100% !important; max-width: none !important; }
-.poomahhi-admin-fullwidth .table { width: 100% !important; max-width: none !important; }
-</style>
+</div>
+
+<include target="_admin_styles.html" />

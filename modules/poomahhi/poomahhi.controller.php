@@ -550,6 +550,7 @@ class poomahhiController extends poomahhi
 		$this->_convertDateFields($args);
 
 		$args->product_image = $this->_uploadProductImage($args->product_srl);
+		$args->regdate = date('YmdHis');
 
 		$output = executeQuery('poomahhi.insertProduct', $args);
 		if(!$output->toBool()) return $output;
@@ -1843,6 +1844,19 @@ class poomahhiController extends poomahhi
 
 		$view_access = $oModel->getProductViewAccess($product_srl, $logged_info->member_srl);
 		if($view_access) return new BaseObject(-1, '이미 열람 권한이 있습니다.');
+
+		// 신청 마감(=구매 차단): status=closed 또는 마감일 경과
+		$is_closed = (($product->status ?: 'active') === 'closed');
+		if(!$is_closed)
+		{
+			$ddl = $product->apply_end_date ?: $product->deadline_date;
+			if($ddl)
+			{
+				$ddl_ymdhis = (strlen((string)$ddl) === 8) ? $ddl . '235959' : $ddl;
+				if(date('YmdHis') > $ddl_ymdhis) $is_closed = true;
+			}
+		}
+		if($is_closed) return new BaseObject(-1, '마감된 유료 콘텐츠는 구매할 수 없습니다.');
 
 		// 유료 열람 포인트는 라이믹스 포인트 모듈만 사용 (품앗이 자체 포인트 분기는 비활성·레거시 보존)
 		if(!class_exists('PointModel'))

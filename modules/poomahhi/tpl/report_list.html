@@ -23,9 +23,9 @@ function pmhAdminDeleteReview(formId) {
 }
 </script>
 
-<h2>신고 관리</h2>
+<div class="poomahhi-admin-fullwidth" style="width:100%;">
 
-<div style="margin-bottom:15px;">
+<div class="pmh-admin-filter-form" style="margin-bottom:15px;">
 	<a href="{getUrl('','module','admin','act','dispPoomahhiAdminReportList')}" class="x_btn x_btn-default <!--@if(!$current_review_type)-->x_active<!--@end-->">전체</a>
 	<a href="{getUrl('','module','admin','act','dispPoomahhiAdminReportList','review_type','member_review')}" class="x_btn x_btn-default <!--@if($current_review_type == 'member_review')-->x_active<!--@end-->">회원평가</a>
 	<a href="{getUrl('','module','admin','act','dispPoomahhiAdminReportList','review_type','review')}" class="x_btn x_btn-default <!--@if($current_review_type == 'review')-->x_active<!--@end-->">참여 리뷰</a>
@@ -33,24 +33,24 @@ function pmhAdminDeleteReview(formId) {
 </div>
 
 <!--@if($report_list && count($report_list))-->
-<table class="x_table">
+<table class="table table-bordered table-hover">
 	<thead>
 		<tr>
-			<th>번호</th>
-			<th>신고일시</th>
-			<th>유형</th>
-			<th>신고자</th>
-			<th>피신고 작성자</th>
-			<th>신고 사유</th>
+			<th style="width:60px;">순번</th>
+			<th style="width:140px;">신고일시</th>
+			<th style="width:90px;">유형</th>
+			<th style="width:120px;">신고자</th>
+			<th style="width:120px;">피신고 작성자</th>
+			<th style="width:140px;">신고 사유</th>
 			<th>신고된 내용 / 품앗이 연결</th>
-			<th>처리</th>
+			<th style="width:280px;">처리</th>
 		</tr>
 	</thead>
 	<tbody>
 		<!--@foreach($report_list as $report)-->
 		<tr>
-			<td>{$report->report_srl}</td>
-			<td>{zdate($report->regdate, 'Y-m-d H:i')}</td>
+			<td>{$report->list_no}</td>
+			<td><!--@if($report->regdate)-->{zdate($report->regdate, 'Y-m-d H:i')}<!--@else-->-<!--@end--></td>
 			<td><!--@if($report->review_type == 'member_review')-->회원평가<!--@elseif($report->review_type == 'review_reply')-->대댓글<!--@else-->참여 리뷰<!--@end--></td>
 			<td><!--@if($report->reporter_info)-->{$report->reporter_info->nick_name}<!--@else-->탈퇴회원<!--@end--></td>
 			<td><!--@if($report->reviewed_member_info)-->{$report->reviewed_member_info->nick_name}<!--@else-->-<!--@end--></td>
@@ -60,24 +60,24 @@ function pmhAdminDeleteReview(formId) {
 					<!--@if($report->review_content)-->{$report->review_content}<!--@else--><span style="color:#aaa;">삭제됨</span><!--@end-->
 				</div>
 				<!--@if($report->application_srl)-->
-				<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;">
+				<div class="pmh-admin-actions">
 					<!--@if($report->product_title)-->
-					<span style="font-size:11px;color:#555;background:#f0f0f0;padding:2px 6px;border-radius:3px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="{$report->product_title}">{$report->product_title}</span>
+					<span style="font-size:11px;color:#555;background:#f0f0f0;padding:2px 6px;border-radius:3px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-block;vertical-align:middle;" title="{$report->product_title}">{$report->product_title}</span>
 					<!--@end-->
-					<a href="{getUrl('','module','admin','act','dispPoomahhiAdminReviewList','application_srl',$report->application_srl)}" style="font-size:11px;color:#fff;background:#5c6bc0;padding:2px 8px;border-radius:3px;text-decoration:none;white-space:nowrap;" title="해당 신청의 리뷰·평가·대댓글 전체 스레드 보기">스레드 보기</a>
+					<a href="{getUrl('','module','admin','act','dispPoomahhiAdminReviewList','application_srl',$report->application_srl)}" class="x_btn x_btn-mini x_btn-primary" title="해당 신청의 리뷰 스레드 보기">스레드</a>
 					<!--@if($pmh_front_mid)-->
-					<a href="/?mid={$pmh_front_mid}&amp;act=dispPoomahhiApplicationDetail&amp;application_srl={$report->application_srl}" target="_blank" style="font-size:11px;color:#1a73e8;text-decoration:underline;white-space:nowrap;" title="참여자 리뷰 페이지">리뷰보기</a>
+					<a href="/?mid={$pmh_front_mid}&amp;act=dispPoomahhiApplicationDetail&amp;application_srl={$report->application_srl}" target="_blank" class="x_btn x_btn-mini x_btn-default">리뷰보기</a>
 					<!--@end-->
 				</div>
 				<!--@end-->
 			</td>
-			<td>
+			<td class="pmh-admin-actions">
 				<form action="./" method="post" style="display:inline;">
 					<input type="hidden" name="module" value="admin" />
 					<input type="hidden" name="act" value="procPoomahhiAdminDeleteReport" />
 					<input type="hidden" name="report_srl" value="{$report->report_srl}" />
 					<input type="hidden" name="success_return_url" value="{getUrl('','module','admin','act','dispPoomahhiAdminReportList','review_type',$current_review_type)}" />
-					<button type="submit" class="x_btn x_btn-default x_btn-xs" onclick="return confirm('이 신고를 무시(삭제)하시겠습니까?');">무시</button>
+					<button type="submit" class="x_btn x_btn-mini x_btn-default" onclick="return confirm('이 신고를 무시(삭제)하시겠습니까?');">무시</button>
 				</form>
 				<!--@if($report->review_content)-->
 				<!--@if($report->review_type == 'review_reply')-->
@@ -88,7 +88,7 @@ function pmhAdminDeleteReview(formId) {
 					<input type="hidden" name="review_srl" value="{$report->review_srl}" />
 					<input type="hidden" name="review_type" value="{$report->review_type}" />
 					<input type="hidden" name="success_return_url" value="{getUrl('','module','admin','act','dispPoomahhiAdminReportList','review_type',$current_review_type)}" />
-					<button type="submit" class="x_btn x_btn-danger x_btn-xs" onclick="return confirm('신고된 대댓글을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.');">대댓글 삭제</button>
+					<button type="submit" class="x_btn x_btn-mini x_btn-danger" onclick="return confirm('신고된 대댓글을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.');">대댓글 삭제</button>
 				</form>
 				<!--@elseif($report->review_type == 'member_review')-->
 				<form id="pmhDelMR{$report->report_srl}" action="./" method="post" style="display:inline;">
@@ -99,7 +99,7 @@ function pmhAdminDeleteReview(formId) {
 					<input type="hidden" name="review_type" value="{$report->review_type}" />
 					<input type="hidden" name="delete_related" value="N" />
 					<input type="hidden" name="success_return_url" value="{getUrl('','module','admin','act','dispPoomahhiAdminReportList','review_type',$current_review_type)}" />
-					<button type="button" class="x_btn x_btn-danger x_btn-xs" onclick="pmhAdminDeleteMemberReview('pmhDelMR{$report->report_srl}');">댓글 삭제</button>
+					<button type="button" class="x_btn x_btn-mini x_btn-danger" onclick="pmhAdminDeleteMemberReview('pmhDelMR{$report->report_srl}');">댓글 삭제</button>
 				</form>
 				<!--@else-->
 				<form id="pmhDelReview{$report->report_srl}" action="./" method="post" style="display:inline;">
@@ -110,7 +110,7 @@ function pmhAdminDeleteReview(formId) {
 					<input type="hidden" name="review_type" value="{$report->review_type}" />
 					<input type="hidden" name="delete_related" value="N" />
 					<input type="hidden" name="success_return_url" value="{getUrl('','module','admin','act','dispPoomahhiAdminReportList','review_type',$current_review_type)}" />
-					<button type="button" class="x_btn x_btn-danger x_btn-xs" onclick="pmhAdminDeleteReview('pmhDelReview{$report->report_srl}');">리뷰 삭제</button>
+					<button type="button" class="x_btn x_btn-mini x_btn-danger" onclick="pmhAdminDeleteReview('pmhDelReview{$report->report_srl}');">리뷰 삭제</button>
 				</form>
 				<!--@end-->
 				<!--@end-->
@@ -121,15 +121,20 @@ function pmhAdminDeleteReview(formId) {
 </table>
 
 <!--@if($page_navigation)-->
-<div class="x_pagination">
-	<ul>
-		<!--@while($page_no = $page_navigation->getNextPage())-->
-		<li class="x_active"|cond="$page_no == $page_navigation->cur_page"><a href="{getUrl('page', $page_no)}">{$page_no}</a></li>
-		<!--@end-->
-	</ul>
+<div class="pmh-admin-pagination">
+	<!--@for($i = $page_navigation->first_page; $i <= $page_navigation->last_page; $i++)-->
+	<!--@if($i == $page_navigation->cur_page)-->
+	<strong>[{$i}]</strong>
+	<!--@else-->
+	<a href="{getUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminReportList', 'review_type', $current_review_type, 'page', $i)}">[{$i}]</a>
+	<!--@end-->
+	<!--@end-->
 </div>
 <!--@end-->
 
 <!--@else-->
-<p class="x_well">신고 내역이 없습니다.</p>
+<p style="text-align:center; padding:40px 0; color:#999;">신고 내역이 없습니다.</p>
 <!--@end-->
+</div>
+
+<include target="_admin_styles.html" />

@@ -39,7 +39,7 @@
 .pmh-arl-count { font-size:13px; color:#666; margin-bottom:12px; }
 </style>
 
-<div class="pmh-arl-wrap">
+<div class="poomahhi-admin-fullwidth pmh-arl-wrap" style="width:100%;">
 <h2>리뷰 통합 조회</h2>
 
 <!--@if($filter_application_srl)-->
@@ -49,15 +49,17 @@
 </div>
 <!--@end-->
 
-<form action="{getUrl('','module','admin','act','dispPoomahhiAdminReviewList')}" method="get" class="pmh-arl-filter" no-error-return-url="true">
+<div class="pmh-admin-filter-form">
+<form action="{getUrl('','module','admin','act','dispPoomahhiAdminReviewList')}" method="get" class="pmh-arl-filter" no-error-return-url="true" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:0;">
 	<input type="hidden" name="module" value="admin" />
 	<input type="hidden" name="act" value="dispPoomahhiAdminReviewList" />
-	<input type="text" name="keyword" style="margin-bottom: 0;" value="<!--@if($filter_keyword)-->{$filter_keyword}<!--@end-->" placeholder="내용 검색..." />
-	<button type="submit" class="x_btn x_btn-default x_btn-sm">검색</button>
+	<input type="text" name="keyword" class="form-control" style="width:220px; margin-bottom:0;" value="<!--@if($filter_keyword)-->{$filter_keyword}<!--@end-->" placeholder="내용 검색..." />
+	<button type="submit" class="x_btn x_btn-default">검색</button>
 	<!--@if($filter_keyword || $filter_product_srl)-->
-	<a href="{getUrl('','module','admin','act','dispPoomahhiAdminReviewList')}" class="x_btn x_btn-default x_btn-sm">초기화</a>
+	<a href="{getUrl('','module','admin','act','dispPoomahhiAdminReviewList')}" class="x_btn x_btn-default">초기화</a>
 	<!--@end-->
 </form>
+</div>
 
 <div class="pmh-arl-count">총 <b><!--@if($total_count)-->{$total_count}<!--@else-->0<!--@end--></b>건</div>
 
@@ -166,17 +168,21 @@
 <!--@end-->
 
 <!--@if($page_navigation)-->
-<div class="x_pagination" style="margin-top:20px;">
-	<ul>
-		<!--@while($page_no = $page_navigation->getNextPage())-->
-		<li class="x_active"|cond="$page_no == $page"><a href="{getUrl('page', $page_no, 'keyword', $filter_keyword, 'product_srl', $filter_product_srl)}">{$page_no}</a></li>
-		<!--@end-->
-	</ul>
+<div class="pmh-admin-pagination">
+	<!--@for($i = $page_navigation->first_page; $i <= $page_navigation->last_page; $i++)-->
+	<!--@if($i == $page_navigation->cur_page)-->
+	<strong>[{$i}]</strong>
+	<!--@else-->
+	<a href="{getUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminReviewList', 'page', $i, 'keyword', $filter_keyword, 'product_srl', $filter_product_srl, 'application_srl', $filter_application_srl)}">[{$i}]</a>
+	<!--@end-->
+	<!--@end-->
 </div>
 <!--@end-->
 
 <!--@else-->
-<div class="pmh-arl-empty">조회된 리뷰가 없습니다.</div>
+<p style="text-align:center; padding:40px 0; color:#999;">조회된 리뷰가 없습니다.</p>
 <!--@end-->
 
 </div>
+
+<include target="_admin_styles.html" />

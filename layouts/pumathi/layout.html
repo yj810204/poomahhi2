@@ -410,10 +410,9 @@
 									<include target="include/tools.html" />
 								<!--@else-->
 									<!--@if(
-										($mid != 'index' && $mid != 'member' && $mid != 'poomahhi_business' && $mid != 'board_inquiry') && (
-											($mid == 'poomahhi' || $mid == 'local_poomahhi')
-												? !$act
-												: $act != 'dispBoardWrite'
+										$mid != 'index' && $mid != 'member' && $mid != 'poomahhi_business' && $mid != 'board_inquiry' && (
+											(($mid == 'poomahhi' || $mid == 'local_poomahhi') && (!$act || $act == 'dispPoomahhiProductList' || $act == 'dispPoomahhiSearchResult'))
+											|| (($mid != 'poomahhi' && $mid != 'local_poomahhi') && $act != 'dispBoardWrite')
 										)
 									)-->
 									<div class="pmh-list-display">

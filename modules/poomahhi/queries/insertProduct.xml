@@ -39,5 +39,6 @@
 		<column name="status" var="status" />
 		<column name="content_access_type" var="content_access_type" />
 		<column name="point_cost" var="point_cost" />
+		<column name="regdate" var="regdate" />
 	</columns>
 </query>

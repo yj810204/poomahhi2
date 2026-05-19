@@ -53,19 +53,43 @@
 		<a href="{$product->product_url}" target="_blank" class="pmh-link-product">상품 보러가기 <i class="ri-arrow-right-line"></i></a>
 		<!--@end-->
 
-		<!--@if($require_login)-->
+		<!--@if($lock_reason == 'login_private')-->
 		<div class="pmh-content-lock-area">
 			<div class="pmh-lock-inner">
 				<i class="ri-lock-line"></i>
 				<div class="pmh-desc-box">
-					<p class="pmh-lock-desc">로그인하시면 콘텐츠를 확인하실 수 있습니다.</p>
+					<p class="pmh-lock-desc">회원 전용 콘텐츠입니다.<br><span class="bh_color_main">로그인 후 이용해 주세요.</span></p>
 				</div>
 				<div class="pmh-lock-btns">
 					<a href="{getUrl('', 'mid', 'member', 'act', 'dispMemberLoginForm', 'redirect_url', $current_url)}" class="pmh-btn-deduct bh_bg_color_main">로그인하기</a>
 				</div>
 			</div>
 		</div>
-		<!--@elseif($show_lock_ui)-->
+		<!--@elseif($lock_reason == 'login_paid')-->
+		<div class="pmh-content-lock-area">
+			<div class="pmh-lock-inner">
+				<i class="ri-lock-line"></i>
+				<div class="pmh-desc-box">
+					<p class="pmh-lock-desc">유료 콘텐츠입니다.<br><span class="bh_color_main">로그인 후 <!--@if($content_point_cost)-->{$content_point_cost}<!--@else-->0<!--@end-->P 차감으로 열람하실 수 있습니다.</span></p>
+				</div>
+				<div class="pmh-lock-btns">
+					<a href="{getUrl('', 'mid', 'member', 'act', 'dispMemberLoginForm', 'redirect_url', $current_url)}" class="pmh-btn-deduct bh_bg_color_main">로그인하기</a>
+				</div>
+			</div>
+		</div>
+		<!--@elseif($lock_reason == 'paid_closed')-->
+		<div class="pmh-content-lock-area">
+			<div class="pmh-lock-inner">
+				<i class="ri-lock-line"></i>
+				<div class="pmh-desc-box">
+					<p class="pmh-lock-desc">마감된 유료 콘텐츠입니다.<br><span class="bh_color_main">더 이상 구매할 수 없습니다.</span></p>
+				</div>
+				<div class="pmh-lock-btns">
+					<button type="button" class="pmh-btn-cancel bh_bg_color_gray_600" onclick="history.back();">목록으로</button>
+				</div>
+			</div>
+		</div>
+		<!--@elseif($lock_reason == 'paid_open')-->
 		<div class="pmh-content-lock-area">
 			<div class="pmh-lock-inner">
 				<i class="ri-lock-line"></i>

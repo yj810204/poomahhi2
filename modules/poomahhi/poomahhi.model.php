@@ -83,6 +83,26 @@ class poomahhiModel extends poomahhi
 	}
 
 	/**
+	 * @brief 회원이 구매(열람권 획득)한 product_srl 목록을 배열로 반환 (목록 화면 N+1 방지용)
+	 */
+	function getMyPurchasedProductSrls($member_srl)
+	{
+		if(!$member_srl) return array();
+		$args = new stdClass();
+		$args->member_srl = $member_srl;
+		$output = executeQueryArray('poomahhi.getProductViewAccessListByMember', $args);
+		if(!$output->toBool() || !$output->data) return array();
+		$rows = $output->data;
+		if(!is_array($rows)) $rows = array($rows);
+		$result = array();
+		foreach($rows as $row)
+		{
+			if($row && !empty($row->product_srl)) $result[(int)$row->product_srl] = true;
+		}
+		return $result;
+	}
+
+	/**
 	 * @brief 상품 목록 조회
 	 */
 	function getProductList($args)
@@ -1224,6 +1244,21 @@ class poomahhiModel extends poomahhi
 			$out = str_replace('{' . $k . '}', (string)$val, $out);
 		}
 		return $out;
+	}
+
+	/**
+	 * @brief 모집 마감 여부 (DB status=closed 또는 신청 마감일 경과)
+	 */
+	function isProductApplyClosed($product)
+	{
+		if(!$product) return false;
+		if(($product->status ?: 'active') === 'closed') return true;
+
+		$dday_source = $product->apply_end_date ?: $product->deadline_date;
+		if(!$dday_source) return false;
+
+		$deadline_ymdhis = (strlen((string)$dday_source) === 8) ? $dday_source . '235959' : $dday_source;
+		return date('YmdHis') > $deadline_ymdhis;
 	}
 
 	/**

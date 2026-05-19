@@ -3,17 +3,17 @@
 <div class="poomahhi-admin-fullwidth" style="width:100%;">
 
 <!-- 검색/필터 -->
-<div style="margin-bottom:15px;">
-	<form action="./" method="get" no-error-return-url="true" style="display:flex; gap:10px; align-items:center;">
+<div class="pmh-admin-filter-form">
+	<form action="./" method="get" no-error-return-url="true" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
 		<input type="hidden" name="module" value="admin" />
 		<input type="hidden" name="act" value="dispPoomahhiAdminProductList" />
-		<select name="status" class="form-control" style="width:150px;">
+		<select name="status" class="form-control" style="width:150px; margin-bottom:0;">
 			<option value="">전체 상태</option>
 			<option value="active" selected|cond="Context::get('status') == 'active'">모집중</option>
 			<option value="closed" selected|cond="Context::get('status') == 'closed'">마감</option>
 		</select>
-		<input type="text" name="search_keyword" value="<!--@if(Context::get('search_keyword'))-->{Context::get('search_keyword')}<!--@else--><!--@end-->" placeholder="검색어" class="form-control" style="width:250px;" />
-		<button type="submit" class="btn btn-default">검색</button>
+		<input type="text" name="search_keyword" value="<!--@if(Context::get('search_keyword'))-->{Context::get('search_keyword')}<!--@else--><!--@end-->" placeholder="검색어" class="form-control" style="width:250px; margin-bottom:0;" />
+		<button type="submit" class="x_btn x_btn-default">검색</button>
 	</form>
 </div>
 
@@ -21,18 +21,29 @@
 <table class="table table-bordered table-hover">
 	<thead>
 		<tr>
-			<th style="width:80px;">SRL</th>
+			<th style="width:60px;">순번</th>
+			<th style="width:100px;">유형</th>
+			<th style="width:100px;">카테고리</th>
 			<th>제목</th>
 			<th style="width:120px;">업체명</th>
 			<th style="width:100px;">상태</th>
+			<th style="width:100px;">공개설정</th>
 			<th style="width:120px;">등록일</th>
-			<th style="width:260px;">관리</th>
+			<th style="width:320px;">관리</th>
 		</tr>
 	</thead>
 	<tbody>
 		<!--@foreach($product_list as $product)-->
 		<tr>
-			<td>{$product->product_srl}</td>
+			<td>{$product->list_no}</td>
+			<td>
+				<!--@if($product->product_type == 'local')-->
+				<span style="color:#5c6bc0;">지역</span>
+				<!--@else-->
+				<span style="color:#333;">상품</span>
+				<!--@end-->
+			</td>
+			<td><!--@if($product->category_title)-->{$product->category_title}<!--@else-->-<!--@end--></td>
 			<td>
 				<!--@if($module_info && $module_info->mid)-->
 				<a href="{getUrl('', 'mid', $module_info->mid, 'act', 'dispPoomahhiProductDetail', 'product_srl', $product->product_srl)}" target="_blank">{$product->title}</a>
@@ -42,33 +53,44 @@
 			</td>
 			<td><!--@if($product->company_name)-->{$product->company_name}<!--@else-->-<!--@end--></td>
 			<td>
-				<!--@if($product->status == 'active')-->
-				<span style="color:green;">모집중</span>
-				<!--@else-->
+				<!--@if($product->is_apply_closed)-->
 				<span style="color:red;">마감</span>
+				<!--@if($product->status != 'closed')-->
+				<small style="color:#999;"> (기한경과)</small>
+				<!--@end-->
+				<!--@else-->
+				<span style="color:green;">모집중</span>
 				<!--@end-->
 			</td>
-			<td>{zdate($product->regdate, 'Y-m-d')}</td>
 			<td>
-				<!--@if($module_info && $module_info->mid)-->
-				<a href="{getUrl('', 'mid', $module_info->mid, 'act', 'dispPoomahhiProductDetail', 'product_srl', $product->product_srl)}" class="btn btn-sm btn-default" target="_blank">상세</a>
-				<a href="{getUrl('', 'mid', $module_info->mid, 'act', 'dispPoomahhiProductWrite', 'product_srl', $product->product_srl)}" class="btn btn-sm btn-default" target="_blank">수정</a>
+				<!--@if(($product->content_access_type ?: 'public') == 'paid')-->
+				<span style="color:#e67e22; font-weight:bold;">유료 ({$product->point_cost}P)</span>
+				<!--@elseif($product->content_access_type == 'private')-->
+				<span style="color:#3498db;">비공개</span>
+				<!--@else-->
+				<span style="color:#999;">공개</span>
 				<!--@end-->
-				<a href="{getUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminApplicationList', 'product_srl', $product->product_srl)}" class="btn btn-sm btn-info">품앗이 신청 관리</a>
+			</td>
+			<td><!--@if($product->display_regdate)-->{zdate($product->display_regdate, 'Y-m-d')}<!--@else-->-<!--@end--></td>
+			<td class="pmh-admin-actions">
+				<!--@if($module_info && $module_info->mid)-->
+				<a href="{getUrl('', 'mid', $module_info->mid, 'act', 'dispPoomahhiProductDetail', 'product_srl', $product->product_srl)}" class="x_btn x_btn-mini x_btn-default" target="_blank">상세</a>
+				<a href="{getUrl('', 'mid', $module_info->mid, 'act', 'dispPoomahhiProductWrite', 'product_srl', $product->product_srl)}" class="x_btn x_btn-mini x_btn-default" target="_blank">수정</a>
+				<!--@end-->
+				<a href="{getUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminApplicationList', 'product_srl', $product->product_srl)}" class="x_btn x_btn-mini x_btn-primary">신청 관리</a>
 			</td>
 		</tr>
 		<!--@end-->
 	</tbody>
 </table>
 
-<!-- 페이지네이션 -->
 <!--@if($page_navigation)-->
-<div class="pagination" style="text-align:center;">
+<div class="pmh-admin-pagination">
 	<!--@for($i = $page_navigation->first_page; $i <= $page_navigation->last_page; $i++)-->
 	<!--@if($i == $page_navigation->cur_page)-->
 	<strong>[{$i}]</strong>
 	<!--@else-->
-	<a href="{getUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminProductList', 'page', $i)}">[{$i}]</a>
+	<a href="{getUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminProductList', 'page', $i, 'status', Context::get('status'), 'search_keyword', Context::get('search_keyword'))}">[{$i}]</a>
 	<!--@end-->
 	<!--@end-->
 </div>
@@ -76,8 +98,6 @@
 <!--@else-->
 <p style="text-align:center; padding:40px 0; color:#999;">등록된 상품이 없습니다.</p>
 <!--@end-->
-</div><style>
-.poomahhi-admin-fullwidth { width: 100% !important; max-width: none !important; }
-.poomahhi-admin-fullwidth .x_page-header { width: 100% !important; max-width: none !important; }
-.poomahhi-admin-fullwidth .table { width: 100% !important; max-width: none !important; }
-</style>
+</div>
+
+<include target="_admin_styles.html" />

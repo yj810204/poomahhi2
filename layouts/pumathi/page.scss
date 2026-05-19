@@ -120,8 +120,7 @@
             }
         }
         &.card-paid {
-            pointer-events: none; 
-            .img_wrap {
+            .image_wrap {
                 &::after { 
                     content: ''; 
                     position: absolute; 
@@ -130,8 +129,12 @@
                     width: 100%; 
                     height: 100%; 
                     background-color: rgba(255, 255, 255, 0.7); 
+                    pointer-events: none;
                 }
             }
+        }
+        &.card-locked {
+            pointer-events: none; 
         }
         &:hover .image_wrap img {
             transform: scale(1.1);

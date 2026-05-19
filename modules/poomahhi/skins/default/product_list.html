@@ -103,7 +103,7 @@
 	<!--@if($product_list)-->
 	<div class="pmh-card-grid common_product_display product_list">
 		<!--@foreach($product_list as $product)-->
-		<div class="pmh-card <!--@if($product->is_paid)-->card-paid<!--@end--> card_wrap">
+		<div class="pmh-card <!--@if($product->show_paid_overlay)-->card-paid<!--@end--> <!--@if($product->is_card_locked)-->card-locked<!--@end--> card_wrap">
 			<a href="{getUrl('', 'mid', $mid, 'act', 'dispPoomahhiProductDetail', 'product_srl', $product->product_srl)}" class="pmh-card-link">
 				<div class="pmh-card-image image_wrap">
 					<!--@if($product->product_image)-->
@@ -111,7 +111,7 @@
 					<!--@else-->
 					<div class="pmh-card-noimg"></div>
 					<!--@end-->
-					<!--@if($product->is_paid)-->
+					<!--@if($product->show_paid_overlay)-->
 					<span class="badge-paid paid"><i class="ri-lock-line fw-n"></i></i> <!--@if($product->point_cost_display)-->{$product->point_cost_display}<!--@else-->0<!--@end-->P</span>
 					<!--@end-->
 					<!-- 위시리스트 하트 -->

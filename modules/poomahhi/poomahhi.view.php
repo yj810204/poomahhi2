@@ -880,6 +880,13 @@ class poomahhiView extends poomahhi
 
 		$args->status = 'active';
 
+		// 비회원에게는 비공개(private) 상품을 목록에서 제외
+		$logged_info_for_filter = Context::get('logged_info');
+		if(!$logged_info_for_filter)
+		{
+			$args->content_access_types = array('public', 'paid');
+		}
+
 		if($use_popular_sort)
 		{
 			$output = $oModel->getProductListByWishlistCount($args);
@@ -905,6 +912,13 @@ class poomahhiView extends poomahhi
 		// 위시리스트 정보 (로그인한 사용자) 및 D-day 계산
 		$wishlist_map = array();
 		$logged_info = Context::get('logged_info');
+
+		// 구매 목록 일괄 조회 (is_card_locked 계산용, N+1 방지)
+		$purchased_set = array();
+		if($logged_info)
+		{
+			$purchased_set = $oModel->getMyPurchasedProductSrls($logged_info->member_srl);
+		}
 
 		if($output->data)
 		{
@@ -944,6 +958,19 @@ class poomahhiView extends poomahhi
 				{
 					$product->region_title = $region_map[$product->region_srl];
 				}
+
+				// 유료 콘텐츠 여부 (잠금 배지·오버레이용)
+				$product->is_paid = (($product->content_access_type ?: 'public') === 'paid' && (int)($product->point_cost ?: 0) > 0);
+				$product->point_cost_display = (int)($product->point_cost ?: 0);
+				$product->is_purchased = !empty($purchased_set[(int)$product->product_srl]);
+				$product->show_paid_overlay = ($product->is_paid && !$product->is_purchased);
+
+				// 카드 클릭 차단: 신청 마감 + 유료 + 미구매(열람권 없음)일 때만
+				$product->is_card_locked = (
+					$product->is_paid &&
+					!$product->is_purchased &&
+					$oModel->isProductApplyClosed($product)
+				);
 			}
 		}
 
@@ -1036,6 +1063,12 @@ class poomahhiView extends poomahhi
 		$args_base->status = 'active';
 		$args_base->list_count = 15;
 		$args_base->page = 1;
+
+		// 비회원에게는 비공개(private) 상품 검색 결과에서 제외
+		if(!$logged_info)
+		{
+			$args_base->content_access_types = array('public', 'paid');
+		}
 
 		$args_product = clone $args_base;
 		$args_product->product_type = 'product';
@@ -1196,11 +1229,24 @@ class poomahhiView extends poomahhi
 			}
 		}
 
+		// 잠금 사유 분기 (스킨 메시지·버튼 분기에 사용)
+		$lock_reason = '';
+		if($show_lock_ui)
+		{
+			$lock_reason = $is_application_closed ? 'paid_closed' : 'paid_open';
+		}
+		elseif($require_login)
+		{
+			$lock_reason = ($content_access_type === 'paid') ? 'login_paid' : 'login_private';
+		}
+
 		Context::set('product', $product);
 		Context::set('extra_vars', $extra_vars);
 		Context::set('has_content_access', $has_content_access);
 		Context::set('show_lock_ui', $show_lock_ui);
 		Context::set('require_login', $require_login);
+		Context::set('lock_reason', $lock_reason);
+		Context::set('is_application_closed', $is_application_closed);
 		Context::set('content_point_cost', $point_cost);
 		Context::set('current_url', \Rhymix\Framework\URL::getCurrentURL());
 		Context::set('category', $category);

@@ -48,6 +48,9 @@
             .rp-card {
                 position: relative;
                 width: calc((100% - 50px) / 2);
+                &:hover .rp-card-image img {
+                    transform: scale(1.1);
+                }
                 .rp-card-image {
                     position: relative;
                     aspect-ratio: var(--poom-thumb-aspect, 1 / 1);
@@ -60,6 +63,7 @@
                         height: 100%; 
                         object-fit: cover;
                         display: block;
+                        transition: all .5s;
                     }
                     .rp-wishlist-btn {
                         position: absolute;
@@ -199,6 +203,7 @@
             padding: 0 0 0 15px;
             border-radius: 0;
             .rp-grid {
+                flex-wrap: nowrap;
                 gap: 15px;
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch;
@@ -220,6 +225,20 @@
                             i {
                                 font-size: 18px;
                                 line-height: 30px;
+                            }
+                        }
+                        .rp-badge-paid { 
+                            top: 10px; 
+                            left: 10px; 
+                            width: 24px;
+                            height: 24px;
+                            padding: 1px 0; 
+                            font-size: 0;
+                            display: flex;
+                            justify-content: center;
+                            i {
+                                font-size: 14px;
+                                padding-left: 4px;
                             }
                         }
                     }

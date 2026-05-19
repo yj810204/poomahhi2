@@ -18,8 +18,8 @@
 		<!--@end-->
 
 		<div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-			<input type="text" name="title" value="<!--@if($template)-->{$template->title}<!--@else--><!--@end-->" class="form-control" style="width:250px;" required="required" placeholder="템플릿명 (예: 음식 체험)" />
-			<input type="text" name="description" value="<!--@if($template)-->{$template->description}<!--@else--><!--@end-->" class="form-control" style="width:350px;" placeholder="설명 (선택)" />
+			<input type="text" name="title" value="<!--@if($template)-->{$template->title}<!--@else--><!--@end-->" class="form-control" style="width:250px; margin-bottom:0;" required="required" placeholder="템플릿명 (예: 음식 체험)" />
+			<input type="text" name="description" value="<!--@if($template)-->{$template->description}<!--@else--><!--@end-->" class="form-control" style="width:350px; margin-bottom:0;" placeholder="설명 (선택)" />
 			<button type="submit" class="btn btn-primary"><!--@if($template)-->수정<!--@else-->추가<!--@end--></button>
 			<!--@if($template)-->
 			<a href="{getUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminExtraTemplate')}" class="btn btn-default">취소</a>
@@ -30,29 +30,31 @@
 
 <!-- 템플릿 목록 (Drag & Drop 정렬) -->
 <!--@if($template_list)-->
-<table class="table table-bordered table-striped" id="templateSortTable" style="width:100%; table-layout:auto;">
+<table class="table table-bordered table-hover pmh-admin-sortable" id="templateSortTable" style="width:100%; table-layout:auto;">
 	<thead>
 		<tr>
 			<th style="width:40px;"></th>
+			<th style="width:60px;">순번</th>
 			<th>템플릿명</th>
 			<th>설명</th>
 			<th style="width:100px;">확장변수</th>
-			<th style="width:200px;">관리</th>
+			<th style="width:280px;">관리</th>
 		</tr>
 	</thead>
 	<tbody id="templateSortBody">
 		<!--@foreach($template_list as $tpl)-->
 		<tr data-template-srl="{$tpl->template_srl}">
-			<td style="cursor:move; text-align:center; color:#999;">&#9776;</td>
+			<td class="pmh-admin-drag-handle" style="text-align:center; color:#999;">&#9776;</td>
+			<td>{$tpl->list_no}</td>
 			<td><strong>{$tpl->title}</strong></td>
 			<td><!--@if($tpl->description)-->{$tpl->description}<!--@else-->-<!--@end--></td>
 			<td style="text-align:center;">
 				<a href="{getUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminExtraDef', 'template_srl', $tpl->template_srl)}">{$tpl->extra_def_count}개 관리</a>
 			</td>
-			<td>
-				<a href="{getUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminExtraTemplate', 'template_srl', $tpl->template_srl)}" class="btn btn-sm btn-default">수정</a>
-				<a href="{getUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminExtraDef', 'template_srl', $tpl->template_srl)}" class="btn btn-sm btn-info">변수관리</a>
-				<a href="{getUrl('', 'module', 'admin', 'act', 'procPoomahhiAdminDeleteExtraTemplate', 'template_srl', $tpl->template_srl)}" onclick="return confirm('템플릿과 소속 확장변수가 모두 삭제됩니다. 진행하시겠습니까?');" class="btn btn-sm btn-danger">삭제</a>
+			<td class="pmh-admin-actions">
+				<a href="{getUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminExtraTemplate', 'template_srl', $tpl->template_srl)}" class="x_btn x_btn-mini x_btn-default">수정</a>
+				<a href="{getUrl('', 'module', 'admin', 'act', 'dispPoomahhiAdminExtraDef', 'template_srl', $tpl->template_srl)}" class="x_btn x_btn-mini x_btn-primary">변수관리</a>
+				<a href="{getUrl('', 'module', 'admin', 'act', 'procPoomahhiAdminDeleteExtraTemplate', 'template_srl', $tpl->template_srl)}" onclick="return confirm('템플릿과 소속 확장변수가 모두 삭제됩니다. 진행하시겠습니까?');" class="x_btn x_btn-mini x_btn-danger">삭제</a>
 			</td>
 		</tr>
 		<!--@end-->
@@ -97,12 +99,7 @@
 	});
 })();
 </script>
-<style>
-.poomahhi-admin-fullwidth { width: 100% !important; max-width: none !important; }
-#templateSortTable { width: 100% !important; }
-#templateSortBody tr.drag-over { border-top: 2px solid #337ab7; }
-#templateSortBody tr[draggable] td:first-child { cursor: move; }
-</style>
+<include target="_admin_styles.html" />
 <!--@else-->
 <p style="text-align:center; padding:30px 0; color:#999;">등록된 확장변수 템플릿이 없습니다. 위에서 템플릿을 추가하세요.</p>
 <!--@end-->

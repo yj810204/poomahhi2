@@ -20,6 +20,36 @@ class poomahhiAdminView extends poomahhi
 	}
 
 	/**
+	 * @brief 관리자 목록 순번 (페이지네이션, 전체 건수 기준 내림차순)
+	 */
+	protected function assignAdminListNumbersDescending(&$list, $total_count, $page, $list_count)
+	{
+		if(!$list) return;
+		$list_start_no = (int)$total_count - (((int)$page - 1) * (int)$list_count);
+		$idx = 0;
+		foreach($list as &$row)
+		{
+			$row->list_no = $list_start_no - $idx;
+			$idx++;
+		}
+		unset($row);
+	}
+
+	/**
+	 * @brief 관리자 목록 순번 (1부터 오름차순, 드래그 정렬 목록용)
+	 */
+	protected function assignAdminListNumbersAscending(&$list)
+	{
+		if(!$list) return;
+		$no = 1;
+		foreach($list as &$row)
+		{
+			$row->list_no = $no++;
+		}
+		unset($row);
+	}
+
+	/**
 	 * @brief 모듈 설정 페이지
 	 */
 	function dispPoomahhiAdminConfig()
@@ -96,6 +126,8 @@ class poomahhiAdminView extends poomahhi
 		$channel = null;
 		if($channel_srl) $channel = $oModel->getChannel($channel_srl);
 
+		$this->assignAdminListNumbersAscending($channel_list);
+
 		Context::set('channel_list', $channel_list);
 		Context::set('channel', $channel);
 
@@ -117,6 +149,8 @@ class poomahhiAdminView extends poomahhi
 		$region_srl = Context::get('region_srl');
 		$region = null;
 		if($region_srl) $region = $oModel->getRegion($region_srl);
+
+		$this->assignAdminListNumbersAscending($region_list);
 
 		Context::set('region_list', $region_list);
 		Context::set('region', $region);
@@ -151,6 +185,8 @@ class poomahhiAdminView extends poomahhi
 				$tpl->extra_def_count = ($def_output->data) ? count($def_output->data) : 0;
 			}
 		}
+
+		$this->assignAdminListNumbersAscending($template_list);
 
 		Context::set('template_list', $template_list);
 		Context::set('template', $template);
@@ -193,6 +229,8 @@ class poomahhiAdminView extends poomahhi
 			$extra_def = $oModel->getExtraDef($extra_def_srl);
 		}
 
+		$this->assignAdminListNumbersAscending($extra_def_list);
+
 		Context::set('template_list', $template_list);
 		Context::set('template_srl', $template_srl);
 		Context::set('extra_def_list', $extra_def_list);
@@ -219,6 +257,58 @@ class poomahhiAdminView extends poomahhi
 		if($search_keyword) $args->search_keyword = '%' . $search_keyword . '%';
 
 		$output = $oModel->getProductList($args);
+
+		$list_count = (int)$args->list_count;
+		$page = (int)$args->page;
+		$total_count = (int)$output->total_count;
+
+		$category_map = array();
+		if($output->data)
+		{
+			$module_srls = array();
+			foreach($output->data as $p)
+			{
+				if(!empty($p->module_srl)) $module_srls[(int)$p->module_srl] = true;
+			}
+			foreach(array_keys($module_srls) as $msrl)
+			{
+				$category_list = $oModel->getCategoryList($msrl);
+				if(!$category_list) continue;
+				foreach($category_list as $cat)
+				{
+					$category_map[$cat->category_srl] = $cat->title;
+				}
+			}
+
+			$this->assignAdminListNumbersDescending($output->data, $total_count, $page, $list_count);
+			foreach($output->data as &$product)
+			{
+				if(empty($product->regdate) && !empty($product->last_update))
+				{
+					$product->display_regdate = $product->last_update;
+				}
+				else
+				{
+					$product->display_regdate = $product->regdate;
+				}
+				$product->is_apply_closed = $oModel->isProductApplyClosed($product);
+				$product->category_title = '';
+				if($product->category_srl && isset($category_map[$product->category_srl]))
+				{
+					$product->category_title = $category_map[$product->category_srl];
+				}
+				elseif($product->category_srl)
+				{
+					$cat = $oModel->getCategory($product->category_srl);
+					if($cat && isset($cat->title))
+					{
+						$product->category_title = $cat->title;
+						$category_map[$product->category_srl] = $cat->title;
+					}
+				}
+			}
+			unset($product);
+		}
 
 		Context::set('product_list', $output->data);
 		Context::set('page_navigation', $output->page_navigation);
@@ -250,12 +340,14 @@ class poomahhiAdminView extends poomahhi
 		$oMemberModel = getModel('member');
 		if($output->data)
 		{
+			$this->assignAdminListNumbersDescending($output->data, (int)$output->total_count, (int)$args->page, (int)$args->list_count);
 			foreach($output->data as &$app)
 			{
 				$app->product = $oModel->getProduct($app->product_srl);
 				$app->member_info = $oMemberModel->getMemberInfoByMemberSrl($app->member_srl);
 				$app->review = $oModel->getReviewByApplication($app->application_srl);
 			}
+			unset($app);
 		}
 
 		Context::set('application_list', $output->data);
@@ -292,10 +384,12 @@ class poomahhiAdminView extends poomahhi
 		$oMemberModel = getModel('member');
 		if($output->data)
 		{
+			$this->assignAdminListNumbersDescending($output->data, (int)$output->total_count, (int)$args->page, (int)$args->list_count);
 			foreach($output->data as &$item)
 			{
 				$item->member_info = $oMemberModel->getMemberInfoByMemberSrl($item->business_member_srl);
 			}
+			unset($item);
 		}
 
 		Context::set('settlement_list', $output->data);
@@ -325,6 +419,7 @@ class poomahhiAdminView extends poomahhi
 
 		if($output->data)
 		{
+			$this->assignAdminListNumbersDescending($output->data, (int)$output->total_count, (int)$args->page, (int)$args->list_count);
 			foreach($output->data as &$report)
 			{
 				$report->reporter_info = $oMemberModel->getMemberInfoByMemberSrl($report->reporter_member_srl);
@@ -432,6 +527,7 @@ class poomahhiAdminView extends poomahhi
 
 		if($output->data)
 		{
+			$this->assignAdminListNumbersDescending($output->data, (int)$output->total_count, (int)$args->page, (int)$args->list_count);
 			foreach($output->data as &$row)
 			{
 				$m = $get_member($row->member_srl);

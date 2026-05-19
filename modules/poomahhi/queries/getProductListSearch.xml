@@ -16,6 +16,7 @@
 		<condition operation="equal" column="p.category_srl" var="category_srl" pipe="AND" />
 		<condition operation="equal" column="p.status" var="status" pipe="AND" />
 		<condition operation="equal" column="p.product_type" var="product_type" pipe="AND" />
+		<condition operation="in" column="p.content_access_type" var="content_access_types" pipe="AND" />
 		<group pipe="AND">
 			<condition operation="like" column="p.title" var="search_keyword" />
 			<condition operation="like" column="p.company_name" var="search_keyword" pipe="or" />

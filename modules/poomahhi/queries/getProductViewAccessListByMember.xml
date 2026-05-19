@@ -1,0 +1,11 @@
+<query id="getProductViewAccessListByMember" action="select">
+	<tables>
+		<table name="poomahhi_product_view_access" />
+	</tables>
+	<columns>
+		<column name="product_srl" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="member_srl" var="member_srl" notnull="notnull" />
+	</conditions>
+</query>
